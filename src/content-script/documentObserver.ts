@@ -1,12 +1,22 @@
-import {FilterNotification, Notification} from "../app/interfaces/notifications";
+import {ContentNotification, FilterNotification} from "../app/interfaces/notifications";
+import {Observer, Subject} from "rxjs";
 
 export default class DocumentObserver {
-  checkTable: any = {}
 
+  subject = new Subject<ContentNotification>()
+
+  observer: Observer<FilterNotification> = {
+    next: this.listener.bind(this),
+    error: () => {
+    },
+    complete: () => {
+    }
+  }
+
+  private checkTable: { [key: string]: HTMLElement } = {}
 
   constructor() {
 
-    chrome.runtime.onMessage.addListener(this.listener.bind(this))
 
   }
 
@@ -23,6 +33,8 @@ export default class DocumentObserver {
     const urlVideos: Array<string> = this.getAllCurrentVideos()
 
     this.sendData(urlImages, urlVideos)
+
+    console.log('images length', urlImages.length)
 
   }
 
@@ -126,26 +138,31 @@ export default class DocumentObserver {
 
   private sendData(urlImages: Array<string>, urlVideos: Array<string>) {
 
-    try {
-      chrome.runtime.sendMessage({urlImages, urlVideos})
-    } catch (e) {
-      console.log(`urlImages`, urlVideos)
-      console.log(`urlImages`, urlImages)
+    const notification: ContentNotification = {
+      urlImages,
+      urlVideos
     }
+
+    this.subject.next(notification)
 
   }
 
   private listener(notification: FilterNotification) {
-    
-    if (notification.predict == "Not porn")
+
+    if (notification.predict == "Not porn") {
       this.changeCss(notification.imgSrc)
+
+      console.log(this.checkTable[notification.imgSrc])
+    }
+
+
   }
 
 
   private changeCss(src: string) {
 
-    if (this.checkTable[src])
-      this.checkTable[src].setAttribute("style", "display: block !important;")
+    if (this.checkTable[src]) //setAttribute("style", "display: !important")
+      this.checkTable[src].setAttribute("style", "display: inline !important")
 
   }
 

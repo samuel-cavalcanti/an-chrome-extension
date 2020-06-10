@@ -3,6 +3,7 @@ import {ModelService} from "../model/model.service";
 
 import {LoadImageService} from "../load-image/load-image.service";
 import {ChromeMessengerService} from "../chrome-messenger/chrome-messenger.service";
+import Port = chrome.runtime.Port;
 
 @Injectable({
   providedIn: 'root'
@@ -11,13 +12,20 @@ export class TeddyFilterService {
 
 
   constructor(private model: ModelService,
-              private loadImage: LoadImageService,
-              private chromeMessenger: ChromeMessengerService) {
+              private loadImage: LoadImageService) {
 
 
-    chromeMessenger.subject.subscribe(loadImage.observer)
-    loadImage.subject.subscribe(model.observer)
-    model.subject.subscribe(chromeMessenger.observer)
+    model.subscribe(loadImage)
+    
+    chrome.runtime.onConnect.addListener((port: Port) => {
+
+      const chromeMessenger = new ChromeMessengerService(port)
+
+      loadImage.subscribe(chromeMessenger)
+
+      chromeMessenger.subscribe(model)
+    })
+
 
 
   }

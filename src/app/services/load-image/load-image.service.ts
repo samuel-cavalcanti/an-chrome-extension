@@ -4,43 +4,42 @@ import {ImageSize} from "../../interfaces/image-size";
 import {Observer, Subject} from "rxjs";
 import {ImageNotification, Notification} from "../../interfaces/notifications";
 import {ReasonsTable} from "../../classes/reasons-table/reasons-table";
+import Module from "../../../classes/module";
 
 @Injectable({
   providedIn: 'root'
 })
-export class LoadImageService {
+export class LoadImageService extends Module<Notification, ImageNotification> {
   imageSize: ImageSize = <ImageSize>{expected: 200, min: 40}
-  subject = new Subject<ImageNotification>()
 
 
-  observer: Observer<Notification> = {
-    next: this.next.bind(this),
-    error: (e) => {
-      console.log(e)
-    },
-    complete: () => {
-    }
-  }
-
-  private images: { [key: string]: number } = {}
+  private images: { [key: string]: string } = {}
 
 
   constructor() {
+    super()
+  }
+
+   error(e): void {
 
   }
 
+   complete(): void {
 
-  /*
-   * Creates a dom element and loads the image pointed to by the provided src.
-   */
+  }
+
   next(notification: Notification) {
 
 
     if (notification.id === undefined) {
-      this.subject.error(ReasonsTable.No_tab_No_prediction)
+      console.log(notification, ReasonsTable.No_tab_No_prediction)
       return
     }
 
+
+    /*
+ * Creates a dom element and loads the image pointed to by the provided src.
+ */
     const img = document.createElement('img');
     img.addEventListener('error', this.onError.bind(this))
     img.addEventListener('load', this.onLoad.bind(this))
@@ -49,11 +48,11 @@ export class LoadImageService {
   }
 
   onError(event) {
-    const notification: Notification = <Notification>{
-      id: this.images[event.target.src],
-      message: ReasonsTable.Could_not_load_image_from_external_source
-    }
-    console.log("On Error", notification)
+    // const notification: Notification = <Notification>{
+    //   id: this.images[event.target.src],
+    //   message: ReasonsTable.Could_not_load_image_from_external_source
+    // }
+    // console.log("On Error", notification)
 
     delete this.images[event.target.src]
 
@@ -69,17 +68,14 @@ export class LoadImageService {
       return
     }
 
-    const message = `${ReasonsTable.Image_size_too_small} width ${imgTarget.naturalHeight}  height ${imgTarget.naturalHeight}`
-    console.log(message)
+    // const message = `${ReasonsTable.Image_size_too_small} width ${imgTarget.naturalHeight}  height ${imgTarget.naturalHeight}`
+    // console.log(message)
   }
 
   notify(img: HTMLImageElement) {
     const id = this.images[img.src]
 
-    if (id === undefined)
-      console.log("Load image Notify", img, img.src, img.naturalHeight, img.naturalHeight)
-    else
-      console.log("Load image Notify", img.naturalHeight, img.naturalHeight)
+
 
     this.subject.next({id, img})
     delete this.images[img.src]

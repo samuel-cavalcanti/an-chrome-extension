@@ -1,12 +1,11 @@
- img {
-    display: none !important;
-  
+img {
+  display: none !important;
 }
 
 video {
-    display: none !important;
+  /*display: none !important;*/
 }
 
 iframe {
-    display: none !important;
+  /*display: none !important;*/
 }

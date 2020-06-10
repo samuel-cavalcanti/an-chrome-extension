@@ -1,18 +1,24 @@
 interface ImageNotification {
-  id: number,
+  id: string,
   img: HTMLImageElement,
 }
 
 interface Notification {
-  id: number,
+  id: string,
   message: string
 }
 
 interface FilterNotification {
-  id: number,
+  id: string,
   predict: string,
-  imgSrc: string
+  imgSrc: string,
+  message?: string,
 }
 
+interface ContentNotification {
+  urlImages?: Array<string>,
+  urlVideos?: Array<string>,
+  message?: string,
+}
 
-export {Notification, ImageNotification, FilterNotification}
+export {Notification, ImageNotification, FilterNotification, ContentNotification}
