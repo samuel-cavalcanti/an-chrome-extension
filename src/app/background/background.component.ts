@@ -10,6 +10,11 @@ export class BackgroundComponent implements OnInit {
 
   constructor(teddyFilter: TeddyFilterService) {
 
+    try {
+      teddyFilter.startFilter()
+    } catch (e) {
+      console.error(e)
+    }
 
   }
 

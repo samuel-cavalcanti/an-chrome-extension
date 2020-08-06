@@ -15,9 +15,11 @@ export default class DocumentObserver {
 
   private checkTable: { [key: string]: HTMLElement } = {}
 
-  constructor() {
+  private errorMessages = {
 
+    noSrc: new Error('Cannot read src, property undefined'),
 
+    noArray: new Error('Cannot read urlImages or urlVideos, property undefined')
   }
 
   start() {
@@ -34,12 +36,11 @@ export default class DocumentObserver {
 
     this.sendData(urlImages, urlVideos)
 
-    console.log('images length', urlImages.length)
 
   }
 
   private getAllCurrentImages(): Array<string> {
-    let imagesTable: Array<string> = new Array(document.images.length)
+    let imagesTable: Array<string> = new Array<string>(document.images.length)
 
     for (let i = 0; i < document.images.length; i++) {
       if (document.images[i].src.length) {
@@ -53,19 +54,19 @@ export default class DocumentObserver {
   }
 
   private getAllCurrentVideos(): Array<string> {
-    let videos: any = document.getElementsByTagName("video")
-    let videosTable: Array<string> = new Array(videos.length)
+    let elements: any = document.getElementsByTagName("video")
+    let videos: Array<string> = new Array<string>(elements.length)
 
-    for (let video of videos) {
-      const url = DocumentObserver.getUrlVideo(video)
+    for (const element of elements) {
+      const url = DocumentObserver.getUrlVideo(element)
       if (url.length) {
-        this.checkTable[url] = video
-        videosTable.push(video)
+        this.checkTable[url] = element
+        videos.push(element)
       }
 
     }
 
-    return videosTable;
+    return videos;
 
   }
 
@@ -80,13 +81,18 @@ export default class DocumentObserver {
   }
 
   private static getUrlVideo(video: HTMLVideoElement): string {
+    if (video == undefined)
+      throw new Error('video is undefined')
 
     if (video.src.substring(0, 4) == "blob" || !video.src) {
       if (video.baseURI) {
         return video.baseURI;
       }
     }
-    return video.src;
+    if (video.src)
+      return video.src;
+
+    return ""
   }
 
   private getAllNewData(mutations: MutationRecord[]): { urlImages: Array<string>, urlVideos: Array<string> } {
@@ -138,6 +144,9 @@ export default class DocumentObserver {
 
   private sendData(urlImages: Array<string>, urlVideos: Array<string>) {
 
+    if (urlImages == undefined || urlVideos == undefined)
+      throw this.errorMessages.noArray
+
     const notification: ContentNotification = {
       urlImages,
       urlVideos
@@ -149,7 +158,7 @@ export default class DocumentObserver {
 
   private listener(notification: FilterNotification) {
 
-    if (notification.predict == "Not porn") {
+    if (notification.predict.name == "Not porn") {
       this.changeCss(notification.imgSrc)
 
       console.log(this.checkTable[notification.imgSrc])
@@ -160,6 +169,9 @@ export default class DocumentObserver {
 
 
   private changeCss(src: string) {
+
+    if (src == undefined)
+      throw this.errorMessages.noSrc
 
     if (this.checkTable[src]) //setAttribute("style", "display: !important")
       this.checkTable[src].setAttribute("style", "display: inline !important")

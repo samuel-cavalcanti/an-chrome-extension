@@ -7,7 +7,7 @@ import * as tf from '@tensorflow/tfjs'
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'Carregue um Filtro';
+  title = 'teddy-extension';
 
 
   constructor() {

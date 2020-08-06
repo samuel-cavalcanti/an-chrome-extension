@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 
 import {ImageSize} from "../../interfaces/image-size";
-import {Observer, Subject} from "rxjs";
 import {ImageNotification, Notification} from "../../interfaces/notifications";
 import {ReasonsTable} from "../../classes/reasons-table/reasons-table";
 import Module from "../../../classes/module";
@@ -20,16 +19,15 @@ export class LoadImageService extends Module<Notification, ImageNotification> {
     super()
   }
 
-   error(e): void {
+  error(e): void {
 
   }
 
-   complete(): void {
+  complete(): void {
 
   }
 
   next(notification: Notification) {
-
 
     if (notification.id === undefined) {
       console.log(notification, ReasonsTable.No_tab_No_prediction)
@@ -74,8 +72,6 @@ export class LoadImageService extends Module<Notification, ImageNotification> {
 
   notify(img: HTMLImageElement) {
     const id = this.images[img.src]
-
-
 
     this.subject.next({id, img})
     delete this.images[img.src]

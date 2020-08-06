@@ -1,9 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Observer, Subject} from "rxjs";
-import {ContentNotification, FilterNotification, Notification} from "../../interfaces/notifications";
+import {FilterNotification, Notification} from "../../../interfaces/notifications";
 import WebRequestBodyDetails = chrome.webRequest.WebRequestBodyDetails;
 import RequestFilter = chrome.webRequest.RequestFilter;
-import tabId = chrome.devtools.inspectedWindow.tabId;
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +28,10 @@ export class ChromeWebRequestService {
       urls: ['<all_urls>']
     }
 
+
+    if (!chrome.webRequest)
+      throw new Error(`you must declare the "webRequest" permission in the extension manifest`)
+
     chrome.webRequest.onCompleted.addListener(this.beforeRequest.bind(this), filter)
   }
 
@@ -46,6 +49,8 @@ export class ChromeWebRequestService {
     // console.log("before Request-> details:", details)
     // this.subject.next({id: details.tabId, message: details.url})
   }
+
+
 
 }
 

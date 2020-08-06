@@ -4,12 +4,15 @@
     "outDir": "./out-tsc/spec",
     "types": [
       "jasmine",
-      "node"
+      "node",
+      "chrome"
     ]
   },
   "files": [
     "src/test.ts",
-    "src/polyfills.ts"
+    "src/polyfills.ts",
+    "src/content-script/content-script.ts",
+    "src/content-script/document-observer.ts"
   ],
   "include": [
     "src/**/*.spec.ts",

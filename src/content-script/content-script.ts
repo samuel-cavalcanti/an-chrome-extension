@@ -1,11 +1,14 @@
-import ChromeMessengerContent from "./chrome-messenger-content";
-import DocumentObserver from "./documentObserver";
+import ChromeBrowserContentCommunication from "./chrome-browser-content-communication";
+import DocumentObserver from "./document-observer";
 
 
-const chromeMessengerContent: ChromeMessengerContent = new ChromeMessengerContent()
+const chromeBrowserContentCommunication: ChromeBrowserContentCommunication = new ChromeBrowserContentCommunication()
 const documentObserver: DocumentObserver = new DocumentObserver()
 
-chromeMessengerContent.subject.subscribe(documentObserver.observer)
-documentObserver.subject.subscribe(chromeMessengerContent.observer)
+chromeBrowserContentCommunication.subject.subscribe(documentObserver.observer)
+documentObserver.subject.subscribe(chromeBrowserContentCommunication.observer)
+
+
+chromeBrowserContentCommunication.tryToCommunicate()
 
 documentObserver.start()

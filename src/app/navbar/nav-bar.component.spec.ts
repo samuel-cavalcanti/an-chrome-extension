@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { navBarComponent } from './nav-bar.component';
 
-describe('ToolbarComponent', () => {
+describe('navBarComponent', () => {
   let component: navBarComponent;
   let fixture: ComponentFixture<navBarComponent>;
 

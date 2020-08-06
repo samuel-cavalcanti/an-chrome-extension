@@ -1,3 +1,9 @@
+export interface Predict {
+  name: string,
+  highConfidenceThreshold: number,
+  lowConfidenceThreshold: number
+}
+
 export interface ClassName {
-  [key: number]: string
+  [key: number]: Predict
 }

@@ -10,10 +10,10 @@
     "src/main.ts",
     "src/polyfills.ts",
     "src/content-script/content-script.ts",
-    "src/content-script/documentObserver.ts"
+    "src/content-script/document-observer.ts"
   ],
   "include": [
-    "src/**/*.d.ts",
+    "src/**/*.d.ts"
 
   ]
 }

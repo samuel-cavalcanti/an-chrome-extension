@@ -1,9 +1,8 @@
 import {Injectable} from '@angular/core';
-import {ModelService} from "../model/model.service";
+import {ConvolucionalNeuralNetwork } from "./convolucional-neural-network/convolucional-neural-network";
 
 import {LoadImageService} from "../load-image/load-image.service";
-import {ChromeMessengerService} from "../chrome-messenger/chrome-messenger.service";
-import Port = chrome.runtime.Port;
+import {ChromeBrowserCommunication} from "../chrome-browser/chrome-browser.communication";
 
 @Injectable({
   providedIn: 'root'
@@ -11,23 +10,41 @@ import Port = chrome.runtime.Port;
 export class TeddyFilterService {
 
 
-  constructor(private model: ModelService,
-              private loadImage: LoadImageService) {
+  private model: ConvolucionalNeuralNetwork
+
+  private loadImage: LoadImageService
+
+  private browser: ChromeBrowserCommunication
+
+  constructor() {
+
+    this.model = new ConvolucionalNeuralNetwork()
+    this.loadImage = new LoadImageService()
+    this.model.subscribe(this.loadImage)
+
+  }
+
+  startFilter() {
+
+    try {
+      this.browser = this.selectBrowser()
+      this.model.load(this.browser.modelURL, this.browser.classesNameURL)
+      this.loadImage.subscribe(this.browser)
+      this.browser.subscribe(this.model)
+      this.browser.tryToStart()
+
+    } catch (e) {
+      console.info(e)
+    }
+
+  }
+
+  selectBrowser(): ChromeBrowserCommunication {
+    if (chrome)
+      return new ChromeBrowserCommunication()
 
 
-    model.subscribe(loadImage)
-    
-    chrome.runtime.onConnect.addListener((port: Port) => {
-
-      const chromeMessenger = new ChromeMessengerService(port)
-
-      loadImage.subscribe(chromeMessenger)
-
-      chromeMessenger.subscribe(model)
-    })
-
-
-
+    throw new Error("Not support the current browser")
   }
 
 

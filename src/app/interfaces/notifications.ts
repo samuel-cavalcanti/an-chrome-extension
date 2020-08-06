@@ -1,3 +1,5 @@
+import {Predict} from "./class-name";
+
 interface ImageNotification {
   id: string,
   img: HTMLImageElement,
@@ -10,7 +12,7 @@ interface Notification {
 
 interface FilterNotification {
   id: string,
-  predict: string,
+  predict: Predict,
   imgSrc: string,
   message?: string,
 }

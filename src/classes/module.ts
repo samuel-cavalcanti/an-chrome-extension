@@ -3,9 +3,9 @@ import {Observer, Subject, Subscription} from "rxjs";
 
 export default abstract class Module<I, O> {
 
-  protected subject = new Subject<O>()
+  subject = new Subject<O>()
 
-  protected observer: Observer<I> = {
+  observer: Observer<I> = {
     next: this.next.bind(this),
     error: this.error.bind(this),
     complete: this.complete.bind(this),

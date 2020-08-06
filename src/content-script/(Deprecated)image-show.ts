@@ -1,7 +1,7 @@
 import {Observer} from "rxjs";
 import {FilterNotification} from "../app/interfaces/notifications";
 
-export default class ImageShow {
+export default class DeprecatedImageShow {
 
   observer: Observer<FilterNotification> = {
     next: this.showImage.bind(this),
@@ -35,7 +35,7 @@ export default class ImageShow {
       const img = this.findImgBySrc(notification.imgSrc)
       console.log("Show Image-> notification:", img)
       if (img !== undefined)
-        ImageShow.changeCss(img)
+        DeprecatedImageShow.changeCss(img)
     }
 
 
