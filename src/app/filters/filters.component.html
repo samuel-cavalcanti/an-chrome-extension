@@ -1,6 +1,13 @@
+<div class="container">
 
-<div class="container"  *ngFor="let name of classNames">
+  <ul class="list-group list-group-flush card" style="width: 18rem; margin: 5px;"
+      *ngFor="let name of classes; index as index">
 
-  <app-filter [className]="name" [enable]="enable" (boxChange)="onChange($event)" ></app-filter>
+    <a type="button" class="list-group-item list-group-item-action"
+       [class.list-group-item-light]="!enables[index]" (click)="enables[index]=!enables[index]">
+      <small *ngIf="!enables[index]">You won't see any</small>
+      {{name}}  </a>
+
+  </ul>
 
 </div>

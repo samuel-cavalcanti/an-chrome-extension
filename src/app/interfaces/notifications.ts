@@ -41,11 +41,13 @@ export interface CnnModelSettingNotification extends Notification {
   type: NotificationTypes.CnnModelSettingNotification
   cnnModel: tf.GraphModel
   classNames: ClassNames
+  enables: Array<boolean>
 }
 
 export interface TensorFlowHubModelNotification extends Notification {
   type: NotificationTypes.TensorFlowHubModelNotification
   cnnModelHub: TensorflowHubModel
   classNames?: ClassNames
+  enables?: Array<boolean>
 }
 

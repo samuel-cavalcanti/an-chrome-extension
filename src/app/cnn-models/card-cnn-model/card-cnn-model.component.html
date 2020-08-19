@@ -19,6 +19,6 @@
 <div [ngSwitch]="status">
   <button *ngSwitchCase="false" class="btn btn-dark w-100" (click)=" click.emit(model)">Select Model</button>
   <button *ngSwitchCase="true" class="btn btn-success w-100" disabled>Selected</button>
-  <app-spinner *ngSwitchCase="undefined"></app-spinner>
+  <app-spinner *ngSwitchCase="undefined" color="text-success"></app-spinner>
 </div>
 

@@ -40,6 +40,7 @@ export class TensorflowHubService {
 
     console.info("response tfHub", response)
     console.info("models: ", this.models)
+
     this.subject.next(this.models)
 
   }

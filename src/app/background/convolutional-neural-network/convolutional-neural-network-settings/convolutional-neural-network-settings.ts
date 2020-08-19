@@ -73,15 +73,18 @@ export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Not
 
   private notify(cnnModel: tf.GraphModel, classNames: ClassNames, userInterfaceMessage: TensorFlowHubModelNotification) {
 
+    const enables = userInterfaceMessage.enables ? userInterfaceMessage.enables : Object.values(classNames).map(value => true)
+
     const cnnMessage: CnnModelSettingNotification = {
       id: "ConvolutionalNeuralNetworkSettings",
       type: NotificationTypes.CnnModelSettingNotification,
       cnnModel,
-      classNames
+      classNames,
+      enables
     }
 
     this.subject.next(cnnMessage)
-    this.subject.next(<TensorFlowHubModelNotification>{...userInterfaceMessage, classNames: classNames})
+    this.subject.next(<TensorFlowHubModelNotification>{...userInterfaceMessage, classNames, enables})
 
   }
 

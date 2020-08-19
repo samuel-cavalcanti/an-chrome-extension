@@ -20,6 +20,7 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
 
   private classNames: ClassNames
   private model: tf.GraphModel
+  private enables: Array<boolean>
 
 
   constructor() {
@@ -63,6 +64,7 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
   private settingsNotification(message: CnnModelSettingNotification) {
     this.model = message.cnnModel
     this.classNames = message.classNames
+    this.enables = message.enables
     console.info("Model is loaded")
 
 

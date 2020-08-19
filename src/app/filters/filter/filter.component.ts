@@ -9,12 +9,24 @@ import {EventFilter} from "../../interfaces/event-filter";
 export class FilterComponent implements OnInit {
 
   @Input() enable: boolean = false
-  @Input('className') class: string
+
+  @Input('className') set className(name: string) {
+    console.info("name: ", name)
+    this.class = name.replace(/[^\w\s]/gi, "")
+    this.name = name
+  }
+
   @Output() boxChange: EventEmitter<EventFilter> = new EventEmitter<EventFilter>()
 
-  constructor() { }
+  class: string
+
+  name: string
+
+  constructor() {
+  }
 
   ngOnInit(): void {
+
   }
 
 }
