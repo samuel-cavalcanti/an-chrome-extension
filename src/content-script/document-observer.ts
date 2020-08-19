@@ -1,11 +1,16 @@
-import {ContentNotification, FilterNotification} from "../app/interfaces/notifications";
+import {
+  ContentNotification,
+  FilterNotification,
+  Notification,
+  NotificationTypes
+} from "../app/interfaces/notifications";
 import {Observer, Subject} from "rxjs";
 
 export default class DocumentObserver {
 
-  subject = new Subject<ContentNotification>()
+  subject = new Subject<Notification>()
 
-  observer: Observer<FilterNotification> = {
+  observer: Observer<Notification> = {
     next: this.listener.bind(this),
     error: () => {
     },
@@ -148,6 +153,8 @@ export default class DocumentObserver {
       throw this.errorMessages.noArray
 
     const notification: ContentNotification = {
+      id: "replace  this in communication",
+      type: NotificationTypes.ContentNotification,
       urlImages,
       urlVideos
     }
@@ -158,7 +165,7 @@ export default class DocumentObserver {
 
   private listener(notification: FilterNotification) {
 
-    if (notification.predict.name == "Not porn") {
+    if (notification.predict == "Not porn") {
       this.changeCss(notification.imgSrc)
 
       console.log(this.checkTable[notification.imgSrc])

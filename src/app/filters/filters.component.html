@@ -1,1 +1,6 @@
-<app-filter className="Porn" [enable]="enable" (boxChange)="onChange($event)" ></app-filter>
+
+<div class="container"  *ngFor="let name of classNames">
+
+  <app-filter [className]="name" [enable]="enable" (boxChange)="onChange($event)" ></app-filter>
+
+</div>

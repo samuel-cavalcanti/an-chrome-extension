@@ -1,16 +1,12 @@
 import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
+import {RouterModule, Routes} from '@angular/router';
 import {BackgroundComponent} from "./background/background.component";
-import {AppComponent} from "./app.component";
-import {FiltersComponent} from "./filters/filters.component";
-import {AddFilterComponent} from "./add-filter/add-filter.component";
 
 
 const routes: Routes = [
   {path: 'background', component: BackgroundComponent},
-  {path:'filters',component:FiltersComponent},
-  {path:'add-filter',component:AddFilterComponent},
-  // {path: '', component: AppComponent},
+  {path: 'filters', loadChildren: () => import("./filters/filters.module").then(m => m.FiltersModule)},
+  {path: 'models', loadChildren: () => import("./cnn-models/cnn-models.module").then(m => m.CnnModelsModule)},
 ];
 
 @NgModule({

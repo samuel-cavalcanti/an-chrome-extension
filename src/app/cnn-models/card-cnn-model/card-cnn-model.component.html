@@ -1,0 +1,24 @@
+<div class="card-body">
+  <h3 class="card-title"> {{model.title}} </h3>
+  <p class="card-text">{{model.description}}</p>
+  <ul class="list-inline" style="font-size: small;margin: 0">
+    <li class="list-inline-item text-muted">Published by:</li>
+    <li class="list-inline-item font-weight-bold">{{model.publisher}}</li>
+  </ul>
+
+  <ul class="list-inline" style="font-size: small;margin: 0">
+    <li class="list-inline-item text-muted">Architecture:</li>
+    <li class="list-inline-item font-weight-bold">{{model.architecture}} </li>
+  </ul>
+
+  <ul class="list-inline" style="font-size: small;margin: 0">
+    <li class="list-inline-item text-muted">dataset:</li>
+    <li class="list-inline-item font-weight-bold">{{model.dataset}} </li>
+  </ul>
+</div>
+<div [ngSwitch]="status">
+  <button *ngSwitchCase="false" class="btn btn-dark w-100" (click)=" click.emit(model)">Select Model</button>
+  <button *ngSwitchCase="true" class="btn btn-success w-100" disabled>Selected</button>
+  <app-spinner *ngSwitchCase="undefined"></app-spinner>
+</div>
+

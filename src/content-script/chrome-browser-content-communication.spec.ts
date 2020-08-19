@@ -17,7 +17,7 @@ describe('ChromeBrowserContentCommunication', () => {
     })).toThrowError('try to send message when channel is not opened')
   });
 
-  describe('Observer methods', function () {
+  describe('ChromeBrowserContentCommunication Observer methods', function () {
     it('should create next function', function () {
       expect(chromeMessengerContent.observer.next !== undefined).toBeTrue()
     })
@@ -30,8 +30,6 @@ describe('ChromeBrowserContentCommunication', () => {
       expect(chromeMessengerContent.observer.complete !== undefined).toBeTrue()
     })
   })
-
-
 
 
 })

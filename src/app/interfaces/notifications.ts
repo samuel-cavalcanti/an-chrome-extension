@@ -1,26 +1,51 @@
-import {Predict} from "./class-name";
+import {ClassNames} from "./class-names";
+import * as tf from "@tensorflow/tfjs";
+import {TensorflowHubModel} from "./tensorflow-hub-model";
 
-interface ImageNotification {
-  id: string,
+export enum NotificationTypes {
+  Notification,
+  ImageSourceNotification,
+  ImageNotification,
+  FilterNotification,
+  ContentNotification,
+  CnnModelSettingNotification,
+  TensorFlowHubModelNotification,
+
+}
+
+export interface Notification {
+  id: string
+  type: number
+  message?: string
+}
+
+export interface ImageNotification extends Notification {
+  type: NotificationTypes.ImageNotification
   img: HTMLImageElement,
 }
 
-interface Notification {
-  id: string,
-  message: string
+
+export interface FilterNotification extends Notification {
+  type: NotificationTypes.FilterNotification
+  predict: string
+  imgSrc: string
 }
 
-interface FilterNotification {
-  id: string,
-  predict: Predict,
-  imgSrc: string,
-  message?: string,
+export interface ContentNotification extends Notification {
+  type: NotificationTypes.ContentNotification
+  urlImages?: Array<string>
+  urlVideos?: Array<string>
 }
 
-interface ContentNotification {
-  urlImages?: Array<string>,
-  urlVideos?: Array<string>,
-  message?: string,
+export interface CnnModelSettingNotification extends Notification {
+  type: NotificationTypes.CnnModelSettingNotification
+  cnnModel: tf.GraphModel
+  classNames: ClassNames
 }
 
-export {Notification, ImageNotification, FilterNotification, ContentNotification}
+export interface TensorFlowHubModelNotification extends Notification {
+  type: NotificationTypes.TensorFlowHubModelNotification
+  cnnModelHub: TensorflowHubModel
+  classNames?: ClassNames
+}
+

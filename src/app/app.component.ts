@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import * as tf from '@tensorflow/tfjs'
+
 
 @Component({
   selector: 'app-root',
@@ -15,7 +15,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
 
-    console.log(tf.version)
+
 
   }
 }
