@@ -10,11 +10,11 @@ export enum NotificationTypes {
   ContentNotification,
   CnnModelSettingNotification,
   TensorFlowHubModelNotification,
-
+  InputShapeNotification
 }
 
 export interface Notification {
-  id: string
+  id?: string
   type: number
   message?: string
 }
@@ -49,5 +49,10 @@ export interface TensorFlowHubModelNotification extends Notification {
   cnnModelHub: TensorflowHubModel
   classNames?: ClassNames
   enables?: Array<boolean>
+}
+
+export interface InputShapeNotification extends Notification {
+  type: NotificationTypes.InputShapeNotification
+  shape: Array<number>
 }
 

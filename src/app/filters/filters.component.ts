@@ -41,6 +41,7 @@ export class FiltersComponent implements OnInit {
 
   enableStatus(index: number): boolean {
     const enableIndex = this.getEnableIndex(index)
+    console.log("index", index, this.enables[enableIndex])
     return this.enables[enableIndex]
 
   }
@@ -59,16 +60,19 @@ export class FiltersComponent implements OnInit {
     this.changeDetectorRef.detectChanges()
   }
 
+  private getEnableIndex(chunkIndex: number): number {
+    return this.currentPage * this.classPages[this.currentPage].length + chunkIndex
+  }
+
   private serviceNotification(notification: TensorFlowHubModelNotification) {
     this.dataset = notification.cnnModelHub.dataset
 
     this.classNamesToChunks(notification.classNames)
+
+    console.log("enables", this.enables)
+
     this.enables = notification.enables
     this.changeDetectorRef.detectChanges()
-  }
-
-  private getEnableIndex(chunkIndex: number): number {
-    return this.currentPage * this.classPages[this.currentPage].length + chunkIndex
   }
 
 

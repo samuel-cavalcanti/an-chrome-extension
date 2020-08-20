@@ -27,7 +27,7 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
 
   private storeKey = "settings"
 
-  private ports: { [key: string]: Port }
+  private readonly ports: { [key: string]: Port }
 
   private userInterfacePort: Port
 
@@ -48,7 +48,6 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
   tryToStart() {
     try {
       this.checkPermissions()
-      chrome.runtime.onMessage.addListener(this.listener.bind(this))
       chrome.runtime.onConnect.addListener(this.onConnect.bind(this))
       this.loadLocalData()
     } catch (e) {
@@ -110,14 +109,14 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
       throw ChromeBackgroundCommunication.erros.urlsUndefined
 
     for (const url of urlImages)
-      this.subject.next(<Notification>{message: url, id: port.name, type: NotificationTypes.ImageSourceNotification})
+      if (url)
+        this.subject.next(<Notification>{message: url, id: port.name, type: NotificationTypes.ImageSourceNotification})
 
   }
 
   private notifyCnnSettings(notification: TensorFlowHubModelNotification, port: Port) {
-    console.info("TensorFlowHubModelNotification", notification)
-    if (notification.id == undefined)
-      notification.id = port.name
+
+    notification.id = port.name
 
 
     this.subject.next(notification)

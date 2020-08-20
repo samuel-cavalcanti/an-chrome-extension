@@ -1,9 +1,9 @@
-<button class="list-group-item list-group-item-action"
-        [class.list-group-item-light]="enable"
+<a class="list-group-item list-group-item-action"
+        [class.list-group-item-light]="!enable"
         (click)="onClick()">
 
-  <small *ngIf="enable">You won't see any</small>
+  <small *ngIf="!enable">You won't see any</small>
 
   {{className}}
 
-</button>
+</a>

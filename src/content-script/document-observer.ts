@@ -165,7 +165,11 @@ export default class DocumentObserver {
 
   private listener(notification: FilterNotification) {
 
-    if (notification.predict == "Not porn") {
+    if (notification.type != NotificationTypes.FilterNotification)
+      return
+
+
+    if (notification.predict == "show") {
       this.changeCss(notification.imgSrc)
 
       console.log(this.checkTable[notification.imgSrc])

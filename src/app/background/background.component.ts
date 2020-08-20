@@ -42,6 +42,7 @@ export class BackgroundComponent {
     this.cnn.subscribe(this.cnnSettings)
 
     this.loadImage.subscribe(this.browser)
+    this.loadImage.subscribe(this.cnnSettings)
 
     this.browser.subscribe(this.cnn)
     this.browser.subscribe(this.cnnSettings)

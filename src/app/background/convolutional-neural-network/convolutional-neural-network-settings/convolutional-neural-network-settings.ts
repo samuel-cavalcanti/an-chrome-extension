@@ -2,6 +2,7 @@ import * as tf from "@tensorflow/tfjs";
 import Module from "../../../../classes/module";
 import {
   CnnModelSettingNotification,
+  InputShapeNotification,
   Notification,
   NotificationTypes,
   TensorFlowHubModelNotification
@@ -79,16 +80,12 @@ export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Not
 
   private notify(cnnModel: tf.GraphModel) {
 
-    const cnnMessage: CnnModelSettingNotification = {
-      id: "ConvolutionalNeuralNetworkSettings",
-      type: NotificationTypes.CnnModelSettingNotification,
-      cnnModel: cnnModel,
-      classNames: this.currentSettings.classNames,
-      enables: this.currentSettings.enables
-    }
+    this.notifyCnn(cnnModel)
 
-    this.subject.next(cnnMessage)
-    this.subject.next(this.currentSettings)
+    this.notifyLoadImage(cnnModel)
+
+    this.notifyUserInterface()
+
   }
 
   private async loadClassNames(dataset: string): Promise<ClassNames> {
@@ -135,4 +132,39 @@ export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Not
     this.currentSettings = {...oldSettings, ...notification, classNames: classNames, enables: enables}
   }
 
+  private notifyLoadImage(cnnModel: tf.GraphModel) {
+    if (!cnnModel)
+      return
+
+    const shape = [...cnnModel.inputs[0].shape]
+
+    if (!shape)
+      throw Error(`Shape is undefined ${shape}`)
+
+    console.log("Shape of Model : ", shape)
+
+    const notification: InputShapeNotification = {
+      type: NotificationTypes.InputShapeNotification,
+      shape: shape.splice(1, shape.length)
+    }
+
+    this.subject.next(notification)
+
+  }
+
+  private notifyCnn(cnnModel: tf.GraphModel) {
+    const cnnMessage: CnnModelSettingNotification = {
+      id: "ConvolutionalNeuralNetworkSettings",
+      type: NotificationTypes.CnnModelSettingNotification,
+      cnnModel: cnnModel,
+      classNames: this.currentSettings.classNames,
+      enables: this.currentSettings.enables
+    }
+    this.subject.next(cnnMessage)
+
+  }
+
+  private notifyUserInterface() {
+    this.subject.next(this.currentSettings)
+  }
 }

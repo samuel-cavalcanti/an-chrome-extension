@@ -1,5 +1,5 @@
 import {Observer, Subject} from "rxjs";
-import {ContentNotification, FilterNotification} from "../app/interfaces/notifications";
+import {ContentNotification, FilterNotification, NotificationTypes} from "../app/interfaces/notifications";
 import {v4 as uuidV4} from "uuid";
 import Port = chrome.runtime.Port;
 
@@ -24,7 +24,8 @@ export default class ChromeBrowserContentCommunication {
     if (this.port == undefined)
       throw new Error('try to send message when channel is not opened')
 
-    message.message = this.port.name
+    message.type = NotificationTypes.ContentNotification
+    message.id = this.port.name
     this.port.postMessage(message)
   }
 
@@ -37,9 +38,8 @@ export default class ChromeBrowserContentCommunication {
   tryToCommunicate() {
 
     try {
-      this.port.onMessage.addListener(this.listener.bind(this))
       this.port = chrome.runtime.connect({name: uuidV4()})
-      console.info("port", this.port)
+      this.port.onMessage.addListener(this.listener.bind(this))
 
     } catch (e) {
       console.error(`unable to open channel from content script`)
