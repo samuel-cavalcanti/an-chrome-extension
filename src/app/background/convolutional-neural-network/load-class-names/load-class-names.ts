@@ -4,6 +4,7 @@ export default class LoadClassNames {
 
 
   static async loadClassByXMLRequest(path: string): Promise<ClassNames> {
+
     return new Promise<ClassNames>((resolve, reject) => {
       const xhr = new XMLHttpRequest();
 

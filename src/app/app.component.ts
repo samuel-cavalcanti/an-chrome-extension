@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {BrowserUserInterfaceService} from "./services/browser-user-interface/browser-user-interface.service";
 
 
 @Component({
@@ -14,7 +15,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
 
 
   }

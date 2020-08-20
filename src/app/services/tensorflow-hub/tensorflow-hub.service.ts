@@ -74,6 +74,8 @@ export class TensorflowHubService {
 
   ObserveTensorFlowHubModels(observer: Observer<Array<TensorflowHubModel>>) {
 
+    console.info("models tensorHubModels", this.models)
+
     this.subject.subscribe(observer)
 
     if (!this.models || this.models.length == 0) {

@@ -1,5 +1,4 @@
 import * as tf from "@tensorflow/tfjs";
-import LoadClassNames from "../load-class-names/load-class-names";
 import Module from "../../../../classes/module";
 import {
   CnnModelSettingNotification,
@@ -8,6 +7,7 @@ import {
   TensorFlowHubModelNotification
 } from "../../../interfaces/notifications";
 import {ClassNames} from "../../../interfaces/class-names";
+import LoadClassNames from "../load-class-names/load-class-names";
 
 
 export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Notification> {
@@ -27,14 +27,19 @@ export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Not
     teddyFilter: chrome.runtime.getURL("assets/modelJS/classes.json")
   }
 
-  private async loadCnnModel(tensorHubUrl: string): Promise<tf.GraphModel> {
+  private async loadCnnModel(tensorHubUrl: string): Promise<tf.GraphModel | undefined> {
+
+    if (!this.needToLoadModel(tensorHubUrl))
+      return undefined
+
+
     console.log('Loading model...');
 
     const startTime = performance.now();
 
     const cnnModel = await tf.loadGraphModel(tensorHubUrl, {fromTFHub: true});
 
-    console.log(`Model loaded and initialized in ${Math.floor(performance.now() - startTime)} ms...`);
+    console.log(`Model loaded  in ${Math.floor(performance.now() - startTime)} ms...`);
 
     return cnnModel
   }
@@ -55,38 +60,80 @@ export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Not
   }
 
   private async hubModelNotification(message: TensorFlowHubModelNotification) {
-    console.info("hubModelNotification", message)
+    console.info("CNN Settings hubModelNotification", message)
 
 
     if (this.localClassesNames[message.cnnModelHub.dataset]) {
-      if (this.currentSettings && this.currentSettings.cnnModelHub.url == message.cnnModelHub.url)
-        return
+      try {
+        const model = await this.loadCnnModel(message.cnnModelHub.url)
+        const classNames = await this.loadClassNames(message.cnnModelHub.dataset)
+        this.updateSetting(message, classNames)
+        this.notify(model)
+      } catch (e) {
+        console.warn("Unable update cnn settings: ", e)
+      }
 
-      this.currentSettings = message
-      const model = await this.loadCnnModel(message.cnnModelHub.url)
-      const classNames = await LoadClassNames.loadClassByXMLRequest(this.localClassesNames[message.cnnModelHub.dataset])
-      this.notify(model, classNames, message)
     }
 
   }
 
 
-  private notify(cnnModel: tf.GraphModel, classNames: ClassNames, userInterfaceMessage: TensorFlowHubModelNotification) {
-
-    const enables = userInterfaceMessage.enables ? userInterfaceMessage.enables : Object.values(classNames).map(value => true)
+  private notify(cnnModel: tf.GraphModel) {
 
     const cnnMessage: CnnModelSettingNotification = {
       id: "ConvolutionalNeuralNetworkSettings",
       type: NotificationTypes.CnnModelSettingNotification,
-      cnnModel,
-      classNames,
-      enables
+      cnnModel: cnnModel,
+      classNames: this.currentSettings.classNames,
+      enables: this.currentSettings.enables
     }
 
     this.subject.next(cnnMessage)
-    this.subject.next(<TensorFlowHubModelNotification>{...userInterfaceMessage, classNames, enables})
+    this.subject.next(this.currentSettings)
+  }
+
+  private async loadClassNames(dataset: string): Promise<ClassNames> {
+
+
+    if (this.needToLoadClassNames(dataset))
+      return LoadClassNames.loadClassByXMLRequest(this.localClassesNames[dataset])
+    else
+      return this.currentSettings.classNames
 
   }
 
+
+  private needToLoadModel(url: string): boolean {
+    if (!url)
+      return false
+
+    if (!this.currentSettings)
+      return true
+
+    if (!this.currentSettings.cnnModelHub)
+      return true
+
+    return this.currentSettings.cnnModelHub.url != url;
+
+  }
+
+  private needToLoadClassNames(dataset: string) {
+    if (!dataset)
+      return false
+
+    if (!this.currentSettings)
+      return true
+
+    if (!this.currentSettings.cnnModelHub.dataset)
+      return true
+
+    return this.currentSettings.cnnModelHub.dataset != dataset
+  }
+
+  private updateSetting(notification: TensorFlowHubModelNotification, classNames: ClassNames) {
+    const enables = notification.enables ? notification.enables : Object.values(classNames).map(() => true)
+    const oldSettings = this.currentSettings ? this.currentSettings : {}
+    this.currentSettings = {...oldSettings, ...notification, classNames: classNames, enables: enables}
+  }
 
 }

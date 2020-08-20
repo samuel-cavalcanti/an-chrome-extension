@@ -46,10 +46,16 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
   }
 
   tryToStart() {
-    this.checkPermissions()
-    chrome.runtime.onConnect.addListener(this.onConnect.bind(this))
-    chrome.runtime.onMessage.addListener(this.listener.bind(this))
-    this.loadLocalData()
+    try {
+      this.checkPermissions()
+      chrome.runtime.onMessage.addListener(this.listener.bind(this))
+      chrome.runtime.onConnect.addListener(this.onConnect.bind(this))
+      this.loadLocalData()
+    } catch (e) {
+      console.log("Unable to  start runtime")
+      console.info(e)
+    }
+
 
   }
 
@@ -61,8 +67,11 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
   }
 
   next(notification: Notification) {
+    console.info("port: ", this.ports[notification.id])
+
     if (this.ports[notification.id])
       this.ports[notification.id].postMessage(notification)
+
 
     if (notification.type == NotificationTypes.TensorFlowHubModelNotification)
       this.storeSettings(notification as TensorFlowHubModelNotification)
@@ -127,7 +136,12 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
       this.subject.next(notification)
       this.next(notification)
     } else if (this.userInterfacePort) {
-      this.next(<TensorFlowHubModelNotification>{id: this.userInterfacePort.name, cnnModelHub: {}, classNames: {}})
+      this.next(<TensorFlowHubModelNotification>{
+        id: this.userInterfacePort.name,
+        cnnModelHub: {},
+        classNames: {},
+        type: NotificationTypes.TensorFlowHubModelNotification
+      })
     }
 
 

@@ -4,23 +4,21 @@ import {TensorflowHubModel} from "../../interfaces/tensorflow-hub-model";
 import {UserInterfaceCommunication} from "../browser-communication/user-interface-communication/user-interface-communication";
 import {ChromeUserInterfaceCommunication} from "../browser-communication/chrome-browser/user-interface-communication/chrome-user-interface-communication";
 import Module from "../../../classes/module";
-import {ClassNames} from "../../interfaces/class-names";
 import {Observer} from "rxjs";
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class BrowserUserInterfaceService extends Module<Notification, Notification> {
   private callbacks = {
-    [NotificationTypes.TensorFlowHubModelNotification]: this.cnnModelSettings.bind(this)
+    [NotificationTypes.TensorFlowHubModelNotification]: this.browserNotification.bind(this)
   }
 
 
   private readonly browser: UserInterfaceCommunication<Notification, Notification>
 
-  private currentModel: TensorflowHubModel
-
-  private classNames: ClassNames
+  private currentCnnModelSettings: TensorFlowHubModelNotification
 
 
   constructor() {
@@ -34,29 +32,15 @@ export class BrowserUserInterfaceService extends Module<Notification, Notificati
 
   selectTensorHubModel(cnnModel: TensorflowHubModel) {
 
-    this.browser.changeCnnModelSettings(cnnModel)
+    const newNotification: TensorFlowHubModelNotification = {...this.currentCnnModelSettings, cnnModelHub: cnnModel}
+    this.browser.setCnnModelSettings(newNotification)
 
   }
 
-  get currentCnnModel(): TensorflowHubModel | undefined {
-    if (this.currentModel)
-      return this.currentModel
-
-    this.browser.getCnnModelSettingsFromBackground()
-
-    return undefined
-
+  changeFilterStatus(enables: Array<boolean>) {
+    const newNotification: TensorFlowHubModelNotification = {...this.currentCnnModelSettings, enables: enables}
+    this.browser.setCnnModelSettings(newNotification)
   }
-
-  get currentClassNames(): ClassNames | undefined {
-    if (this.classNames)
-      return this.classNames
-
-    this.browser.getCnnModelSettingsFromBackground()
-
-    return undefined
-  }
-
 
   static selectBrowserUserInterfaceCommunication(): UserInterfaceCommunication<Notification, Notification> {
     if (chrome)
@@ -82,20 +66,22 @@ export class BrowserUserInterfaceService extends Module<Notification, Notificati
 
   }
 
-  notifyCurrentSettings(observer: Observer<TensorFlowHubModelNotification>) {
+  addCnnModelSettingsObserver(observer: Observer<TensorFlowHubModelNotification>) {
     this.subject.subscribe(observer)
+    this.notifyAll()
   }
 
 
-  private cnnModelSettings(notification: TensorFlowHubModelNotification) {
+  private browserNotification(notification: TensorFlowHubModelNotification) {
 
+    this.currentCnnModelSettings = notification
 
-    this.classNames = notification.classNames
+    this.notifyAll()
+  }
 
-    this.currentModel = notification.cnnModelHub
-
-
-    this.subject.next(notification)
+  private notifyAll() {
+    if (this.currentCnnModelSettings)
+      this.subject.next(this.currentCnnModelSettings)
   }
 
 

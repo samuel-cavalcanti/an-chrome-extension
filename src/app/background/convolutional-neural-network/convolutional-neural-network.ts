@@ -62,10 +62,15 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
   }
 
   private settingsNotification(message: CnnModelSettingNotification) {
-    this.model = message.cnnModel
-    this.classNames = message.classNames
-    this.enables = message.enables
-    console.info("Model is loaded")
+    if (message.cnnModel)
+      this.model = message.cnnModel
+    if (message.classNames)
+      this.classNames = message.classNames
+    if (message.enables)
+      this.enables = message.enables
+
+
+    // console.log(`cnn model setting has changed\n new model: ${message.cnnModel}, or new classNames: ${message.classNames} or new enables: ${message.enables}`)
 
 
   }

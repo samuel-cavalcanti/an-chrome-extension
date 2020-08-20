@@ -1,16 +1,20 @@
-<ng-template [ngIf]="!models || models.length == 0 " class="align-middle">
+<div *ngIf="!models || models.length == 0 || !selectStatus; else showModels" class="align-middle">
 
   <app-spinner></app-spinner>
 
-</ng-template>
-<div class="container">
+</div>
 
-  <div *ngFor="let model of models; index as index" class="card w-100 " style="margin: 5px">
-    <app-card-cnn-model [cnn-model]="model" (selectModel)="selectedModel($event)"
-                        [status]="selectStatus[model.url]"></app-card-cnn-model>
+<ng-template #showModels>
+  <div class="container">
+
+    <div *ngFor="let model of models; index as index" class="card w-100 " style="margin: 5px">
+      <app-card-cnn-model [cnn-model]="model" (selectModel)="selectedModel($event)"
+                          [status]="selectStatus[model.url]"></app-card-cnn-model>
+    </div>
+
   </div>
 
-</div>
+</ng-template>
 
 
 

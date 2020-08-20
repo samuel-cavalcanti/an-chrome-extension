@@ -1,5 +1,4 @@
 import {Notification, NotificationTypes, TensorFlowHubModelNotification} from "../../../../interfaces/notifications";
-import {TensorflowHubModel} from "../../../../interfaces/tensorflow-hub-model";
 import {UserInterfaceCommunication} from "../../user-interface-communication/user-interface-communication";
 import {GET_CURRENT_SETTINGS_MESSAGE} from "../background-communication/chrome-background-communication";
 import Port = chrome.runtime.Port;
@@ -36,16 +35,12 @@ export class ChromeUserInterfaceCommunication extends UserInterfaceCommunication
   }
 
 
-  changeCnnModelSettings(tensorflowHubModel: TensorflowHubModel): void {
-    const newNotification = <TensorFlowHubModelNotification>{
-      type: NotificationTypes.TensorFlowHubModelNotification,
-      cnnModelHub: tensorflowHubModel
-    }
-    this.port.postMessage(newNotification)
+  setCnnModelSettings(tensorflowHubModel: TensorFlowHubModelNotification): void {
+
+    this.port.postMessage(tensorflowHubModel)
   }
 
   private listener(message: Notification) {
-
     this.subject.next(message)
 
   }

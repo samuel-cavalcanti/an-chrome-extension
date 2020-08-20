@@ -1,13 +1,56 @@
-<div class="container">
+<div *ngIf="currentPage == undefined; else showClasses">
 
-  <ul class="list-group list-group-flush card" style="width: 18rem; margin: 5px;"
-      *ngFor="let name of classes; index as index">
-
-    <a type="button" class="list-group-item list-group-item-action"
-       [class.list-group-item-light]="!enables[index]" (click)="enables[index]=!enables[index]">
-      <small *ngIf="!enables[index]">You won't see any</small>
-      {{name}}  </a>
-
-  </ul>
+  <app-spinner></app-spinner>
 
 </div>
+
+<ng-template #showClasses>
+
+  <div class="container text-center">
+
+    <div class="container">
+      <h4 class="card-title">{{dataset}}</h4>
+    </div>
+
+    <ul class="list-group list-group-flush card" style=" margin-bottom: 5px; margin-top: 5px "
+        *ngFor="let name of currentClasses; index as index">
+
+      <button class="list-group-item list-group-item-action"
+              [class.list-group-item-light]="!enableStatus(index)"
+              (click)="changeEnableStatus(index)">
+        <small *ngIf="!enableStatus(index)">You won't see any</small>
+        {{name}}  </button>
+
+    </ul>
+
+    <div class="container text-center" style="margin: 5px;">
+      <nav>
+        <ul class="pagination ">
+
+          <li class="page-item" [class.disabled]="currentPage ==0">
+            <a class="page-link" (click)="goToPage(0)">First</a>
+          </li>
+
+          <li class="page-item" [class.disabled]="currentPage ==0">
+            <a class="page-link" (click)="goToPage(currentPage-1)">Previous</a>
+          </li>
+
+          <li class="page-item" [class.active]="number == currentPage" *ngFor="let number of indexOfPages">
+            <a class="page-link" (click)="goToPage(number)">{{number}}</a>
+          </li>
+
+          <li class="page-item" [class.disabled]="currentPage == lastPage">
+            <a class="page-link" (click)="goToPage(currentPage+1)">Next</a>
+          </li>
+
+          <li class="page-item" [class.disabled]="currentPage == lastPage">
+            <a class="page-link" (click)="goToPage(lastPage)">Last</a>
+          </li>
+
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</ng-template>
+

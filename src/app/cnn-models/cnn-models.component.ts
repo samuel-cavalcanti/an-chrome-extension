@@ -14,12 +14,7 @@ import {TensorFlowHubModelNotification} from "../interfaces/notifications";
 export class CnnModelsComponent implements OnInit {
 
   private observeTensorHub: Observer<Array<TensorflowHubModel>> = {
-    next: (_models: Array<TensorflowHubModel>) => {
-      this.models = _models
-      this.selectStatus = _models.map((value => ({[value.url]: value.url == this.currentModel.url})))
-        .reduce((next, current) => ({...next, ...current}))
-
-    },
+    next: this.tensorHubNotification.bind(this),
     error: () => {
     },
 
@@ -29,19 +24,7 @@ export class CnnModelsComponent implements OnInit {
   }
 
   private observeBrowser: Observer<TensorFlowHubModelNotification> = {
-    next: (notification: TensorFlowHubModelNotification) => {
-
-
-      this.currentModel = notification.cnnModelHub
-      if (!this.selectStatus)
-        return
-
-
-      this.selectStatus[this.currentModel.url] = true
-
-      this.changeDetectorRef.detectChanges()
-
-    },
+    next: this.browserServiceNotification.bind(this),
     error: () => {
     },
 
@@ -64,17 +47,48 @@ export class CnnModelsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log("On INIT CNN MODELS")
     this.tensorflowHubService.ObserveTensorFlowHubModels(this.observeTensorHub)
-    this.userInterfaceService.notifyCurrentSettings(this.observeBrowser)
-    this.currentModel = this.userInterfaceService.currentCnnModel
+    this.userInterfaceService.addCnnModelSettingsObserver(this.observeBrowser)
   }
 
-  async selectedModel(cnnModel: TensorflowHubModel) {
+  selectedModel(cnnModel: TensorflowHubModel) {
     this.userInterfaceService.selectTensorHubModel(cnnModel)
 
     this.selectStatus[this.currentModel.url] = false
     this.selectStatus[cnnModel.url] = undefined
 
+  }
+
+  browserServiceNotification(notification: TensorFlowHubModelNotification) {
+    if (!notification)
+      return;
+
+    this.currentModel = notification.cnnModelHub
+
+    if (!this.models)
+      return
+
+    if (this.selectStatus)
+      this.selectStatus[this.currentModel.url] = true
+    else
+      this.makeSelectStatus()
+
+    this.changeDetectorRef.detectChanges()
+  }
+
+  tensorHubNotification(models: Array<TensorflowHubModel>) {
+    console.log("tensorHubNotification", models, this.currentModel)
+    this.models = models
+    if (this.currentModel)
+      this.makeSelectStatus()
+
+  }
+
+
+  private makeSelectStatus() {
+    this.selectStatus = this.models.map((value => ({[value.url]: value.url == this.currentModel.url})))
+      .reduce((next, current) => ({...next, ...current}))
   }
 
 

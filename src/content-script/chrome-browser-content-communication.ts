@@ -37,9 +37,10 @@ export default class ChromeBrowserContentCommunication {
   tryToCommunicate() {
 
     try {
+      this.port.onMessage.addListener(this.listener.bind(this))
       this.port = chrome.runtime.connect({name: uuidV4()})
       console.info("port", this.port)
-      this.port.onMessage.addListener(this.listener.bind(this))
+
     } catch (e) {
       console.error(`unable to open channel from content script`)
       console.error(e)

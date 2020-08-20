@@ -4,7 +4,7 @@ export abstract class UserInterfaceCommunication<I, O> extends BrowserCommunicat
 
   protected id = "popup"
 
-  abstract changeCnnModelSettings(setting: any): void
+  abstract setCnnModelSettings(setting: any): void
 
   abstract getCnnModelSettingsFromBackground(): void
 

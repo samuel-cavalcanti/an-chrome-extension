@@ -39,9 +39,9 @@ export interface ContentNotification extends Notification {
 
 export interface CnnModelSettingNotification extends Notification {
   type: NotificationTypes.CnnModelSettingNotification
-  cnnModel: tf.GraphModel
-  classNames: ClassNames
-  enables: Array<boolean>
+  cnnModel?: tf.GraphModel
+  classNames?: ClassNames
+  enables?: Array<boolean>
 }
 
 export interface TensorFlowHubModelNotification extends Notification {
