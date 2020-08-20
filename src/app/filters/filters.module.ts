@@ -6,6 +6,7 @@ import {FormsModule} from "@angular/forms";
 import {FiltersRoutingModule} from "./filters.routing.module";
 import {BrowserUserInterfaceService} from "../services/browser-user-interface/browser-user-interface.service";
 import {SpinnerModule} from "../spinner/spinner.module";
+import {PaginationModule} from "../pagination/pagination.module";
 
 
 @NgModule({
@@ -18,6 +19,7 @@ import {SpinnerModule} from "../spinner/spinner.module";
     FormsModule,
     FiltersRoutingModule,
     SpinnerModule,
+    PaginationModule,
   ],
   exports: [
     FiltersComponent

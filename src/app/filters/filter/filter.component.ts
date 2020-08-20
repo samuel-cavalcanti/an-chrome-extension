@@ -1,5 +1,4 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {EventFilter} from "../../interfaces/event-filter";
 
 @Component({
   selector: 'app-filter',
@@ -8,25 +7,25 @@ import {EventFilter} from "../../interfaces/event-filter";
 })
 export class FilterComponent implements OnInit {
 
-  @Input() enable: boolean = false
+  @Input("enable") enable: boolean
 
-  @Input('className') set className(name: string) {
-    console.info("name: ", name)
-    this.class = name.replace(/[^\w\s]/gi, "")
-    this.name = name
-  }
+  @Input("className") className: string
 
-  @Output() boxChange: EventEmitter<EventFilter> = new EventEmitter<EventFilter>()
+  @Input("index") index: number
 
-  class: string
+  @Output() enableChange: EventEmitter<number> = new EventEmitter<number>()
 
-  name: string
 
   constructor() {
   }
 
   ngOnInit(): void {
 
+  }
+
+  onClick() {
+    this.enable = !this.enable
+    this.enableChange.emit(this.index)
   }
 
 }

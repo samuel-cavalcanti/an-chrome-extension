@@ -1,19 +1,9 @@
-<div class="card">
-  <div class="row">
-    <div class="col">
-      <div class="card-body">
-        <label [for]="class" style="cursor: pointer" class="card-title">{{name}}</label>
-      </div>
-    </div>
-    <div class="col">
-      <div class="form-check text-right">
-        <input class="form-check-input position-static" (change)="boxChange.emit({class:name,enable:enable})"
-               type="checkbox"
-               [id]="class" value="option1" [(ngModel)]="enable">
-      </div>
-    </div>
+<button class="list-group-item list-group-item-action"
+        [class.list-group-item-light]="enable"
+        (click)="onClick()">
 
-  </div>
-</div>
+  <small *ngIf="enable">You won't see any</small>
 
+  {{className}}
 
+</button>
