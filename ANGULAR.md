@@ -1,4 +1,3 @@
-# TeddyExtension
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.7.
 
@@ -36,7 +35,6 @@ As instruções seguidas foram as mesmas do background script apresentadas
 nesse tutorial: [chrome extension with angular why and how](https://medium.com/angular-in-depth/chrome-extension-with-angular-why-and-how-778200b87575)
 
 ## Referencias e Ideias Maravilhosas
-- [Teddy bear image](http://clipartandscrap.com/teddy-bear-clipart_17420/)
 
 - [Transformar o background em um componente](https://www.red-gate.com/simple-talk/dotnet/software-tools/developing-google-chrome-extension-using-angular-4/)
 

@@ -5,12 +5,15 @@
 </div>
 
 <ng-template #showModels>
-  <div class="container">
+  <div class="container  text-center">
 
-    <div *ngFor="let model of models; index as index" class="card w-100 " style="margin: 5px">
+    <div *ngFor="let model of modelPages[currentPage]; index as index" class="card w-100 " style="margin: 5px">
       <app-card-cnn-model [cnn-model]="model" (selectModel)="selectedModel($event)"
                           [status]="selectStatus[model.url]"></app-card-cnn-model>
     </div>
+
+    <app-nav-bar-pagination [numberOfPages]="modelPages.length"
+                            (pageChange)="pageChange($event)"></app-nav-bar-pagination>
 
   </div>
 

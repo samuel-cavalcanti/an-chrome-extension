@@ -23,8 +23,7 @@ export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Not
   }
 
   private localClassesNames = {
-    ["imagenet-ilsvrc-2012-cls"]: chrome.runtime.getURL("assets/modelJS/Image-net-class.json"),
-    teddyFilter: chrome.runtime.getURL("assets/modelJS/classes.json")
+    ["imagenet-ilsvrc-2012-cls"]: chrome.runtime.getURL("assets/modelJS/Image-net-class.json")
   }
 
   private async loadCnnModel(tensorHubUrl: string): Promise<tf.GraphModel | undefined> {

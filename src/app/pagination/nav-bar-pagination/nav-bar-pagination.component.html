@@ -1,21 +1,21 @@
 <div class="container text-center" style="margin: 5px;">
   <nav>
-    <ul class="pagination ">
+    <ul class="pagination justify-content-center">
 
       <li class="page-item" [class.disabled]="currentPage ==firstPage">
         <a class="page-link" (click)="goToPage(firstPage)">First</a>
       </li>
 
       <li class="page-item" [class.disabled]="currentPage ==firstPage">
-        <a class="page-link" (click)="goToPage(previousPage)">Previous</a>
+        <a class="page-link " (click)="goToPage(previousPage)">Previous</a>
       </li>
 
       <li class="page-item" [class.active]="number == currentPage" *ngFor="let number of indexOfPages">
-        <a class="page-link" (click)="goToPage(number)">{{number}}</a>
+        <a class="page-link " (click)="goToPage(number)">{{number}}</a>
       </li>
 
       <li class="page-item" [class.disabled]="currentPage == lastPage">
-        <a class="page-link" (click)="goToPage(nextPage)">Next</a>
+        <a class="page-link " (click)="goToPage(nextPage)">Next</a>
       </li>
 
       <li class="page-item" [class.disabled]="currentPage == lastPage">

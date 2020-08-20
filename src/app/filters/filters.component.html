@@ -14,16 +14,8 @@
 
     <ul class="list-group list-group-flush card" style=" margin-bottom: 5px; margin-top: 5px "
         *ngFor="let name of classPages[currentPage]; index as index">
-
       <app-filter (enableChange)="changeEnableStatus($event)" [enable]="enableStatus(index)"
                   [className]="name" [index]="index"></app-filter>
-
-      <!--      <button class="list-group-item list-group-item-action"-->
-      <!--              [class.list-group-item-light]="!enableStatus(index)"-->
-      <!--              (click)="changeEnableStatus(index)">-->
-      <!--        <small *ngIf="!enableStatus(index)">You won't see any</small>-->
-      <!--        {{name}}  </button>-->
-
     </ul>
 
     <app-nav-bar-pagination [numberOfPages]="classPages.length"

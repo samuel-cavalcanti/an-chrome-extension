@@ -7,6 +7,7 @@ import {HttpClientModule} from "@angular/common/http";
 import {TensorflowHubService} from "../services/tensorflow-hub/tensorflow-hub.service";
 import {CardCnnModelComponent} from './card-cnn-model/card-cnn-model.component';
 import {SpinnerModule} from "../spinner/spinner.module";
+import {PaginationModule} from "../pagination/pagination.module";
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import {SpinnerModule} from "../spinner/spinner.module";
     CommonModule,
     HttpClientModule,
     SpinnerModule,
-    CnnModelsRoutingModule
+    CnnModelsRoutingModule,
+    PaginationModule
   ],
   exports: [CnnModelsComponent],
   providers: [TensorflowHubService]

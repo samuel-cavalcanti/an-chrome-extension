@@ -10,7 +10,7 @@ describe('workspace-project App', () => {
 
   it('should display welcome message', () => {
     page.navigateTo();
-    expect(page.getTitleText()).toEqual('teddy-extension app is running!');
+    expect(page.getTitleText()).toEqual('an-chrome-extension app is running!');
   });
 
   afterEach(async () => {

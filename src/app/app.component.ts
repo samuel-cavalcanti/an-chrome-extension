@@ -8,7 +8,7 @@ import {BrowserUserInterfaceService} from "./services/browser-user-interface/bro
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'teddy-extension';
+  title = 'nan-chrome-extension';
 
 
   constructor() {

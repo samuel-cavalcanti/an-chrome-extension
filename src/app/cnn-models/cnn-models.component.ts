@@ -5,6 +5,7 @@ import {Observer} from "rxjs";
 import {TensorflowHubService} from "../services/tensorflow-hub/tensorflow-hub.service";
 import {BrowserUserInterfaceService} from "../services/browser-user-interface/browser-user-interface.service";
 import {TensorFlowHubModelNotification} from "../interfaces/notifications";
+import ChunkArray from "../../classes/ChunkArray";
 
 @Component({
   selector: 'app-add-filter',
@@ -38,6 +39,9 @@ export class CnnModelsComponent implements OnInit {
 
   public currentModel: TensorflowHubModel
 
+  public currentPage: number
+
+  public modelPages: Array<Array<TensorflowHubModel>>
 
   constructor(private tensorflowHubService: TensorflowHubService,
               private userInterfaceService: BrowserUserInterfaceService,
@@ -50,6 +54,7 @@ export class CnnModelsComponent implements OnInit {
     console.log("On INIT CNN MODELS")
     this.tensorflowHubService.ObserveTensorFlowHubModels(this.observeTensorHub)
     this.userInterfaceService.addCnnModelSettingsObserver(this.observeBrowser)
+    this.currentPage = 0
   }
 
   selectedModel(cnnModel: TensorflowHubModel) {
@@ -78,17 +83,31 @@ export class CnnModelsComponent implements OnInit {
   }
 
   tensorHubNotification(models: Array<TensorflowHubModel>) {
-    console.log("tensorHubNotification", models, this.currentModel)
     this.models = models
+    this.modelsToChunks(models)
     if (this.currentModel)
       this.makeSelectStatus()
 
+  }
+
+  pageChange(page:number){
+    this.currentPage = page
+    this.changeDetectorRef.detectChanges()
   }
 
 
   private makeSelectStatus() {
     this.selectStatus = this.models.map((value => ({[value.url]: value.url == this.currentModel.url})))
       .reduce((next, current) => ({...next, ...current}))
+  }
+
+  private modelsToChunks(models: Array<TensorflowHubModel>) {
+
+
+    const chunkArray = new ChunkArray(models)
+    this.modelPages = chunkArray.createChunks(2)
+
+
   }
 
 
