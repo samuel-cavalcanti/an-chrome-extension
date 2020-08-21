@@ -1,4 +1,4 @@
-# nan-chrome-extension
+# an-chrome-extension
 
 Essa é uma aplicação que utiliza os classificadores do  [tensor hub](https://tfhub.dev/) e
 o [Tensorflow JS](https://www.tensorflow.org/js) para a criação de uma
