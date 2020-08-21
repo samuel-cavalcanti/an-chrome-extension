@@ -72,8 +72,6 @@ export class FiltersComponent implements OnInit {
 
     this.classNamesToChunks(notification.classNames)
 
-    console.log("enables", this.enables)
-
     this.enables = notification.enables
     this.changeDetectorRef.detectChanges()
   }

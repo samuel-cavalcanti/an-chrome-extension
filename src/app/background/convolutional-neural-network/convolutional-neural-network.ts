@@ -75,10 +75,7 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
     if (message.enables)
       this.enables = message.enables
 
-    if (!this.model)
-      return
 
-    console.log("Model inputs: ", this.model.inputs)
   }
 
 
@@ -94,7 +91,6 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
 
   protected async startToPredict(image: HTMLImageElement): Promise<string> {
     return new Promise<string>(async (resolve, reject) => {
-      console.log(" try to predict image", image)
       try {
         const logIts = tf.tidy(this.tinyFunction.bind(this, image));
         resolve(this.getTheBestClass(logIts as tf.Tensor))

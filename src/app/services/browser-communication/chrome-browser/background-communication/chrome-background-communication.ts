@@ -66,7 +66,6 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
   }
 
   next(notification: Notification) {
-    console.info("port: ", this.ports[notification.id])
 
     if (this.ports[notification.id])
       this.ports[notification.id].postMessage(notification)

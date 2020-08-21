@@ -18,7 +18,5 @@ export class SearchBarComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onChange(event: InputEvent) {
-    console.log((<HTMLInputElement>event.target).value)
-  }
+
 }

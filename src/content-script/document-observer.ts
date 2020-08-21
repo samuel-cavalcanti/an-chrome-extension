@@ -172,7 +172,6 @@ export default class DocumentObserver {
     if (notification.predict == "show") {
       this.changeCss(notification.imgSrc)
 
-      console.log(this.checkTable[notification.imgSrc])
     }
 
 
