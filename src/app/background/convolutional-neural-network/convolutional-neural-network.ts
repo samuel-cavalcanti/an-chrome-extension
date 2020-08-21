@@ -8,7 +8,7 @@ import {
   Notification,
   NotificationTypes
 } from "../../interfaces/notifications";
-import {ReasonsTable} from "../../classes/reasons-table/reasons-table";
+
 import Module from "../../../classes/module";
 
 
@@ -19,6 +19,7 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
   private classNames: ClassNames
   private model: tf.GraphModel
   private enables: Array<boolean>
+  private predict = {[0]: "not show", [1]: "show"}
 
 
   constructor() {
@@ -45,21 +46,24 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
   }
 
   private imageNotification(message: ImageNotification) {
+
+    const outputMessage: FilterNotification = {
+      type: NotificationTypes.FilterNotification,
+      id: message.id,
+      predict: this.predict[1],
+      imgSrc: message.img.src
+    }
+
     if (!this.model) {
-      setTimeout(this.next.bind(this), this.ONE_SECOND_IN_MS, message)
-      console.log(ReasonsTable.Waiting_for_model_to_load)
+      this.subject.next(outputMessage)
       return
     }
 
     this.startToPredict(message.img)
       .then((pred: string) => {
         console.log("CNN pred:", pred)
-        this.subject.next(<FilterNotification>{
-          type: NotificationTypes.FilterNotification,
-          id: message.id,
-          predict: pred,
-          imgSrc: message.img.src
-        })
+        outputMessage.predict = pred
+        this.subject.next(outputMessage)
       })
   }
 
@@ -83,7 +87,8 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
     const argMax = await indices.data();
 
     console.log(this.classNames[argMax[0]])
-    return this.enables[argMax[0]] ? "show" : "not show"
+    const pred = this.enables[argMax[0]] ? 1 : 0
+    return this.predict[pred]
   }
 
 
@@ -118,5 +123,6 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
     return this.model.predict(batched)
 
   }
+
 
 }

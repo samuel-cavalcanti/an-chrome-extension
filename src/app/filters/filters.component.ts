@@ -16,8 +16,9 @@ export class FiltersComponent implements OnInit {
 
   enables: Array<boolean>
   dataset: string
-  classPages: Array<Array<string>>
+  classPages: Array<Array<{ name: string, enableId: number }>>
   currentPage: number
+  resultSearch: Array<{ name: string, enableId: number }>
 
   private browserObserver: Observer<TensorFlowHubModelNotification> = {
     next: this.serviceNotification.bind(this),
@@ -39,17 +40,10 @@ export class FiltersComponent implements OnInit {
     this.currentPage = 0
   }
 
-  enableStatus(index: number): boolean {
-    const enableIndex = this.getEnableIndex(index)
-    console.log("index", index, this.enables[enableIndex])
-    return this.enables[enableIndex]
-
-  }
 
   changeEnableStatus(index: number) {
     console.log("change Enable Status", index)
-    const enableIndex = this.getEnableIndex(index)
-    this.enables[enableIndex] = !this.enables[enableIndex]
+    this.enables[index] = !this.enables[index]
     this.userInterfaceService.changeFilterStatus(this.enables)
     this.changeDetectorRef.detectChanges()
   }
@@ -60,8 +54,17 @@ export class FiltersComponent implements OnInit {
     this.changeDetectorRef.detectChanges()
   }
 
-  private getEnableIndex(chunkIndex: number): number {
-    return this.currentPage * this.classPages[this.currentPage].length + chunkIndex
+  onSearch(query: string) {
+
+    if (query === "") {
+      this.resultSearch = undefined
+    } else {
+      const allClasses = this.classPages.reduce(((previousValue, currentValue) => [...previousValue, ...currentValue]))
+      this.resultSearch = allClasses.filter(value => value.name.indexOf(query) != -1)
+    }
+
+
+    this.changeDetectorRef.detectChanges()
   }
 
   private serviceNotification(notification: TensorFlowHubModelNotification) {
@@ -82,9 +85,8 @@ export class FiltersComponent implements OnInit {
 
 
     const classes = Object.values(classNames)
-    const chunkArray = new ChunkArray(classes)
+    const chunkArray = new ChunkArray(classes.map((value, index) => ({name: value, enableId: index})))
     this.classPages = chunkArray.createChunks(10)
-
 
   }
 

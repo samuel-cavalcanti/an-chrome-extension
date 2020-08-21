@@ -17,7 +17,7 @@ import {BackgroundModule} from "./background/background.module";
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BackgroundModule
+    BackgroundModule,
   ],
   providers: [BrowserUserInterfaceService],
   bootstrap: [AppComponent]

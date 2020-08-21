@@ -6,20 +6,35 @@
 
 <ng-template #showClasses>
 
+  <app-search-bar (search)="onSearch($event)"></app-search-bar>
+
   <div class="container text-center">
 
     <div class="container">
       <h4 class="card-title">{{dataset}}</h4>
     </div>
 
-    <ul class="list-group list-group-flush card" style=" margin-bottom: 5px; margin-top: 5px "
-        *ngFor="let name of classPages[currentPage]; index as index">
-      <app-filter (enableChange)="changeEnableStatus($event)" [enable]="enableStatus(index)"
-                  [className]="name" [index]="index"></app-filter>
-    </ul>
+    <div *ngIf="resultSearch; else showAll">
 
-    <app-nav-bar-pagination [numberOfPages]="classPages.length"
-                            (pageChange)="pageChange($event)"></app-nav-bar-pagination>
+      <ul class="list-group list-group-flush card" style=" margin-bottom: 5px; margin-top: 5px "
+          *ngFor="let result of resultSearch">
+        <app-filter (enableChange)="changeEnableStatus($event)" [enable]="enables[result.enableId]"
+                    [className]="result.name" [index]="result.enableId"></app-filter>
+      </ul>
+    </div>
+
+    <ng-template #showAll>
+
+      <ul class="list-group list-group-flush card" style=" margin-bottom: 5px; margin-top: 5px "
+          *ngFor="let classItem of classPages[currentPage]">
+        <app-filter (enableChange)="changeEnableStatus($event)" [enable]="enables[classItem.enableId]"
+                    [className]="classItem.name" [index]="classItem.enableId"></app-filter>
+      </ul>
+
+      <app-nav-bar-pagination [numberOfPages]="classPages.length"
+                              (pageChange)="pageChange($event)"></app-nav-bar-pagination>
+    </ng-template>
+
 
   </div>
 </ng-template>

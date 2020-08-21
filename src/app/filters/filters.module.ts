@@ -4,15 +4,17 @@ import {FiltersComponent} from "./filters.component";
 import {FilterComponent} from "./filter/filter.component";
 import {FormsModule} from "@angular/forms";
 import {FiltersRoutingModule} from "./filters.routing.module";
-import {BrowserUserInterfaceService} from "../services/browser-user-interface/browser-user-interface.service";
 import {SpinnerModule} from "../spinner/spinner.module";
 import {PaginationModule} from "../pagination/pagination.module";
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import {SearchBarComponent} from "./search-bar/search-bar.component";
 
 
 @NgModule({
   declarations: [
     FiltersComponent,
     FilterComponent,
+    SearchBarComponent,
   ],
   imports: [
     CommonModule,
@@ -20,6 +22,7 @@ import {PaginationModule} from "../pagination/pagination.module";
     FiltersRoutingModule,
     SpinnerModule,
     PaginationModule,
+    FontAwesomeModule,
   ],
   exports: [
     FiltersComponent

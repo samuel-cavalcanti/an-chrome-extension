@@ -1,0 +1,11 @@
+<div class="container h-100 w-100" style="width: auto">
+  <div class="d-flex justify-content-center h-100">
+    <div class="searchbar">
+      <input class="search_input bg-dark" type="text" name="" placeholder="Search..."
+             (input)="searchEmit.emit($event.target.value)">
+      <a style="cursor: pointer" class="search_icon">
+        <fa-icon [icon]="icon"></fa-icon>
+      </a>
+    </div>
+  </div>
+</div>
