@@ -1,6 +1,6 @@
 # nan-chrome-extension
 
-Essa É uma aplicação que utiliza os classificadores do  [tensor hub](https://tfhub.dev/) e
+Essa é uma aplicação que utiliza os classificadores do  [tensor hub](https://tfhub.dev/) e
 o [Tensorflow JS](https://www.tensorflow.org/js) para a criação de uma
 [extensão chrome](https://developer.chrome.com/extensions/getstarted) que filtre
 toda imagens.
@@ -59,7 +59,7 @@ Para instalar uma extensão desempacotada no chrome pode seguir essas instruçõ
 
 1. Abra a aba das extensões: `chrome://extensions`
 2. Habilite o __Developer mode__ (canto superior direito)
-3. Click em __LOAD UNPACKED__ e selecione a pasta [dist](dist/) desse repositório, onde está localizada o __manifest.json__
+3. Click em __LOAD UNPACKED__ e selecione a pasta [an-chrome-extension](dist/an-chrome-extension) em dist  desse repositório, onde está localizada o __manifest.json__
 
 ![Foto de Auxilio](load_extension.png)
 
