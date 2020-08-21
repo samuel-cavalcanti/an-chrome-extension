@@ -1,0 +1,63 @@
+{
+  "name": "An chrome extension",
+  "version": "1.0",
+  "manifest_version": 2,
+  "description": "Simple test for convolution neural networks  ",
+  "permissions": [
+    "storage",
+    "declarativeContent",
+    "activeTab",
+    "tabs",
+    "<all_urls>",
+    "webRequest",
+    "webRequestBlocking"
+  ],
+  "background": {
+    "page": "index.html#/background",
+    "persistent": true
+  },
+  "web_accessible_resources": [
+    "assets/modelJS/*"
+  ],
+  "browser_action": {
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "assets/default-icon/deep-learning16.png",
+      "32": "assets/default-icon/deep-learning32.png",
+      "48": "assets/default-icon/deep-learning48.png",
+      "128": "assets/default-icon/deep-learning128.png"
+    }
+  },
+  "icons": {
+    "16": "assets/default-icon/deep-learning16.png",
+    "32": "assets/default-icon/deep-learning32.png",
+    "48": "assets/default-icon/deep-learning48.png",
+    "128": "assets/default-icon/deep-learning128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "all_frames": true,
+      "run_at": "document_end",
+      "js": [
+        "content-script.js",
+        "runtime.js",
+        "vendor.js"
+      ]
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "all_frames": true,
+      "run_at": "document_start",
+      "css": [
+        "hide.css"
+      ]
+    }
+  ]
+}
+
+
