@@ -1,6 +1,7 @@
 import * as tf from "@tensorflow/tfjs";
 import Module from "../../../../classes/module";
 import {
+  ClassNameUrlsNotification,
   CnnModelSettingNotification,
   InputShapeNotification,
   Notification,
@@ -15,6 +16,7 @@ export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Not
 
   private callbacks = {
     [NotificationTypes.TensorFlowHubModelNotification]: this.hubModelNotification.bind(this),
+    [NotificationTypes.ClassNameUrlsNotification]: this.classNameUrlsNotification.bind(this)
   }
 
   private currentSettings: TensorFlowHubModelNotification
@@ -23,9 +25,7 @@ export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Not
     super();
   }
 
-  private localClassesNames = {
-    ["imagenet-ilsvrc-2012-cls"]: chrome.runtime.getURL("assets/modelJS/Image-net-class.json")
-  }
+  private localClassesNames: { [key: string]: string }
 
   private async loadCnnModel(tensorHubUrl: string): Promise<tf.GraphModel | undefined> {
 
@@ -47,11 +47,13 @@ export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Not
 
   next(message: Notification) {
 
+
     if (this.callbacks[message.type])
       this.callbacks[message.type](message)
 
 
   }
+
 
   complete(): void {
   }
@@ -74,6 +76,14 @@ export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Not
       }
 
     }
+
+  }
+
+  private classNameUrlsNotification(notification: ClassNameUrlsNotification) {
+
+    this.localClassesNames = notification.urls
+
+    console.log("local Classes Names", this.localClassesNames)
 
   }
 

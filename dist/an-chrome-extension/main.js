@@ -304,14 +304,12 @@ __webpack_require__.r(__webpack_exports__);
 var ConvolutionalNeuralNetworkSettings = /** @class */ (function (_super) {
     Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(ConvolutionalNeuralNetworkSettings, _super);
     function ConvolutionalNeuralNetworkSettings() {
-        var _a, _b;
+        var _a;
         var _this = _super.call(this) || this;
         _this.callbacks = (_a = {},
             _a[_interfaces_notifications__WEBPACK_IMPORTED_MODULE_3__["NotificationTypes"].TensorFlowHubModelNotification] = _this.hubModelNotification.bind(_this),
+            _a[_interfaces_notifications__WEBPACK_IMPORTED_MODULE_3__["NotificationTypes"].ClassNameUrlsNotification] = _this.classNameUrlsNotification.bind(_this),
             _a);
-        _this.localClassesNames = (_b = {},
-            _b["imagenet-ilsvrc-2012-cls"] = chrome.runtime.getURL("assets/modelJS/Image-net-class.json"),
-            _b);
         return _this;
     }
     ConvolutionalNeuralNetworkSettings.prototype.loadCnnModel = function (tensorHubUrl) {
@@ -369,6 +367,10 @@ var ConvolutionalNeuralNetworkSettings = /** @class */ (function (_super) {
                 }
             });
         });
+    };
+    ConvolutionalNeuralNetworkSettings.prototype.classNameUrlsNotification = function (notification) {
+        this.localClassesNames = notification.urls;
+        console.log("local Classes Names", this.localClassesNames);
     };
     ConvolutionalNeuralNetworkSettings.prototype.notify = function (cnnModel) {
         this.notifyCnn(cnnModel);
@@ -701,12 +703,13 @@ var NotificationTypes;
 (function (NotificationTypes) {
     NotificationTypes[NotificationTypes["Notification"] = 0] = "Notification";
     NotificationTypes[NotificationTypes["ImageSourceNotification"] = 1] = "ImageSourceNotification";
-    NotificationTypes[NotificationTypes["ImageNotification"] = 2] = "ImageNotification";
-    NotificationTypes[NotificationTypes["FilterNotification"] = 3] = "FilterNotification";
-    NotificationTypes[NotificationTypes["ContentNotification"] = 4] = "ContentNotification";
-    NotificationTypes[NotificationTypes["CnnModelSettingNotification"] = 5] = "CnnModelSettingNotification";
-    NotificationTypes[NotificationTypes["TensorFlowHubModelNotification"] = 6] = "TensorFlowHubModelNotification";
-    NotificationTypes[NotificationTypes["InputShapeNotification"] = 7] = "InputShapeNotification";
+    NotificationTypes[NotificationTypes["ClassNameUrlsNotification"] = 2] = "ClassNameUrlsNotification";
+    NotificationTypes[NotificationTypes["ImageNotification"] = 3] = "ImageNotification";
+    NotificationTypes[NotificationTypes["FilterNotification"] = 4] = "FilterNotification";
+    NotificationTypes[NotificationTypes["ContentNotification"] = 5] = "ContentNotification";
+    NotificationTypes[NotificationTypes["CnnModelSettingNotification"] = 6] = "CnnModelSettingNotification";
+    NotificationTypes[NotificationTypes["TensorFlowHubModelNotification"] = 7] = "TensorFlowHubModelNotification";
+    NotificationTypes[NotificationTypes["InputShapeNotification"] = 8] = "InputShapeNotification";
 })(NotificationTypes || (NotificationTypes = {}));
 
 
@@ -800,12 +803,13 @@ var BrowserCommunication = /** @class */ (function (_super) {
 /*!***************************************************************************************************************************!*\
   !*** ./src/app/services/browser-communication/chrome-browser/background-communication/chrome-background-communication.ts ***!
   \***************************************************************************************************************************/
-/*! exports provided: GET_CURRENT_SETTINGS_MESSAGE, ChromeBackgroundCommunication */
+/*! exports provided: GET_CURRENT_SETTINGS_MESSAGE, GET_LOCAL_CLASS_NAME_URLS, ChromeBackgroundCommunication */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GET_CURRENT_SETTINGS_MESSAGE", function() { return GET_CURRENT_SETTINGS_MESSAGE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GET_LOCAL_CLASS_NAME_URLS", function() { return GET_LOCAL_CLASS_NAME_URLS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChromeBackgroundCommunication", function() { return ChromeBackgroundCommunication; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../interfaces/notifications */ "./src/app/interfaces/notifications.ts");
@@ -814,10 +818,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var GET_CURRENT_SETTINGS_MESSAGE = "get current cnn settings";
+var GET_LOCAL_CLASS_NAME_URLS = " get local class name urls";
 var ChromeBackgroundCommunication = /** @class */ (function (_super) {
     Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(ChromeBackgroundCommunication, _super);
     function ChromeBackgroundCommunication() {
-        var _a;
+        var _a, _b;
         var _this = _super.call(this) || this;
         _this.callbacks = (_a = {},
             _a[_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].Notification] = _this.simpleNotifications.bind(_this),
@@ -825,6 +830,9 @@ var ChromeBackgroundCommunication = /** @class */ (function (_super) {
             _a[_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].TensorFlowHubModelNotification] = _this.notifyCnnSettings.bind(_this),
             _a);
         _this.storeKey = "settings";
+        _this.localClassesNames = (_b = {},
+            _b["imagenet-ilsvrc-2012-cls"] = chrome.runtime.getURL("assets/modelJS/Image-net-class.json"),
+            _b);
         _this.ports = {};
         console.info("ChromeBackgroundCommunication");
         return _this;
@@ -840,6 +848,7 @@ var ChromeBackgroundCommunication = /** @class */ (function (_super) {
             this.checkPermissions();
             chrome.runtime.onConnect.addListener(this.onConnect.bind(this));
             this.loadLocalData();
+            this.sendClassNameUrls();
         }
         catch (e) {
             console.log("Unable to  start runtime");
@@ -922,6 +931,15 @@ var ChromeBackgroundCommunication = /** @class */ (function (_super) {
             this.userInterfacePort = port;
             this.loadLocalData();
         }
+        else if (notification.message == GET_LOCAL_CLASS_NAME_URLS) {
+            this.sendClassNameUrls();
+        }
+    };
+    ChromeBackgroundCommunication.prototype.sendClassNameUrls = function () {
+        this.subject.next({
+            type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].ClassNameUrlsNotification,
+            urls: this.localClassesNames
+        });
     };
     ChromeBackgroundCommunication.erros = {
         enableContentScript: new Error("Must enable Chrome Content Scripts"),

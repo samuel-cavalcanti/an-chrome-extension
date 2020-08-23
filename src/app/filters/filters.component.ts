@@ -72,11 +72,10 @@ export class FiltersComponent implements OnInit {
 
     onSearch(query: string) {
 
-        if (query === "") {
+        if (query === "")
             this.resultSearch = undefined
-        } else {
+        else
             this.resultSearch = this.classes.filter(value => value.name.indexOf(query) != -1)
-        }
 
 
         this.changeDetectorRef.detectChanges()
@@ -91,13 +90,11 @@ export class FiltersComponent implements OnInit {
         this.changeDetectorRef.detectChanges()
     }
 
-
     private classNamesToChunks() {
         if (!this.classes || this.classes.length == 0)
             return
         const chunkArray = new ChunkArray(this.classes)
         this.classPages = chunkArray.createChunks(10)
     }
-
 
 }

@@ -14,12 +14,13 @@ var NotificationTypes;
 (function (NotificationTypes) {
     NotificationTypes[NotificationTypes["Notification"] = 0] = "Notification";
     NotificationTypes[NotificationTypes["ImageSourceNotification"] = 1] = "ImageSourceNotification";
-    NotificationTypes[NotificationTypes["ImageNotification"] = 2] = "ImageNotification";
-    NotificationTypes[NotificationTypes["FilterNotification"] = 3] = "FilterNotification";
-    NotificationTypes[NotificationTypes["ContentNotification"] = 4] = "ContentNotification";
-    NotificationTypes[NotificationTypes["CnnModelSettingNotification"] = 5] = "CnnModelSettingNotification";
-    NotificationTypes[NotificationTypes["TensorFlowHubModelNotification"] = 6] = "TensorFlowHubModelNotification";
-    NotificationTypes[NotificationTypes["InputShapeNotification"] = 7] = "InputShapeNotification";
+    NotificationTypes[NotificationTypes["ClassNameUrlsNotification"] = 2] = "ClassNameUrlsNotification";
+    NotificationTypes[NotificationTypes["ImageNotification"] = 3] = "ImageNotification";
+    NotificationTypes[NotificationTypes["FilterNotification"] = 4] = "FilterNotification";
+    NotificationTypes[NotificationTypes["ContentNotification"] = 5] = "ContentNotification";
+    NotificationTypes[NotificationTypes["CnnModelSettingNotification"] = 6] = "CnnModelSettingNotification";
+    NotificationTypes[NotificationTypes["TensorFlowHubModelNotification"] = 7] = "TensorFlowHubModelNotification";
+    NotificationTypes[NotificationTypes["InputShapeNotification"] = 8] = "InputShapeNotification";
 })(NotificationTypes || (NotificationTypes = {}));
 
 

@@ -34,6 +34,7 @@ export class BackgroundComponent {
 
     this.browser.tryToStart()
 
+
   }
 
   private subscribes() {

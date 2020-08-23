@@ -1,4 +1,5 @@
 import {
+  ClassNameUrlsNotification,
   ContentNotification,
   Notification,
   NotificationTypes,
@@ -8,6 +9,8 @@ import {BrowserCommunication} from "../../browser-communication";
 import Port = chrome.runtime.Port;
 
 export const GET_CURRENT_SETTINGS_MESSAGE = "get current cnn settings"
+
+export const GET_LOCAL_CLASS_NAME_URLS = " get local class name urls"
 
 export class ChromeBackgroundCommunication extends BrowserCommunication <Notification, Notification> {
 
@@ -31,6 +34,10 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
 
   private userInterfacePort: Port
 
+  private localClassesNames = {
+    ["imagenet-ilsvrc-2012-cls"]: chrome.runtime.getURL("assets/modelJS/Image-net-class.json")
+  }
+
   constructor() {
     super()
     this.ports = {}
@@ -50,6 +57,7 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
       this.checkPermissions()
       chrome.runtime.onConnect.addListener(this.onConnect.bind(this))
       this.loadLocalData()
+      this.sendClassNameUrls()
     } catch (e) {
       console.log("Unable to  start runtime")
       console.info(e)
@@ -155,7 +163,16 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
     if (notification.message == GET_CURRENT_SETTINGS_MESSAGE) {
       this.userInterfacePort = port
       this.loadLocalData()
+    } else if (notification.message == GET_LOCAL_CLASS_NAME_URLS) {
+      this.sendClassNameUrls()
     }
+  }
+
+  private sendClassNameUrls() {
+    this.subject.next(<ClassNameUrlsNotification>{
+      type: NotificationTypes.ClassNameUrlsNotification,
+      urls: this.localClassesNames
+    })
   }
 
 }

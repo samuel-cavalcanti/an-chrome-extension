@@ -5,6 +5,7 @@ import {TensorflowHubModel} from "./tensorflow-hub-model";
 export enum NotificationTypes {
   Notification,
   ImageSourceNotification,
+  ClassNameUrlsNotification,
   ImageNotification,
   FilterNotification,
   ContentNotification,
@@ -54,5 +55,10 @@ export interface TensorFlowHubModelNotification extends Notification {
 export interface InputShapeNotification extends Notification {
   type: NotificationTypes.InputShapeNotification
   shape: Array<number>
+}
+
+export interface ClassNameUrlsNotification extends Notification {
+  type: NotificationTypes.ClassNameUrlsNotification
+  urls: { [key: string]: string }
 }
 

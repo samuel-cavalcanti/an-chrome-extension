@@ -17483,12 +17483,10 @@ var FiltersComponent = /** @class */ (function () {
         this.changeDetectorRef.detectChanges();
     };
     FiltersComponent.prototype.onSearch = function (query) {
-        if (query === "") {
+        if (query === "")
             this.resultSearch = undefined;
-        }
-        else {
+        else
             this.resultSearch = this.classes.filter(function (value) { return value.name.indexOf(query) != -1; });
-        }
         this.changeDetectorRef.detectChanges();
     };
     FiltersComponent.prototype.serviceNotification = function (notification) {
