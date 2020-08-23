@@ -1,5 +1,5 @@
-<ul class="list-group list-group-flush card" style=" margin-bottom: 5px; margin-top: 5px "
-    *ngFor="let filter of filters">
-  <app-filter (enableChange)="enableChange.emit($event)" [enable]="enables[filter.enableId]"
-              [className]="filter.name" [index]="filter.enableId"></app-filter>
+<ul class="list-group list-group-flush card" style=" margin: 5px "
+    *ngFor="let result of filters">
+  <app-filter (enableChange)="enableChange.emit($event)" [enable]="enables[result.enableId]"
+              [className]="result.name" [index]="result.enableId"></app-filter>
 </ul>

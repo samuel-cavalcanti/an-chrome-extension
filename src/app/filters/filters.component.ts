@@ -2,7 +2,6 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {BrowserUserInterfaceService} from "../services/browser-user-interface/browser-user-interface.service";
 import {Observer} from "rxjs";
 import {TensorFlowHubModelNotification} from "../interfaces/notifications";
-import {ClassNames} from "../interfaces/class-names";
 import ChunkArray from "../../classes/ChunkArray";
 
 @Component({
@@ -35,6 +34,8 @@ export class FiltersComponent implements OnInit {
         },
     }
 
+    private classes: Array<{ name: string, enableId: number }>
+
     constructor(private userInterfaceService: BrowserUserInterfaceService,
                 private changeDetectorRef: ChangeDetectorRef) {
 
@@ -58,13 +59,13 @@ export class FiltersComponent implements OnInit {
 
 
     changeEnableStatus(index: number) {
-        console.log("change Enable Status", index)
+
         this.userInterfaceService.changeFilterStatus(index)
         this.changeDetectorRef.detectChanges()
     }
 
     pageChange(page: number) {
-        console.info("pageChange", page)
+
         this.currentPage = page
         this.changeDetectorRef.detectChanges()
     }
@@ -74,8 +75,7 @@ export class FiltersComponent implements OnInit {
         if (query === "") {
             this.resultSearch = undefined
         } else {
-            const allClasses = this.classPages.reduce(((previousValue, currentValue) => [...previousValue, ...currentValue]))
-            this.resultSearch = allClasses.filter(value => value.name.indexOf(query) != -1)
+            this.resultSearch = this.classes.filter(value => value.name.indexOf(query) != -1)
         }
 
 
@@ -84,21 +84,18 @@ export class FiltersComponent implements OnInit {
 
     private serviceNotification(notification: TensorFlowHubModelNotification) {
         this.dataset = notification.cnnModelHub.dataset
-
-        this.classNamesToChunks(notification.classNames)
+        this.classes = Object.values(notification.classNames).map((value, index) => ({name: value, enableId: index}))
+        this.classNamesToChunks()
 
         this.enables = notification.enables
         this.changeDetectorRef.detectChanges()
     }
 
 
-    private classNamesToChunks(classNames: ClassNames) {
-        if (!classNames)
+    private classNamesToChunks() {
+        if (!this.classes || this.classes.length == 0)
             return
-
-
-        const classes = Object.values(classNames)
-        const chunkArray = new ChunkArray(classes.map((value, index) => ({name: value, enableId: index})))
+        const chunkArray = new ChunkArray(this.classes)
         this.classPages = chunkArray.createChunks(10)
     }
 
