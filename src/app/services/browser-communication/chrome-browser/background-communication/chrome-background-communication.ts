@@ -41,7 +41,7 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
   constructor() {
     super()
     this.ports = {}
-    console.info("ChromeBackgroundCommunication")
+
   }
 
   checkPermissions() {
@@ -53,6 +53,7 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
   }
 
   tryToStart() {
+    console.log("stating browser listener ...")
     try {
       this.checkPermissions()
       chrome.runtime.onConnect.addListener(this.onConnect.bind(this))
@@ -161,6 +162,7 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
   private simpleNotifications(notification: Notification, port: Port) {
     console.info("simpleNotifications", notification)
     if (notification.message == GET_CURRENT_SETTINGS_MESSAGE) {
+      console.log("load local data")
       this.userInterfacePort = port
       this.loadLocalData()
     } else if (notification.message == GET_LOCAL_CLASS_NAME_URLS) {

@@ -82,6 +82,7 @@ export class FiltersComponent implements OnInit {
     }
 
     private serviceNotification(notification: TensorFlowHubModelNotification) {
+
         this.dataset = notification.cnnModelHub.dataset
         this.classes = Object.values(notification.classNames).map((value, index) => ({name: value, enableId: index}))
         this.classNamesToChunks()

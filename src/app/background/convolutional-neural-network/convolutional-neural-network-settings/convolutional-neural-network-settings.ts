@@ -62,8 +62,6 @@ export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Not
   }
 
   private async hubModelNotification(message: TensorFlowHubModelNotification) {
-    console.info("CNN Settings hubModelNotification", message)
-
 
     if (this.localClassesNames[message.cnnModelHub.dataset]) {
       try {

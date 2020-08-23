@@ -53,6 +53,9 @@ export class BrowserUserInterfaceService extends Module<Notification, Notificati
 
 
   next(notification: Notification): void {
+    console.log("browser user interface browserNotification: ", notification)
+    console.log(this.callbacks)
+
 
     if (this.callbacks[notification.type])
       this.callbacks[notification.type](notification)
@@ -76,6 +79,7 @@ export class BrowserUserInterfaceService extends Module<Notification, Notificati
   private browserNotification(notification: TensorFlowHubModelNotification) {
 
     this.currentCnnModelSettings = notification
+
 
     this.notifyAll()
   }

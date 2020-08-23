@@ -345,7 +345,6 @@ var ConvolutionalNeuralNetworkSettings = /** @class */ (function (_super) {
             return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"])(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.info("CNN Settings hubModelNotification", message);
                         if (!this.localClassesNames[message.cnnModelHub.dataset]) return [3 /*break*/, 5];
                         _a.label = 1;
                     case 1:
@@ -834,7 +833,6 @@ var ChromeBackgroundCommunication = /** @class */ (function (_super) {
             _b["imagenet-ilsvrc-2012-cls"] = chrome.runtime.getURL("assets/modelJS/Image-net-class.json"),
             _b);
         _this.ports = {};
-        console.info("ChromeBackgroundCommunication");
         return _this;
     }
     ChromeBackgroundCommunication.prototype.checkPermissions = function () {
@@ -844,6 +842,7 @@ var ChromeBackgroundCommunication = /** @class */ (function (_super) {
             throw ChromeBackgroundCommunication.erros.enableStorage;
     };
     ChromeBackgroundCommunication.prototype.tryToStart = function () {
+        console.log("stating browser listener ...");
         try {
             this.checkPermissions();
             chrome.runtime.onConnect.addListener(this.onConnect.bind(this));
@@ -928,6 +927,7 @@ var ChromeBackgroundCommunication = /** @class */ (function (_super) {
     ChromeBackgroundCommunication.prototype.simpleNotifications = function (notification, port) {
         console.info("simpleNotifications", notification);
         if (notification.message == GET_CURRENT_SETTINGS_MESSAGE) {
+            console.log("load local data");
             this.userInterfacePort = port;
             this.loadLocalData();
         }
@@ -1092,6 +1092,8 @@ var BrowserUserInterfaceService = /** @class */ (function (_super) {
             throw new Error("Not implemented");
     };
     BrowserUserInterfaceService.prototype.next = function (notification) {
+        console.log("browser user interface browserNotification: ", notification);
+        console.log(this.callbacks);
         if (this.callbacks[notification.type])
             this.callbacks[notification.type](notification);
     };
