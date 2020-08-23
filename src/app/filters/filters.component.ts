@@ -6,87 +6,86 @@ import {ClassNames} from "../interfaces/class-names";
 import ChunkArray from "../../classes/ChunkArray";
 
 @Component({
-  selector: 'app-filters',
-  templateUrl: './filters.component.html',
-  styleUrls: ['./filters.component.css'],
+    selector: 'app-filters',
+    templateUrl: './filters.component.html',
+    styleUrls: ['./filters.component.css'],
 })
 
 export class FiltersComponent implements OnInit {
 
 
-  enables: Array<boolean>
-  dataset: string
-  classPages: Array<Array<{ name: string, enableId: number }>>
-  currentPage: number
-  resultSearch: Array<{ name: string, enableId: number }>
+    enables: Array<boolean>
+    dataset: string
+    classPages: Array<Array<{ name: string, enableId: number }>>
+    currentPage: number
+    resultSearch: Array<{ name: string, enableId: number }>
 
-  private browserObserver: Observer<TensorFlowHubModelNotification> = {
-    next: this.serviceNotification.bind(this),
-    error: () => {
-    },
-    complete: () => {
-    },
-  }
+    private browserObserver: Observer<TensorFlowHubModelNotification> = {
+        next: this.serviceNotification.bind(this),
+        error: () => {
+        },
+        complete: () => {
+        },
+    }
 
-  constructor(private userInterfaceService: BrowserUserInterfaceService,
-              private changeDetectorRef: ChangeDetectorRef) {
-
-
-  }
-
-  ngOnInit(): void {
-    console.log("On INIT FILTERS")
-    this.userInterfaceService.addCnnModelSettingsObserver(this.browserObserver)
-    this.currentPage = 0
-  }
+    constructor(private userInterfaceService: BrowserUserInterfaceService,
+                private changeDetectorRef: ChangeDetectorRef) {
 
 
-  changeEnableStatus(index: number) {
-    console.log("change Enable Status", index)
-    this.enables[index] = !this.enables[index]
-    this.userInterfaceService.changeFilterStatus(this.enables)
-    this.changeDetectorRef.detectChanges()
-  }
+    }
 
-  pageChange(page: number) {
-    console.info("pageChange", page)
-    this.currentPage = page
-    this.changeDetectorRef.detectChanges()
-  }
-
-  onSearch(query: string) {
-
-    if (query === "") {
-      this.resultSearch = undefined
-    } else {
-      const allClasses = this.classPages.reduce(((previousValue, currentValue) => [...previousValue, ...currentValue]))
-      this.resultSearch = allClasses.filter(value => value.name.indexOf(query) != -1)
+    ngOnInit(): void {
+        console.log("On INIT FILTERS")
+        this.userInterfaceService.addCnnModelSettingsObserver(this.browserObserver)
+        this.currentPage = 0
     }
 
 
-    this.changeDetectorRef.detectChanges()
-  }
+    changeEnableStatus(index: number) {
+        console.log("change Enable Status", index)
+        this.userInterfaceService.changeFilterStatus(index)
+        this.changeDetectorRef.detectChanges()
+    }
 
-  private serviceNotification(notification: TensorFlowHubModelNotification) {
-    this.dataset = notification.cnnModelHub.dataset
+    pageChange(page: number) {
+        console.info("pageChange", page)
+        this.currentPage = page
+        this.changeDetectorRef.detectChanges()
+    }
 
-    this.classNamesToChunks(notification.classNames)
+    onSearch(query: string) {
 
-    this.enables = notification.enables
-    this.changeDetectorRef.detectChanges()
-  }
-
-
-  private classNamesToChunks(classNames: ClassNames) {
-    if (!classNames)
-      return
+        if (query === "") {
+            this.resultSearch = undefined
+        } else {
+            const allClasses = this.classPages.reduce(((previousValue, currentValue) => [...previousValue, ...currentValue]))
+            this.resultSearch = allClasses.filter(value => value.name.indexOf(query) != -1)
+        }
 
 
-    const classes = Object.values(classNames)
-    const chunkArray = new ChunkArray(classes.map((value, index) => ({name: value, enableId: index})))
-    this.classPages = chunkArray.createChunks(10)
+        this.changeDetectorRef.detectChanges()
+    }
 
-  }
+    private serviceNotification(notification: TensorFlowHubModelNotification) {
+        this.dataset = notification.cnnModelHub.dataset
+
+        this.classNamesToChunks(notification.classNames)
+
+        this.enables = notification.enables
+        this.changeDetectorRef.detectChanges()
+    }
+
+
+    private classNamesToChunks(classNames: ClassNames) {
+        if (!classNames)
+            return
+
+
+        const classes = Object.values(classNames)
+        const chunkArray = new ChunkArray(classes.map((value, index) => ({name: value, enableId: index})))
+        this.classPages = chunkArray.createChunks(10)
+
+    }
 
 
 }

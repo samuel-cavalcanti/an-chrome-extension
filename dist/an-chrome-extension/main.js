@@ -1062,8 +1062,9 @@ var BrowserUserInterfaceService = /** @class */ (function (_super) {
         var newNotification = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])({}, this.currentCnnModelSettings), { cnnModelHub: cnnModel });
         this.browser.setCnnModelSettings(newNotification);
     };
-    BrowserUserInterfaceService.prototype.changeFilterStatus = function (enables) {
-        var newNotification = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])({}, this.currentCnnModelSettings), { enables: enables });
+    BrowserUserInterfaceService.prototype.changeFilterStatus = function (index) {
+        var newNotification = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])({}, this.currentCnnModelSettings);
+        newNotification.enables[index] = !newNotification.enables[index];
         this.browser.setCnnModelSettings(newNotification);
     };
     BrowserUserInterfaceService.selectBrowserUserInterfaceCommunication = function () {

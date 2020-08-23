@@ -37,8 +37,9 @@ export class BrowserUserInterfaceService extends Module<Notification, Notificati
 
   }
 
-  changeFilterStatus(enables: Array<boolean>) {
-    const newNotification: TensorFlowHubModelNotification = {...this.currentCnnModelSettings, enables: enables}
+  changeFilterStatus(index: number) {
+    const newNotification: TensorFlowHubModelNotification = {...this.currentCnnModelSettings}
+    newNotification.enables[index] = !newNotification.enables[index]
     this.browser.setCnnModelSettings(newNotification)
   }
 

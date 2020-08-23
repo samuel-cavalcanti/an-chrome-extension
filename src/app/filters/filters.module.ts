@@ -8,6 +8,7 @@ import {SpinnerModule} from "../spinner/spinner.module";
 import {PaginationModule} from "../pagination/pagination.module";
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import {SearchBarComponent} from "./search-bar/search-bar.component";
+import { FilterListComponent } from './filter-list/filter-list.component';
 
 
 @NgModule({
@@ -15,6 +16,7 @@ import {SearchBarComponent} from "./search-bar/search-bar.component";
     FiltersComponent,
     FilterComponent,
     SearchBarComponent,
+    FilterListComponent,
   ],
   imports: [
     CommonModule,
