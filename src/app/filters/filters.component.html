@@ -1,37 +1,35 @@
-<div *ngIf="classPages == undefined ; else showClasses">
-
-  <app-spinner></app-spinner>
-
-</div>
-
-<ng-template #showClasses>
-
-  <app-search-bar (search)="onSearch($event)"></app-search-bar>
-
+<div *ngIf="currentState != states.loading">
   <div class="container text-center">
 
-    <div class="container">
-      <h4 class="card-title">{{dataset}}</h4>
-    </div>
-
-    <div *ngIf="resultSearch; else showAll">
-
-      <app-filter-list (enableChange)="changeEnableStatus($event)" [filters]="resultSearch"
-                       [enables]="enables">>
-      </app-filter-list>
-
-    </div>
-
-    <ng-template #showAll>
-      <app-filter-list (enableChange)="changeEnableStatus($event)" [filters]="classPages[currentPage]"
-                       [enables]="enables">>
-      </app-filter-list>
-
-      <app-nav-bar-pagination [numberOfPages]="classPages.length"
-                              (pageChange)="pageChange($event)"></app-nav-bar-pagination>
-    </ng-template>
-
+    <h4 class="card-title">{{dataset}}</h4>
 
   </div>
-</ng-template>
 
+  <app-search-bar (search)="onSearch($event)"></app-search-bar>
+</div>
+
+
+<div [ngSwitch]="currentState">
+
+  <app-spinner *ngSwitchCase="states.loading"></app-spinner>
+
+
+  <app-filter-list *ngSwitchCase="states.searching"
+                   (enableChange)="changeEnableStatus($event)" [filters]="resultSearch"
+                   [enables]="enables">>
+  </app-filter-list>
+
+
+  <div *ngSwitchCase="states.viewAll">
+
+    <app-filter-list (enableChange)="changeEnableStatus($event)" [filters]="classPages[currentPage]"
+                     [enables]="enables">>
+    </app-filter-list>
+
+    <app-nav-bar-pagination [numberOfPages]="classPages.length"
+                            (pageChange)="pageChange($event)"></app-nav-bar-pagination>
+
+  </div>
+
+
+</div>

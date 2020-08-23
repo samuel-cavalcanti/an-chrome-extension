@@ -19,6 +19,13 @@ export class FiltersComponent implements OnInit {
     classPages: Array<Array<{ name: string, enableId: number }>>
     currentPage: number
     resultSearch: Array<{ name: string, enableId: number }>
+    states = {
+        loading: 0,
+        viewAll: 1,
+        searching: 2,
+    }
+    state: number
+
 
     private browserObserver: Observer<TensorFlowHubModelNotification> = {
         next: this.serviceNotification.bind(this),
@@ -31,13 +38,22 @@ export class FiltersComponent implements OnInit {
     constructor(private userInterfaceService: BrowserUserInterfaceService,
                 private changeDetectorRef: ChangeDetectorRef) {
 
-
+        this.state = this.states.loading
     }
 
     ngOnInit(): void {
         console.log("On INIT FILTERS")
         this.userInterfaceService.addCnnModelSettingsObserver(this.browserObserver)
         this.currentPage = 0
+    }
+
+    get currentState() {
+        if (this.classPages == undefined)
+            return this.states.loading
+        else if (this.resultSearch)
+            return this.states.searching
+
+        return this.states.viewAll
     }
 
 
@@ -84,7 +100,6 @@ export class FiltersComponent implements OnInit {
         const classes = Object.values(classNames)
         const chunkArray = new ChunkArray(classes.map((value, index) => ({name: value, enableId: index})))
         this.classPages = chunkArray.createChunks(10)
-
     }
 
 
