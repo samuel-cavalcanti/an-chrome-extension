@@ -1,92 +1,92 @@
-import DocumentObserver from "./document-observer";
-import {Subject} from "rxjs";
+import DocumentObserver from "./document-observer"
+import {Subject} from "rxjs"
 
-describe('DocumentObserver', function () {
+describe("DocumentObserver", () => {
 
-  it('should create an instance', function () {
-    expect(new DocumentObserver()).toBeTruthy();
-  });
+  it("should create an instance", () => {
+    expect(new DocumentObserver()).toBeTruthy()
+  })
 
   const documentObserver = new DocumentObserver()
 
-  it('should checkTable be an object', function () {
+  it("should checkTable be an object", () => {
     expect(documentObserver["checkTable"]).toBeInstanceOf(Object)
   })
 
-  it('should create an instance of Subject', function () {
+  it("should create an instance of Subject", () => {
     expect(documentObserver.subject).toBeInstanceOf(Subject)
   })
 
-  describe('Observer methods', function () {
-    it('should create next function', function () {
+  describe("Observer methods", () => {
+    it("should create next function", () => {
       expect(documentObserver.observer.next !== undefined).toBeTrue()
     })
 
-    it('should create error function', function () {
+    it("should create error function", () => {
       expect(documentObserver.observer.error !== undefined).toBeTrue()
     })
 
-    it('should create error complete', function () {
+    it("should create error complete", () => {
       expect(documentObserver.observer.complete !== undefined).toBeTrue()
     })
   })
 
 
-  it('should getAllCurrentImages be an array', function () {
+  it("should getAllCurrentImages be an array", () => {
     const images = documentObserver["getAllCurrentImages"]()
     expect(images).toBeInstanceOf(Array)
   })
 
-  it('should getAllCurrentImages be an array', function () {
+  it("should getAllCurrentImages be an array", () => {
     const videos = documentObserver["getAllCurrentVideos"]()
     expect(videos).toBeInstanceOf(Array)
   })
 
 
-  describe('getUrlVideo', function () {
+  describe("getUrlVideo", () => {
 
-    it('should return an string', () => {
-      const video = document.createElement('video')
+    it("should return an string", () => {
+      const video = document.createElement("video")
       expect(DocumentObserver["getUrlVideo"](video)).toBeInstanceOf(String)
     })
 
-    it('should throw Error: video is undefined', function () {
-      expect(()=>DocumentObserver["getUrlVideo"](undefined)).toThrowError(/video is undefined/)
+    it("should throw Error: video is undefined", () => {
+      expect(() => DocumentObserver["getUrlVideo"](undefined)).toThrowError(/video is undefined/)
     })
 
   })
 
 
-  describe('getAllNewData', function () {
+  describe("getAllNewData", () => {
     const data = documentObserver["getAllNewData"]([])
 
-    it('should data be Object', function () {
+    it("should data be Object", () => {
       expect(data).toBeInstanceOf(Object)
-    });
+    })
 
     const urlImages = data.urlImages
 
     const urlVideos = data.urlVideos
 
-    it('should urlImages be array', function () {
+    it("should urlImages be array", () => {
       expect(urlImages).toBeInstanceOf(Array)
-    });
+    })
 
-    it('should urlVideos be array', function () {
+    it("should urlVideos be array", () => {
       expect(urlVideos).toBeInstanceOf(Array)
-    });
+    })
 
-  });
+  })
 
-  it('should ChangeCss only accept string', function () {
-    expect(()=>documentObserver["changeCss"](undefined)).toThrowError('Cannot read src, property undefined')
-  });
+  it("should ChangeCss only accept string", () => {
+    expect(() => documentObserver["changeCss"](undefined)).toThrowError("Cannot read src, property undefined")
+  })
 
-  it('should sendData send data ', function () {
+  it("should sendData send data ", () => {
 
-    expect(() => documentObserver["sendData"]([], undefined)).toThrowError('Cannot read urlImages or urlVideos, property undefined')
+    expect(() => documentObserver["sendData"]([], undefined)).toThrowError("Cannot read urlImages or urlVideos, property undefined")
 
-    expect(() => documentObserver["sendData"](undefined, [])).toThrowError('Cannot read urlImages or urlVideos, property undefined')
-  });
+    expect(() => documentObserver["sendData"](undefined, [])).toThrowError("Cannot read urlImages or urlVideos, property undefined")
+  })
 
 })

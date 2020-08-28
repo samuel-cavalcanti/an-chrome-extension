@@ -54,8 +54,9 @@ var ChromeBrowserContentCommunication = /** @class */ (function () {
         this.port = undefined;
     }
     ChromeBrowserContentCommunication.prototype.sender = function (message) {
-        if (this.port == undefined)
-            throw new Error('try to send message when channel is not opened');
+        if (this.port == undefined) {
+            throw new Error("try to send message when channel is not opened");
+        }
         message.type = _app_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].ContentNotification;
         message.id = this.port.name;
         this.port.postMessage(message);
@@ -130,10 +131,24 @@ var DocumentObserver = /** @class */ (function () {
         };
         this.checkTable = {};
         this.errorMessages = {
-            noSrc: new Error('Cannot read src, property undefined'),
-            noArray: new Error('Cannot read urlImages or urlVideos, property undefined')
+            noSrc: new Error("Cannot read src, property undefined"),
+            noArray: new Error("Cannot read urlImages or urlVideos, property undefined")
         };
     }
+    DocumentObserver.getUrlVideo = function (video) {
+        if (video === undefined) {
+            throw new Error("video is undefined");
+        }
+        if (video.src.substring(0, 4) === "blob" || !video.src) {
+            if (video.baseURI) {
+                return video.baseURI;
+            }
+        }
+        if (video.src) {
+            return video.src;
+        }
+        return "";
+    };
     DocumentObserver.prototype.start = function () {
         this.sendAllCurrentUrlData();
         this.createObserver();
@@ -177,23 +192,11 @@ var DocumentObserver = /** @class */ (function () {
         return videos;
     };
     DocumentObserver.prototype.checkSrc = function (target, url) {
-        if (this.checkTable[url] == undefined) {
+        if (this.checkTable[url] === undefined) {
             this.checkTable[url] = target;
             return false;
         }
         return true;
-    };
-    DocumentObserver.getUrlVideo = function (video) {
-        if (video == undefined)
-            throw new Error('video is undefined');
-        if (video.src.substring(0, 4) == "blob" || !video.src) {
-            if (video.baseURI) {
-                return video.baseURI;
-            }
-        }
-        if (video.src)
-            return video.src;
-        return "";
     };
     DocumentObserver.prototype.getAllNewData = function (mutations) {
         var e_2, _a;
@@ -240,8 +243,9 @@ var DocumentObserver = /** @class */ (function () {
         observer.observe(document.body, config);
     };
     DocumentObserver.prototype.sendData = function (urlImages, urlVideos) {
-        if (urlImages == undefined || urlVideos == undefined)
+        if (urlImages === undefined || urlVideos === undefined) {
             throw this.errorMessages.noArray;
+        }
         var notification = {
             id: "replace  this in communication",
             type: _app_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].ContentNotification,
@@ -251,17 +255,20 @@ var DocumentObserver = /** @class */ (function () {
         this.subject.next(notification);
     };
     DocumentObserver.prototype.listener = function (notification) {
-        if (notification.type != _app_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].FilterNotification)
+        if (notification.type != _app_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].FilterNotification) {
             return;
-        if (notification.predict == "show") {
+        }
+        if (notification.predict === "show") {
             this.changeCss(notification.imgSrc);
         }
     };
     DocumentObserver.prototype.changeCss = function (src) {
-        if (src == undefined)
+        if (src === undefined) {
             throw this.errorMessages.noSrc;
-        if (this.checkTable[src]) //setAttribute("style", "display: !important")
+        }
+        if (this.checkTable[src]) { // setAttribute("style", "display: !important")
             this.checkTable[src].setAttribute("style", "display: inline !important");
+        }
     };
     return DocumentObserver;
 }());

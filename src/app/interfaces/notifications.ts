@@ -1,6 +1,6 @@
-import {ClassNames} from "./class-names";
-import * as tf from "@tensorflow/tfjs";
-import {TensorflowHubModel} from "./tensorflow-hub-model";
+import {ClassNames} from "./class-names"
+import * as tf from "@tensorflow/tfjs"
+import {TensorflowHubModel} from "./tensorflow-hub-model"
 
 export enum NotificationTypes {
   Notification,

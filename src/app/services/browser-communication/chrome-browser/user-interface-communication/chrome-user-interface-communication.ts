@@ -1,19 +1,20 @@
-import {Notification, NotificationTypes, TensorFlowHubModelNotification} from "../../../../interfaces/notifications";
-import {UserInterfaceCommunication} from "../../user-interface-communication/user-interface-communication";
-import {GET_CURRENT_SETTINGS_MESSAGE} from "../background-communication/chrome-background-communication";
-import Port = chrome.runtime.Port;
+import {Notification, NotificationTypes, TensorFlowHubModelNotification} from "../../../../interfaces/notifications"
+import {UserInterfaceCommunication} from "../../user-interface-communication/user-interface-communication"
+import {GET_CURRENT_SETTINGS_MESSAGE} from "../background-communication/chrome-background-communication"
+import Port = chrome.runtime.Port
 
 export class ChromeUserInterfaceCommunication extends UserInterfaceCommunication <Notification, Notification> {
 
   private port: Port
 
   constructor() {
-    super();
+    super()
   }
 
   checkPermissions(): void {
-    if (!chrome.extension || !chrome.runtime)
+    if (!chrome.extension || !chrome.runtime) {
       throw Error("Unable to connect to background script")
+    }
   }
 
   complete(): void {
@@ -46,10 +47,10 @@ export class ChromeUserInterfaceCommunication extends UserInterfaceCommunication
   }
 
   getCnnModelSettingsFromBackground() {
-    this.port.postMessage(<Notification>{
+    this.port.postMessage({
       message: GET_CURRENT_SETTINGS_MESSAGE,
       type: NotificationTypes.Notification
-    })
+    } as Notification)
   }
 
 

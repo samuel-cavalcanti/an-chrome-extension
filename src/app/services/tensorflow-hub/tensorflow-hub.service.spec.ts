@@ -1,16 +1,16 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing"
 
-import { TensorflowHubService } from './tensorflow-hub.service';
+import { TensorflowHubService } from "./tensorflow-hub.service"
 
-describe('TensorflowHubService', () => {
-  let service: TensorflowHubService;
+describe("TensorflowHubService", () => {
+  let service: TensorflowHubService
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(TensorflowHubService);
-  });
+    TestBed.configureTestingModule({})
+    service = TestBed.inject(TensorflowHubService)
+  })
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
-});
+  it("should be created", () => {
+    expect(service).toBeTruthy()
+  })
+})

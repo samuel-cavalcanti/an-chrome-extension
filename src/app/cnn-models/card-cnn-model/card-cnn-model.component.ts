@@ -1,10 +1,10 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {TensorflowHubModel} from "../../interfaces/tensorflow-hub-model";
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core"
+import {TensorflowHubModel} from "../../interfaces/tensorflow-hub-model"
 
 @Component({
-  selector: 'app-card-cnn-model',
-  templateUrl: './card-cnn-model.component.html',
-  styleUrls: ['./card-cnn-model.component.css']
+  selector: "app-card-cnn-model",
+  templateUrl: "./card-cnn-model.component.html",
+  styleUrls: ["./card-cnn-model.component.css"]
 })
 export class CardCnnModelComponent implements OnInit {
 

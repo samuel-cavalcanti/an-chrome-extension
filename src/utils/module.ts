@@ -1,4 +1,4 @@
-import {Observer, Subject, Subscription} from "rxjs";
+import {Observer, Subject, Subscription} from "rxjs"
 
 
 export default abstract class Module<I, O> {
@@ -13,14 +13,14 @@ export default abstract class Module<I, O> {
 
   protected subscriptions: Array<Subscription> = new Array<Subscription>()
 
-  abstract next(notification: I): void;
+  protected abstract next(notification: I): void
 
-  abstract error(e): void;
+  protected abstract error(e): void
 
-  abstract complete(): void;
+  protected abstract complete(): void
 
-  subscribe(_module: Module<any, I>) {
-    this.subscriptions.push(_module.subject.subscribe(this.observer))
+  addObserver(abstractModule: Module<any, I>) {
+    this.subscriptions.push(abstractModule.subject.subscribe(this.observer))
   }
 
   unsubscribe() {
@@ -30,3 +30,4 @@ export default abstract class Module<I, O> {
   }
 
 }
+

@@ -1,25 +1,25 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing"
 
-import { CardCnnModelComponent } from './card-cnn-model.component';
+import { CardCnnModelComponent } from "./card-cnn-model.component"
 
-describe('CardCnnModelComponent', () => {
-  let component: CardCnnModelComponent;
-  let fixture: ComponentFixture<CardCnnModelComponent>;
+describe("CardCnnModelComponent", () => {
+  let component: CardCnnModelComponent
+  let fixture: ComponentFixture<CardCnnModelComponent>
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ CardCnnModelComponent ]
     })
-    .compileComponents();
-  }));
+    .compileComponents()
+  }))
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CardCnnModelComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    fixture = TestBed.createComponent(CardCnnModelComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+  })
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+  it("should create", () => {
+    expect(component).toBeTruthy()
+  })
+})

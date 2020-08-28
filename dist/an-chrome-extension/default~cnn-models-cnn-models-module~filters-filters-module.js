@@ -66,10 +66,12 @@ var NavBarPaginationComponent = /** @class */ (function () {
         var numberOfLinks = 5;
         var lastIndex = numberOfLinks - 1;
         var step = this.currentPage % lastIndex;
-        if (step == 0)
+        if (step == 0) {
             this.indexOfPages = allIndex.splice(this.currentPage, numberOfLinks);
-        else
+        }
+        else {
             this.indexOfPages = allIndex.splice(this.currentPage - step, numberOfLinks);
+        }
     };
     NavBarPaginationComponent.ɵfac = function NavBarPaginationComponent_Factory(t) { return new (t || NavBarPaginationComponent)(); };
     NavBarPaginationComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: NavBarPaginationComponent, selectors: [["app-nav-bar-pagination"]], inputs: { numberOfPages: "numberOfPages" }, outputs: { pageChange: "pageChange" }, decls: 16, vars: 9, consts: [[1, "container", "text-center", 2, "margin", "5px"], [1, "pagination", "justify-content-center"], [1, "page-item"], [1, "page-link", 3, "click"], ["class", "page-item", 3, "active", 4, "ngFor", "ngForOf"]], template: function NavBarPaginationComponent_Template(rf, ctx) { if (rf & 1) {
@@ -122,9 +124,9 @@ var NavBarPaginationComponent = /** @class */ (function () {
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](NavBarPaginationComponent, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"],
         args: [{
-                selector: 'app-nav-bar-pagination',
-                templateUrl: './nav-bar-pagination.component.html',
-                styleUrls: ['./nav-bar-pagination.component.css']
+                selector: "app-nav-bar-pagination",
+                templateUrl: "./nav-bar-pagination.component.html",
+                styleUrls: ["./nav-bar-pagination.component.css"]
             }]
     }], function () { return []; }, { numberOfPages: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Input"],
@@ -218,9 +220,9 @@ var SpinnerComponent = /** @class */ (function () {
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](SpinnerComponent, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
         args: [{
-                selector: 'app-spinner',
-                templateUrl: './spinner.component.html',
-                styleUrls: ['./spinner.component.css']
+                selector: "app-spinner",
+                templateUrl: "./spinner.component.html",
+                styleUrls: ["./spinner.component.css"]
             }]
     }], function () { return []; }, { color: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
@@ -271,10 +273,10 @@ var SpinnerModule = /** @class */ (function () {
 
 /***/ }),
 
-/***/ "./src/classes/ChunkArray.ts":
-/*!***********************************!*\
-  !*** ./src/classes/ChunkArray.ts ***!
-  \***********************************/
+/***/ "./src/utils/ChunkArray.ts":
+/*!*********************************!*\
+  !*** ./src/utils/ChunkArray.ts ***!
+  \*********************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 

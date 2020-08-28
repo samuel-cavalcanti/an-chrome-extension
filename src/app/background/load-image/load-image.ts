@@ -3,25 +3,25 @@ import {
   InputShapeNotification,
   Notification,
   NotificationTypes
-} from "../../interfaces/notifications";
-import Module from "../../../classes/module";
+} from "../../interfaces/notifications"
+import Module from "../../../utils/module"
 
 
 export class LoadImage extends Module<Notification, Notification> {
+
+  constructor() {
+    super()
+  }
+
+  private static noTabError = new Error("Tab Not found")
   private shape = {width: 224, height: 224, min: 40}
 
 
   private tabs: { [key: string]: string } = {}
 
-  private static noTabError = new Error('Tab Not found')
-
   private callbacks = {
     [NotificationTypes.ImageSourceNotification]: this.imageSourceNotification.bind(this),
     // [NotificationTypes.InputShapeNotification]: this.inputShapeNotification.bind(this)
-  }
-
-  constructor() {
-    super()
   }
 
   error(e): void {
@@ -34,8 +34,9 @@ export class LoadImage extends Module<Notification, Notification> {
 
   next(notification: Notification) {
 
-    if (this.callbacks[notification.type])
+    if (this.callbacks[notification.type]) {
       this.callbacks[notification.type](notification)
+    }
 
   }
 
@@ -56,12 +57,13 @@ export class LoadImage extends Module<Notification, Notification> {
 
 
   private createDomElement(src: string): HTMLImageElement {
-    if (!src)
+    if (!src) {
       return undefined
+    }
 
-    const img = document.createElement('img');
-    img.addEventListener('error', this.onError.bind(this))
-    img.addEventListener('load', this.onLoad.bind(this))
+    const img = document.createElement("img")
+    img.addEventListener("error", this.onError.bind(this))
+    img.addEventListener("load", this.onLoad.bind(this))
     img.src = src
     return img
   }
@@ -76,10 +78,10 @@ export class LoadImage extends Module<Notification, Notification> {
   }
 
   private onLoad(event) {
-    const imgTarget = (<HTMLImageElement>event.target)
+    const imgTarget = (event.target as HTMLImageElement)
     if ((imgTarget.height && imgTarget.height >= this.shape.min) || (imgTarget.width && imgTarget.width >= this.shape.min)) {
-      imgTarget.width = this.shape.width;
-      imgTarget.height = this.shape.height;
+      imgTarget.width = this.shape.width
+      imgTarget.height = this.shape.height
       this.notify(imgTarget)
       return
     }
@@ -88,8 +90,9 @@ export class LoadImage extends Module<Notification, Notification> {
 
   private getTabFromSource(src: string): string {
     const tab = this.tabs[src]
-    if (!tab)
-      throw Error('Tab Not found')
+    if (!tab) {
+      throw Error("Tab Not found")
+    }
 
     return this.tabs[src]
   }
@@ -97,7 +100,7 @@ export class LoadImage extends Module<Notification, Notification> {
   notify(img: HTMLImageElement) {
     const id = this.getTabFromSource(img.src)
 
-    this.subject.next(<ImageNotification>{type: NotificationTypes.ImageNotification, id, img})
+    this.subject.next({type: NotificationTypes.ImageNotification, id, img} as ImageNotification)
     delete this.tabs[img.src]
   }
 

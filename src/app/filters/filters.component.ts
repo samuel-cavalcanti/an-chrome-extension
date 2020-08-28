@@ -1,13 +1,13 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {BrowserUserInterfaceService} from "../services/browser-user-interface/browser-user-interface.service";
-import {Observer} from "rxjs";
-import {TensorFlowHubModelNotification} from "../interfaces/notifications";
-import ChunkArray from "../../classes/ChunkArray";
+import {ChangeDetectorRef, Component, OnInit} from "@angular/core"
+import {BrowserUserInterfaceService} from "../services/browser-user-interface/browser-user-interface.service"
+import {Observer} from "rxjs"
+import {TensorFlowHubModelNotification} from "../interfaces/notifications"
+import ChunkArray from "../../utils/ChunkArray"
 
 @Component({
-    selector: 'app-filters',
-    templateUrl: './filters.component.html',
-    styleUrls: ['./filters.component.css'],
+    selector: "app-filters",
+    templateUrl: "./filters.component.html",
+    styleUrls: ["./filters.component.css"],
 })
 
 export class FiltersComponent implements OnInit {
@@ -49,10 +49,12 @@ export class FiltersComponent implements OnInit {
     }
 
     get currentState() {
-        if (this.classPages == undefined)
+        if (this.classPages === undefined) {
             return this.states.loading
-        else if (this.resultSearch)
+        }
+        else if (this.resultSearch) {
             return this.states.searching
+ }
 
         return this.states.viewAll
     }
@@ -72,10 +74,12 @@ export class FiltersComponent implements OnInit {
 
     onSearch(query: string) {
 
-        if (query === "")
+        if (query === "") {
             this.resultSearch = undefined
-        else
-            this.resultSearch = this.classes.filter(value => value.name.indexOf(query) != -1)
+        }
+        else {
+            this.resultSearch = this.classes.filter(value => value.name.indexOf(query) !== -1)
+        }
 
 
         this.changeDetectorRef.detectChanges()
@@ -92,8 +96,9 @@ export class FiltersComponent implements OnInit {
     }
 
     private classNamesToChunks() {
-        if (!this.classes || this.classes.length == 0)
+        if (!this.classes || this.classes.length === 0) {
             return
+        }
         const chunkArray = new ChunkArray(this.classes)
         this.classPages = chunkArray.createChunks(10)
     }

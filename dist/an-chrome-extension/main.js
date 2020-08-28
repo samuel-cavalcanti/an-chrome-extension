@@ -42,9 +42,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var routes = [
-    { path: 'filters', loadChildren: function () { return Promise.all(/*! import() | filters-filters-module */[__webpack_require__.e("default~cnn-models-cnn-models-module~filters-filters-module"), __webpack_require__.e("filters-filters-module")]).then(__webpack_require__.bind(null, /*! ./filters/filters.module */ "./src/app/filters/filters.module.ts")).then(function (m) { return m.FiltersModule; }); } },
-    { path: 'models', loadChildren: function () { return Promise.all(/*! import() | cnn-models-cnn-models-module */[__webpack_require__.e("default~cnn-models-cnn-models-module~filters-filters-module"), __webpack_require__.e("cnn-models-cnn-models-module")]).then(__webpack_require__.bind(null, /*! ./cnn-models/cnn-models.module */ "./src/app/cnn-models/cnn-models.module.ts")).then(function (m) { return m.CnnModelsModule; }); } },
-    { path: 'background', component: _background_background_component__WEBPACK_IMPORTED_MODULE_2__["BackgroundComponent"] },
+    { path: "filters", loadChildren: function () { return Promise.all(/*! import() | filters-filters-module */[__webpack_require__.e("default~cnn-models-cnn-models-module~filters-filters-module"), __webpack_require__.e("filters-filters-module")]).then(__webpack_require__.bind(null, /*! ./filters/filters.module */ "./src/app/filters/filters.module.ts")).then(function (m) { return m.FiltersModule; }); } },
+    { path: "models", loadChildren: function () { return Promise.all(/*! import() | cnn-models-cnn-models-module */[__webpack_require__.e("default~cnn-models-cnn-models-module~filters-filters-module"), __webpack_require__.e("cnn-models-cnn-models-module")]).then(__webpack_require__.bind(null, /*! ./cnn-models/cnn-models.module */ "./src/app/cnn-models/cnn-models.module.ts")).then(function (m) { return m.CnnModelsModule; }); } },
+    { path: "background", component: _background_background_component__WEBPACK_IMPORTED_MODULE_2__["BackgroundComponent"] },
 ];
 var AppRoutingModule = /** @class */ (function () {
     function AppRoutingModule() {
@@ -85,7 +85,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var AppComponent = /** @class */ (function () {
     function AppComponent() {
-        this.title = 'nan-chrome-extension';
+        this.title = "nan-chrome-extension";
     }
     AppComponent.prototype.ngOnInit = function () {
     };
@@ -100,9 +100,9 @@ var AppComponent = /** @class */ (function () {
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](AppComponent, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
         args: [{
-                selector: 'app-root',
-                templateUrl: './app.component.html',
-                styleUrls: ['./app.component.css']
+                selector: "app-root",
+                templateUrl: "./app.component.html",
+                styleUrls: ["./app.component.css"]
             }]
     }], function () { return []; }, null); })();
 
@@ -200,24 +200,26 @@ var BackgroundComponent = /** @class */ (function () {
         this.subscribes();
         this.startFilter();
     }
+    BackgroundComponent.selectBrowserBackgroundCommunication = function () {
+        if (chrome) {
+            return new _services_browser_communication_chrome_browser_background_communication_chrome_background_communication__WEBPACK_IMPORTED_MODULE_4__["ChromeBackgroundCommunication"]();
+        }
+        else {
+            throw new Error("Not implemented");
+        }
+    };
     BackgroundComponent.prototype.startFilter = function () {
         this.browser.tryToStart();
     };
     BackgroundComponent.prototype.subscribes = function () {
-        this.cnn.subscribe(this.browser);
-        this.cnn.subscribe(this.loadImage);
-        this.cnn.subscribe(this.cnnSettings);
-        this.loadImage.subscribe(this.browser);
-        this.loadImage.subscribe(this.cnnSettings);
-        this.browser.subscribe(this.cnn);
-        this.browser.subscribe(this.cnnSettings);
-        this.cnnSettings.subscribe(this.browser);
-    };
-    BackgroundComponent.selectBrowserBackgroundCommunication = function () {
-        if (chrome)
-            return new _services_browser_communication_chrome_browser_background_communication_chrome_background_communication__WEBPACK_IMPORTED_MODULE_4__["ChromeBackgroundCommunication"]();
-        else
-            throw new Error("Not implemented");
+        this.cnn.addObserver(this.browser);
+        this.cnn.addObserver(this.loadImage);
+        this.cnn.addObserver(this.cnnSettings);
+        this.loadImage.addObserver(this.browser);
+        this.loadImage.addObserver(this.cnnSettings);
+        this.browser.addObserver(this.cnn);
+        this.browser.addObserver(this.cnnSettings);
+        this.cnnSettings.addObserver(this.browser);
     };
     BackgroundComponent.ɵfac = function BackgroundComponent_Factory(t) { return new (t || BackgroundComponent)(); };
     BackgroundComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: BackgroundComponent, selectors: [["app-background"]], decls: 2, vars: 0, template: function BackgroundComponent_Template(rf, ctx) { if (rf & 1) {
@@ -231,8 +233,8 @@ var BackgroundComponent = /** @class */ (function () {
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](BackgroundComponent, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
         args: [{
-                selector: 'app-background',
-                templateUrl: './background.component.html',
+                selector: "app-background",
+                templateUrl: "./background.component.html",
             }]
     }], function () { return []; }, null); })();
 
@@ -293,7 +295,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ConvolutionalNeuralNetworkSettings", function() { return ConvolutionalNeuralNetworkSettings; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _tensorflow_tfjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @tensorflow/tfjs */ "./node_modules/@tensorflow/tfjs/dist/index.js");
-/* harmony import */ var _classes_module__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../classes/module */ "./src/classes/module.ts");
+/* harmony import */ var _utils_module__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../utils/module */ "./src/utils/module.ts");
 /* harmony import */ var _interfaces_notifications__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../interfaces/notifications */ "./src/app/interfaces/notifications.ts");
 /* harmony import */ var _load_class_names_load_class_names__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../load-class-names/load-class-names */ "./src/app/background/convolutional-neural-network/load-class-names/load-class-names.ts");
 
@@ -318,9 +320,10 @@ var ConvolutionalNeuralNetworkSettings = /** @class */ (function (_super) {
             return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"])(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!this.needToLoadModel(tensorHubUrl))
+                        if (!this.needToLoadModel(tensorHubUrl)) {
                             return [2 /*return*/, undefined];
-                        console.log('Loading model...');
+                        }
+                        console.log("Loading model...");
                         startTime = performance.now();
                         return [4 /*yield*/, _tensorflow_tfjs__WEBPACK_IMPORTED_MODULE_1__["loadGraphModel"](tensorHubUrl, { fromTFHub: true })];
                     case 1:
@@ -332,8 +335,9 @@ var ConvolutionalNeuralNetworkSettings = /** @class */ (function (_super) {
         });
     };
     ConvolutionalNeuralNetworkSettings.prototype.next = function (message) {
-        if (this.callbacks[message.type])
+        if (this.callbacks[message.type]) {
             this.callbacks[message.type](message);
+        }
     };
     ConvolutionalNeuralNetworkSettings.prototype.complete = function () {
     };
@@ -379,31 +383,39 @@ var ConvolutionalNeuralNetworkSettings = /** @class */ (function (_super) {
     ConvolutionalNeuralNetworkSettings.prototype.loadClassNames = function (dataset) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function () {
             return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"])(this, function (_a) {
-                if (this.needToLoadClassNames(dataset))
+                if (this.needToLoadClassNames(dataset)) {
                     return [2 /*return*/, _load_class_names_load_class_names__WEBPACK_IMPORTED_MODULE_4__["default"].loadClassByXMLRequest(this.localClassesNames[dataset])];
-                else
+                }
+                else {
                     return [2 /*return*/, this.currentSettings.classNames];
+                }
                 return [2 /*return*/];
             });
         });
     };
     ConvolutionalNeuralNetworkSettings.prototype.needToLoadModel = function (url) {
-        if (!url)
+        if (!url) {
             return false;
-        if (!this.currentSettings)
+        }
+        if (!this.currentSettings) {
             return true;
-        if (!this.currentSettings.cnnModelHub)
+        }
+        if (!this.currentSettings.cnnModelHub) {
             return true;
-        return this.currentSettings.cnnModelHub.url != url;
+        }
+        return this.currentSettings.cnnModelHub.url !== url;
     };
     ConvolutionalNeuralNetworkSettings.prototype.needToLoadClassNames = function (dataset) {
-        if (!dataset)
+        if (!dataset) {
             return false;
-        if (!this.currentSettings)
+        }
+        if (!this.currentSettings) {
             return true;
-        if (!this.currentSettings.cnnModelHub.dataset)
+        }
+        if (!this.currentSettings.cnnModelHub.dataset) {
             return true;
-        return this.currentSettings.cnnModelHub.dataset != dataset;
+        }
+        return this.currentSettings.cnnModelHub.dataset !== dataset;
     };
     ConvolutionalNeuralNetworkSettings.prototype.updateSetting = function (notification, classNames) {
         var enables = notification.enables ? notification.enables : Object.values(classNames).map(function () { return true; });
@@ -411,11 +423,13 @@ var ConvolutionalNeuralNetworkSettings = /** @class */ (function (_super) {
         this.currentSettings = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])({}, oldSettings), notification), { classNames: classNames, enables: enables });
     };
     ConvolutionalNeuralNetworkSettings.prototype.notifyLoadImage = function (cnnModel) {
-        if (!cnnModel)
+        if (!cnnModel) {
             return;
+        }
         var shape = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__spread"])(cnnModel.inputs[0].shape);
-        if (!shape)
+        if (!shape) {
             throw Error("Shape is undefined " + shape);
+        }
         console.log("Shape of Model : ", shape);
         var notification = {
             type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_3__["NotificationTypes"].InputShapeNotification,
@@ -437,7 +451,7 @@ var ConvolutionalNeuralNetworkSettings = /** @class */ (function (_super) {
         this.subject.next(this.currentSettings);
     };
     return ConvolutionalNeuralNetworkSettings;
-}(_classes_module__WEBPACK_IMPORTED_MODULE_2__["default"]));
+}(_utils_module__WEBPACK_IMPORTED_MODULE_2__["default"]));
 
 
 
@@ -456,7 +470,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _tensorflow_tfjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @tensorflow/tfjs */ "./node_modules/@tensorflow/tfjs/dist/index.js");
 /* harmony import */ var _interfaces_notifications__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../interfaces/notifications */ "./src/app/interfaces/notifications.ts");
-/* harmony import */ var _classes_module__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../classes/module */ "./src/classes/module.ts");
+/* harmony import */ var _utils_module__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../utils/module */ "./src/utils/module.ts");
 
 
 
@@ -466,9 +480,7 @@ var ConvolutionalNeuralNetwork = /** @class */ (function (_super) {
     function ConvolutionalNeuralNetwork() {
         var _a;
         var _this = _super.call(this) || this;
-        _this.ONE_SECOND_IN_MS = 1000;
         _this.predict = (_a = {}, _a[0] = "not show", _a[1] = "show", _a);
-        console.info(_tensorflow_tfjs__WEBPACK_IMPORTED_MODULE_1__["version"]);
         return _this;
     }
     ConvolutionalNeuralNetwork.prototype.error = function (e) {
@@ -476,10 +488,12 @@ var ConvolutionalNeuralNetwork = /** @class */ (function (_super) {
     ConvolutionalNeuralNetwork.prototype.complete = function () {
     };
     ConvolutionalNeuralNetwork.prototype.next = function (message) {
-        if (message.type == _interfaces_notifications__WEBPACK_IMPORTED_MODULE_2__["NotificationTypes"].ImageNotification)
+        if (message.type === _interfaces_notifications__WEBPACK_IMPORTED_MODULE_2__["NotificationTypes"].ImageNotification) {
             return this.imageNotification(message);
-        if (message.type == _interfaces_notifications__WEBPACK_IMPORTED_MODULE_2__["NotificationTypes"].CnnModelSettingNotification)
+        }
+        if (message.type === _interfaces_notifications__WEBPACK_IMPORTED_MODULE_2__["NotificationTypes"].CnnModelSettingNotification) {
             return this.settingsNotification(message);
+        }
     };
     ConvolutionalNeuralNetwork.prototype.imageNotification = function (message) {
         var _this = this;
@@ -501,12 +515,15 @@ var ConvolutionalNeuralNetwork = /** @class */ (function (_super) {
         });
     };
     ConvolutionalNeuralNetwork.prototype.settingsNotification = function (message) {
-        if (message.cnnModel)
+        if (message.cnnModel) {
             this.model = message.cnnModel;
-        if (message.classNames)
+        }
+        if (message.classNames) {
             this.classNames = message.classNames;
-        if (message.enables)
+        }
+        if (message.enables) {
             this.enables = message.enables;
+        }
     };
     ConvolutionalNeuralNetwork.prototype.getTheBestClass = function (logIts) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function () {
@@ -549,12 +566,12 @@ var ConvolutionalNeuralNetwork = /** @class */ (function (_super) {
     ConvolutionalNeuralNetwork.prototype.tinyFunction = function (img) {
         var image = _tensorflow_tfjs__WEBPACK_IMPORTED_MODULE_1__["browser"].fromPixels(img).toFloat();
         var normalized = image.div(_tensorflow_tfjs__WEBPACK_IMPORTED_MODULE_1__["scalar"](255.0));
-        var shape = this.model.inputs[0].shape;
+        // const shape = this.model.inputs[0].shape
         var batched = normalized.reshape([1, 224, 224, 3]);
         return this.model.predict(batched);
     };
     return ConvolutionalNeuralNetwork;
-}(_classes_module__WEBPACK_IMPORTED_MODULE_3__["default"]));
+}(_utils_module__WEBPACK_IMPORTED_MODULE_3__["default"]));
 
 
 
@@ -579,10 +596,10 @@ var LoadClassNames = /** @class */ (function () {
             return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"])(this, function (_a) {
                 return [2 /*return*/, new Promise(function (resolve, reject) {
                         var xhr = new XMLHttpRequest();
-                        xhr.addEventListener('load', function () {
+                        xhr.addEventListener("load", function () {
                             resolve(JSON.parse(xhr.responseText));
                         });
-                        xhr.addEventListener('error', function () {
+                        xhr.addEventListener("error", function () {
                             reject("Error not solver request");
                         });
                         xhr.open("GET", path, true);
@@ -610,7 +627,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LoadImage", function() { return LoadImage; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../interfaces/notifications */ "./src/app/interfaces/notifications.ts");
-/* harmony import */ var _classes_module__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../classes/module */ "./src/classes/module.ts");
+/* harmony import */ var _utils_module__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../utils/module */ "./src/utils/module.ts");
 
 
 
@@ -631,8 +648,9 @@ var LoadImage = /** @class */ (function (_super) {
     LoadImage.prototype.complete = function () {
     };
     LoadImage.prototype.next = function (notification) {
-        if (this.callbacks[notification.type])
+        if (this.callbacks[notification.type]) {
             this.callbacks[notification.type](notification);
+        }
     };
     LoadImage.prototype.imageSourceNotification = function (notification) {
         if (notification.id === undefined) {
@@ -646,11 +664,12 @@ var LoadImage = /** @class */ (function (_super) {
         this.shape.height = notification.shape[1];
     };
     LoadImage.prototype.createDomElement = function (src) {
-        if (!src)
+        if (!src) {
             return undefined;
-        var img = document.createElement('img');
-        img.addEventListener('error', this.onError.bind(this));
-        img.addEventListener('load', this.onLoad.bind(this));
+        }
+        var img = document.createElement("img");
+        img.addEventListener("error", this.onError.bind(this));
+        img.addEventListener("load", this.onLoad.bind(this));
         img.src = src;
         return img;
     };
@@ -671,8 +690,9 @@ var LoadImage = /** @class */ (function (_super) {
     };
     LoadImage.prototype.getTabFromSource = function (src) {
         var tab = this.tabs[src];
-        if (!tab)
-            throw Error('Tab Not found');
+        if (!tab) {
+            throw Error("Tab Not found");
+        }
         return this.tabs[src];
     };
     LoadImage.prototype.notify = function (img) {
@@ -680,9 +700,9 @@ var LoadImage = /** @class */ (function (_super) {
         this.subject.next({ type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].ImageNotification, id: id, img: img });
         delete this.tabs[img.src];
     };
-    LoadImage.noTabError = new Error('Tab Not found');
+    LoadImage.noTabError = new Error("Tab Not found");
     return LoadImage;
-}(_classes_module__WEBPACK_IMPORTED_MODULE_2__["default"]));
+}(_utils_module__WEBPACK_IMPORTED_MODULE_2__["default"]));
 
 
 
@@ -763,9 +783,9 @@ var navBarComponent = /** @class */ (function () {
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](navBarComponent, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
         args: [{
-                selector: 'app-nav-bar',
-                templateUrl: './nav-bar.component.html',
-                styleUrls: ['./nav-bar.component.css']
+                selector: "app-nav-bar",
+                templateUrl: "./nav-bar.component.html",
+                styleUrls: ["./nav-bar.component.css"]
             }]
     }], function () { return []; }, null); })();
 
@@ -783,7 +803,7 @@ var navBarComponent = /** @class */ (function () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrowserCommunication", function() { return BrowserCommunication; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-/* harmony import */ var _classes_module__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../classes/module */ "./src/classes/module.ts");
+/* harmony import */ var _utils_module__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../utils/module */ "./src/utils/module.ts");
 
 
 var BrowserCommunication = /** @class */ (function (_super) {
@@ -792,7 +812,7 @@ var BrowserCommunication = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return BrowserCommunication;
-}(_classes_module__WEBPACK_IMPORTED_MODULE_1__["default"]));
+}(_utils_module__WEBPACK_IMPORTED_MODULE_1__["default"]));
 
 
 
@@ -836,10 +856,12 @@ var ChromeBackgroundCommunication = /** @class */ (function (_super) {
         return _this;
     }
     ChromeBackgroundCommunication.prototype.checkPermissions = function () {
-        if (chrome.runtime == undefined || chrome.runtime.getURL == undefined)
+        if (chrome.runtime === undefined || chrome.runtime.getURL === undefined) {
             throw ChromeBackgroundCommunication.erros.enableContentScript;
-        if (chrome.storage == undefined)
+        }
+        if (chrome.storage === undefined) {
             throw ChromeBackgroundCommunication.erros.enableStorage;
+        }
     };
     ChromeBackgroundCommunication.prototype.tryToStart = function () {
         console.log("stating browser listener ...");
@@ -851,7 +873,7 @@ var ChromeBackgroundCommunication = /** @class */ (function (_super) {
         }
         catch (e) {
             console.log("Unable to  start runtime");
-            console.info(e);
+            console.log(e);
         }
     };
     ChromeBackgroundCommunication.prototype.complete = function () {
@@ -859,10 +881,12 @@ var ChromeBackgroundCommunication = /** @class */ (function (_super) {
     ChromeBackgroundCommunication.prototype.error = function (e) {
     };
     ChromeBackgroundCommunication.prototype.next = function (notification) {
-        if (this.ports[notification.id])
+        if (this.ports[notification.id]) {
             this.ports[notification.id].postMessage(notification);
-        if (notification.type == _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].TensorFlowHubModelNotification)
+        }
+        if (notification.type === _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].TensorFlowHubModelNotification) {
             this.storeSettings(notification);
+        }
     };
     ChromeBackgroundCommunication.prototype.onConnect = function (port) {
         this.ports[port.name] = port;
@@ -870,8 +894,9 @@ var ChromeBackgroundCommunication = /** @class */ (function (_super) {
         port.onDisconnect.addListener(this.disconnect.bind(this));
     };
     ChromeBackgroundCommunication.prototype.listener = function (notification, port) {
-        if (this.callbacks[notification.type])
+        if (this.callbacks[notification.type]) {
             this.callbacks[notification.type](notification, port);
+        }
     };
     ChromeBackgroundCommunication.prototype.disconnect = function (port) {
         delete this.ports[port.name];
@@ -879,15 +904,18 @@ var ChromeBackgroundCommunication = /** @class */ (function (_super) {
     ChromeBackgroundCommunication.prototype.notifyImages = function (notification, port) {
         var e_1, _a;
         var urlImages = notification.urlImages;
-        if (port == undefined)
+        if (port === undefined) {
             throw ChromeBackgroundCommunication.erros.uuidUndefined;
-        if (urlImages == undefined)
+        }
+        if (urlImages === undefined) {
             throw ChromeBackgroundCommunication.erros.urlsUndefined;
+        }
         try {
             for (var urlImages_1 = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__values"])(urlImages), urlImages_1_1 = urlImages_1.next(); !urlImages_1_1.done; urlImages_1_1 = urlImages_1.next()) {
                 var url = urlImages_1_1.value;
-                if (url)
+                if (url) {
                     this.subject.next({ message: url, id: port.name, type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].ImageSourceNotification });
+                }
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -925,13 +953,12 @@ var ChromeBackgroundCommunication = /** @class */ (function (_super) {
         chrome.storage.local.set((_a = {}, _a[this.storeKey] = settings, _a));
     };
     ChromeBackgroundCommunication.prototype.simpleNotifications = function (notification, port) {
-        console.info("simpleNotifications", notification);
-        if (notification.message == GET_CURRENT_SETTINGS_MESSAGE) {
+        if (notification.message === GET_CURRENT_SETTINGS_MESSAGE) {
             console.log("load local data");
             this.userInterfacePort = port;
             this.loadLocalData();
         }
-        else if (notification.message == GET_LOCAL_CLASS_NAME_URLS) {
+        else if (notification.message === GET_LOCAL_CLASS_NAME_URLS) {
             this.sendClassNameUrls();
         }
     };
@@ -944,8 +971,8 @@ var ChromeBackgroundCommunication = /** @class */ (function (_super) {
     ChromeBackgroundCommunication.erros = {
         enableContentScript: new Error("Must enable Chrome Content Scripts"),
         enableStorage: new Error("Must add Storage permission"),
-        uuidUndefined: new Error('UUID undefined'),
-        urlsUndefined: new Error('URLS undefined')
+        uuidUndefined: new Error("UUID undefined"),
+        urlsUndefined: new Error("URLS undefined")
     };
     return ChromeBackgroundCommunication;
 }(_browser_communication__WEBPACK_IMPORTED_MODULE_2__["BrowserCommunication"]));
@@ -978,8 +1005,9 @@ var ChromeUserInterfaceCommunication = /** @class */ (function (_super) {
         return _super.call(this) || this;
     }
     ChromeUserInterfaceCommunication.prototype.checkPermissions = function () {
-        if (!chrome.extension || !chrome.runtime)
+        if (!chrome.extension || !chrome.runtime) {
             throw Error("Unable to connect to background script");
+        }
     };
     ChromeUserInterfaceCommunication.prototype.complete = function () {
     };
@@ -1055,7 +1083,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/__ivy_ngcc__/fesm2015/core.js");
 /* harmony import */ var _interfaces_notifications__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../interfaces/notifications */ "./src/app/interfaces/notifications.ts");
 /* harmony import */ var _browser_communication_chrome_browser_user_interface_communication_chrome_user_interface_communication__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../browser-communication/chrome-browser/user-interface-communication/chrome-user-interface-communication */ "./src/app/services/browser-communication/chrome-browser/user-interface-communication/chrome-user-interface-communication.ts");
-/* harmony import */ var _classes_module__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../classes/module */ "./src/classes/module.ts");
+/* harmony import */ var _utils_module__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../utils/module */ "./src/utils/module.ts");
 
 
 
@@ -1072,10 +1100,18 @@ var BrowserUserInterfaceService = /** @class */ (function (_super) {
             _a);
         console.info("create User Interface Communication");
         _this.browser = BrowserUserInterfaceService.selectBrowserUserInterfaceCommunication();
-        _this.subscribe(_this.browser);
+        _this.addObserver(_this.browser);
         _this.browser.tryToStart();
         return _this;
     }
+    BrowserUserInterfaceService.selectBrowserUserInterfaceCommunication = function () {
+        if (chrome) {
+            return new _browser_communication_chrome_browser_user_interface_communication_chrome_user_interface_communication__WEBPACK_IMPORTED_MODULE_3__["ChromeUserInterfaceCommunication"]();
+        }
+        else {
+            throw new Error("Not implemented");
+        }
+    };
     BrowserUserInterfaceService.prototype.selectTensorHubModel = function (cnnModel) {
         var newNotification = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])({}, this.currentCnnModelSettings), { cnnModelHub: cnnModel });
         this.browser.setCnnModelSettings(newNotification);
@@ -1085,17 +1121,12 @@ var BrowserUserInterfaceService = /** @class */ (function (_super) {
         newNotification.enables[index] = !newNotification.enables[index];
         this.browser.setCnnModelSettings(newNotification);
     };
-    BrowserUserInterfaceService.selectBrowserUserInterfaceCommunication = function () {
-        if (chrome)
-            return new _browser_communication_chrome_browser_user_interface_communication_chrome_user_interface_communication__WEBPACK_IMPORTED_MODULE_3__["ChromeUserInterfaceCommunication"]();
-        else
-            throw new Error("Not implemented");
-    };
     BrowserUserInterfaceService.prototype.next = function (notification) {
         console.log("browser user interface browserNotification: ", notification);
         console.log(this.callbacks);
-        if (this.callbacks[notification.type])
+        if (this.callbacks[notification.type]) {
             this.callbacks[notification.type](notification);
+        }
     };
     BrowserUserInterfaceService.prototype.error = function (e) {
     };
@@ -1110,69 +1141,21 @@ var BrowserUserInterfaceService = /** @class */ (function (_super) {
         this.notifyAll();
     };
     BrowserUserInterfaceService.prototype.notifyAll = function () {
-        if (this.currentCnnModelSettings)
+        if (this.currentCnnModelSettings) {
             this.subject.next(this.currentCnnModelSettings);
+        }
     };
     BrowserUserInterfaceService.ɵfac = function BrowserUserInterfaceService_Factory(t) { return new (t || BrowserUserInterfaceService)(); };
-    BrowserUserInterfaceService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: BrowserUserInterfaceService, factory: BrowserUserInterfaceService.ɵfac, providedIn: 'root' });
+    BrowserUserInterfaceService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: BrowserUserInterfaceService, factory: BrowserUserInterfaceService.ɵfac, providedIn: "root" });
     return BrowserUserInterfaceService;
-}(_classes_module__WEBPACK_IMPORTED_MODULE_4__["default"]));
+}(_utils_module__WEBPACK_IMPORTED_MODULE_4__["default"]));
 
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](BrowserUserInterfaceService, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"],
         args: [{
-                providedIn: 'root'
+                providedIn: "root"
             }]
     }], function () { return []; }, null); })();
-
-
-/***/ }),
-
-/***/ "./src/classes/module.ts":
-/*!*******************************!*\
-  !*** ./src/classes/module.ts ***!
-  \*******************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
-
-
-var Module = /** @class */ (function () {
-    function Module() {
-        this.subject = new rxjs__WEBPACK_IMPORTED_MODULE_1__["Subject"]();
-        this.observer = {
-            next: this.next.bind(this),
-            error: this.error.bind(this),
-            complete: this.complete.bind(this),
-        };
-        this.subscriptions = new Array();
-    }
-    Module.prototype.subscribe = function (_module) {
-        this.subscriptions.push(_module.subject.subscribe(this.observer));
-    };
-    Module.prototype.unsubscribe = function () {
-        var e_1, _a;
-        try {
-            for (var _b = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__values"])(this.subscriptions), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var sub = _c.value;
-                sub.unsubscribe();
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-    };
-    return Module;
-}());
-/* harmony default export */ __webpack_exports__["default"] = (Module);
 
 
 /***/ }),
@@ -1227,6 +1210,55 @@ if (_environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].produc
 }
 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_3__["platformBrowser"]().bootstrapModule(_app_app_module__WEBPACK_IMPORTED_MODULE_2__["AppModule"])
     .catch(function (err) { return console.error(err); });
+
+
+/***/ }),
+
+/***/ "./src/utils/module.ts":
+/*!*****************************!*\
+  !*** ./src/utils/module.ts ***!
+  \*****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
+
+
+var Module = /** @class */ (function () {
+    function Module() {
+        this.subject = new rxjs__WEBPACK_IMPORTED_MODULE_1__["Subject"]();
+        this.observer = {
+            next: this.next.bind(this),
+            error: this.error.bind(this),
+            complete: this.complete.bind(this),
+        };
+        this.subscriptions = new Array();
+    }
+    Module.prototype.addObserver = function (abstractModule) {
+        this.subscriptions.push(abstractModule.subject.subscribe(this.observer));
+    };
+    Module.prototype.unsubscribe = function () {
+        var e_1, _a;
+        try {
+            for (var _b = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__values"])(this.subscriptions), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var sub = _c.value;
+                sub.unsubscribe();
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+    };
+    return Module;
+}());
+/* harmony default export */ __webpack_exports__["default"] = (Module);
 
 
 /***/ }),

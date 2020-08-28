@@ -1,7 +1,7 @@
-import {Observer, Subject} from "rxjs";
-import {ContentNotification, FilterNotification, NotificationTypes} from "../app/interfaces/notifications";
-import {v4 as uuidV4} from "uuid";
-import Port = chrome.runtime.Port;
+import {Observer, Subject} from "rxjs"
+import {ContentNotification, FilterNotification, NotificationTypes} from "../app/interfaces/notifications"
+import {v4 as uuidV4} from "uuid"
+import Port = chrome.runtime.Port
 
 export default class ChromeBrowserContentCommunication {
   subject = new Subject<FilterNotification>()
@@ -21,8 +21,9 @@ export default class ChromeBrowserContentCommunication {
   }
 
   private sender(message: ContentNotification) {
-    if (this.port == undefined)
-      throw new Error('try to send message when channel is not opened')
+    if (this.port === undefined) {
+      throw new Error("try to send message when channel is not opened")
+    }
 
     message.type = NotificationTypes.ContentNotification
     message.id = this.port.name

@@ -1,16 +1,16 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from "@angular/core"
 
-import {TensorflowHubModel} from "../interfaces/tensorflow-hub-model";
-import {Observer} from "rxjs";
-import {TensorflowHubService} from "../services/tensorflow-hub/tensorflow-hub.service";
-import {BrowserUserInterfaceService} from "../services/browser-user-interface/browser-user-interface.service";
-import {TensorFlowHubModelNotification} from "../interfaces/notifications";
-import ChunkArray from "../../classes/ChunkArray";
+import {TensorflowHubModel} from "../interfaces/tensorflow-hub-model"
+import {Observer} from "rxjs"
+import {TensorflowHubService} from "../services/tensorflow-hub/tensorflow-hub.service"
+import {BrowserUserInterfaceService} from "../services/browser-user-interface/browser-user-interface.service"
+import {TensorFlowHubModelNotification} from "../interfaces/notifications"
+import ChunkArray from "../../utils/ChunkArray"
 
 @Component({
-  selector: 'app-add-filter',
-  templateUrl: './cnn-models.component.html',
-  styleUrls: ['./cnn-models.component.css']
+  selector: "app-add-filter",
+  templateUrl: "./cnn-models.component.html",
+  styleUrls: ["./cnn-models.component.css"]
 })
 export class CnnModelsComponent implements OnInit {
 
@@ -66,18 +66,22 @@ export class CnnModelsComponent implements OnInit {
   }
 
   browserServiceNotification(notification: TensorFlowHubModelNotification) {
-    if (!notification)
-      return;
+    if (!notification) {
+      return
+    }
 
     this.currentModel = notification.cnnModelHub
 
-    if (!this.models)
+    if (!this.models) {
       return
+    }
 
-    if (this.selectStatus)
+    if (this.selectStatus) {
       this.selectStatus[this.currentModel.url] = true
-    else
+    }
+    else {
       this.makeSelectStatus()
+    }
 
     this.changeDetectorRef.detectChanges()
   }
@@ -85,19 +89,20 @@ export class CnnModelsComponent implements OnInit {
   tensorHubNotification(models: Array<TensorflowHubModel>) {
     this.models = models
     this.modelsToChunks(models)
-    if (this.currentModel)
+    if (this.currentModel) {
       this.makeSelectStatus()
+    }
 
   }
 
-  pageChange(page:number){
+  pageChange(page: number){
     this.currentPage = page
     this.changeDetectorRef.detectChanges()
   }
 
 
   private makeSelectStatus() {
-    this.selectStatus = this.models.map((value => ({[value.url]: value.url == this.currentModel.url})))
+    this.selectStatus = this.models.map((value => ({[value.url]: value.url === this.currentModel.url})))
       .reduce((next, current) => ({...next, ...current}))
   }
 

@@ -1,5 +1,5 @@
-import ChromeBrowserContentCommunication from "./chrome-browser-content-communication";
-import DocumentObserver from "./document-observer";
+import ChromeBrowserContentCommunication from "./chrome-browser-content-communication"
+import DocumentObserver from "./document-observer"
 
 
 const chromeBrowserContentCommunication: ChromeBrowserContentCommunication = new ChromeBrowserContentCommunication()

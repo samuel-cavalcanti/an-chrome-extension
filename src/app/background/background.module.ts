@@ -1,6 +1,6 @@
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {BackgroundComponent} from "./background.component";
+import {NgModule} from "@angular/core"
+import {CommonModule} from "@angular/common"
+import {BackgroundComponent} from "./background.component"
 
 
 @NgModule({

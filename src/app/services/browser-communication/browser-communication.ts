@@ -1,4 +1,4 @@
-import Module from "../../../classes/module";
+import Module from "../../../utils/module"
 
 
 export abstract class BrowserCommunication<I, O> extends Module<I, O> {

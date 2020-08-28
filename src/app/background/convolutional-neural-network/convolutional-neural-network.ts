@@ -1,5 +1,5 @@
-import * as tf from "@tensorflow/tfjs";
-import {ClassNames} from "../../interfaces/class-names";
+import * as tf from "@tensorflow/tfjs"
+import {ClassNames} from "../../interfaces/class-names"
 
 import {
   CnnModelSettingNotification,
@@ -7,14 +7,14 @@ import {
   ImageNotification,
   Notification,
   NotificationTypes
-} from "../../interfaces/notifications";
+} from "../../interfaces/notifications"
 
-import Module from "../../../classes/module";
+import Module from "../../../utils/module"
 
 
 export class ConvolutionalNeuralNetwork extends Module<Notification, Notification> {
 
-  private ONE_SECOND_IN_MS: number = 1000
+  // private ONE_SECOND_IN_MS = 1000
 
   private classNames: ClassNames
   private model: tf.GraphModel
@@ -24,7 +24,7 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
 
   constructor() {
     super()
-    console.info(tf.version);
+
   }
 
   error(e): void {
@@ -37,11 +37,13 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
 
   next(message: Notification) {
 
-    if (message.type == NotificationTypes.ImageNotification)
+    if (message.type === NotificationTypes.ImageNotification) {
       return this.imageNotification(message as ImageNotification)
+    }
 
-    if (message.type == NotificationTypes.CnnModelSettingNotification)
+    if (message.type === NotificationTypes.CnnModelSettingNotification) {
       return this.settingsNotification(message as CnnModelSettingNotification)
+    }
 
   }
 
@@ -68,20 +70,23 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
   }
 
   private settingsNotification(message: CnnModelSettingNotification) {
-    if (message.cnnModel)
+    if (message.cnnModel) {
       this.model = message.cnnModel
-    if (message.classNames)
+    }
+    if (message.classNames) {
       this.classNames = message.classNames
-    if (message.enables)
+    }
+    if (message.enables) {
       this.enables = message.enables
+    }
 
 
   }
 
 
   private async getTheBestClass(logIts: tf.Tensor): Promise<string> {
-    const {indices} = tf.topk(logIts, 1, true);
-    const argMax = await indices.data();
+    const {indices} = tf.topk(logIts, 1, true)
+    const argMax = await indices.data()
 
     console.log(this.classNames[argMax[0]])
     const pred = this.enables[argMax[0]] ? 1 : 0
@@ -92,7 +97,7 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
   protected async startToPredict(image: HTMLImageElement): Promise<string> {
     return new Promise<string>(async (resolve, reject) => {
       try {
-        const logIts = tf.tidy(this.tinyFunction.bind(this, image));
+        const logIts = tf.tidy(this.tinyFunction.bind(this, image))
         resolve(this.getTheBestClass(logIts as tf.Tensor))
       } catch (e) {
         // console.error("Unable to execute tinyFunction", e)
@@ -106,14 +111,14 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
 
   private tinyFunction(img: HTMLImageElement): tf.Tensor | tf.Tensor[] | tf.NamedTensorMap {
 
-    const image = tf.browser.fromPixels(img).toFloat();
+    const image = tf.browser.fromPixels(img).toFloat()
 
 
-    const normalized = image.div(tf.scalar(255.0));
-    const shape = this.model.inputs[0].shape
+    const normalized = image.div(tf.scalar(255.0))
+    // const shape = this.model.inputs[0].shape
 
 
-    const batched = normalized.reshape([1, 224, 224, 3]);
+    const batched = normalized.reshape([1, 224, 224, 3])
 
 
     return this.model.predict(batched)

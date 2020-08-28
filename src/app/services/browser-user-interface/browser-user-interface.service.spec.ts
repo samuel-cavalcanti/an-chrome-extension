@@ -1,16 +1,16 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing"
 
-import { BrowserUserInterfaceService } from './browser-user-interface.service';
+import { BrowserUserInterfaceService } from "./browser-user-interface.service"
 
-describe('BrowserUserInterfaceService', () => {
-  let service: BrowserUserInterfaceService;
+describe("BrowserUserInterfaceService", () => {
+  let service: BrowserUserInterfaceService
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(BrowserUserInterfaceService);
-  });
+    TestBed.configureTestingModule({})
+    service = TestBed.inject(BrowserUserInterfaceService)
+  })
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
-});
+  it("should be created", () => {
+    expect(service).toBeTruthy()
+  })
+})

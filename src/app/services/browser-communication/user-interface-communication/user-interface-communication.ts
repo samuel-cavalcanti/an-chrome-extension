@@ -1,4 +1,4 @@
-import {BrowserCommunication} from "../browser-communication";
+import {BrowserCommunication} from "../browser-communication"
 
 export abstract class UserInterfaceCommunication<I, O> extends BrowserCommunication<I, O> {
 

@@ -1,5 +1,5 @@
-import * as tf from "@tensorflow/tfjs";
-import Module from "../../../../classes/module";
+import * as tf from "@tensorflow/tfjs"
+import Module from "../../../../utils/module"
 import {
   ClassNameUrlsNotification,
   CnnModelSettingNotification,
@@ -7,9 +7,9 @@ import {
   Notification,
   NotificationTypes,
   TensorFlowHubModelNotification
-} from "../../../interfaces/notifications";
-import {ClassNames} from "../../../interfaces/class-names";
-import LoadClassNames from "../load-class-names/load-class-names";
+} from "../../../interfaces/notifications"
+import {ClassNames} from "../../../interfaces/class-names"
+import LoadClassNames from "../load-class-names/load-class-names"
 
 
 export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Notification> {
@@ -22,24 +22,25 @@ export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Not
   private currentSettings: TensorFlowHubModelNotification
 
   constructor() {
-    super();
+    super()
   }
 
   private localClassesNames: { [key: string]: string }
 
   private async loadCnnModel(tensorHubUrl: string): Promise<tf.GraphModel | undefined> {
 
-    if (!this.needToLoadModel(tensorHubUrl))
+    if (!this.needToLoadModel(tensorHubUrl)) {
       return undefined
+    }
 
 
-    console.log('Loading model...');
+    console.log("Loading model...")
 
-    const startTime = performance.now();
+    const startTime = performance.now()
 
-    const cnnModel = await tf.loadGraphModel(tensorHubUrl, {fromTFHub: true});
+    const cnnModel = await tf.loadGraphModel(tensorHubUrl, {fromTFHub: true})
 
-    console.log(`Model loaded  in ${Math.floor(performance.now() - startTime)} ms...`);
+    console.log(`Model loaded  in ${Math.floor(performance.now() - startTime)} ms...`)
 
     return cnnModel
   }
@@ -48,8 +49,9 @@ export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Not
   next(message: Notification) {
 
 
-    if (this.callbacks[message.type])
+    if (this.callbacks[message.type]) {
       this.callbacks[message.type](message)
+    }
 
 
   }
@@ -99,55 +101,64 @@ export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Not
   private async loadClassNames(dataset: string): Promise<ClassNames> {
 
 
-    if (this.needToLoadClassNames(dataset))
+    if (this.needToLoadClassNames(dataset)) {
       return LoadClassNames.loadClassByXMLRequest(this.localClassesNames[dataset])
-    else
+    } else {
       return this.currentSettings.classNames
+    }
 
   }
 
 
   private needToLoadModel(url: string): boolean {
-    if (!url)
+    if (!url) {
       return false
+    }
 
-    if (!this.currentSettings)
+    if (!this.currentSettings) {
       return true
+    }
 
-    if (!this.currentSettings.cnnModelHub)
+    if (!this.currentSettings.cnnModelHub) {
       return true
+    }
 
-    return this.currentSettings.cnnModelHub.url != url;
+    return this.currentSettings.cnnModelHub.url !== url
 
   }
 
   private needToLoadClassNames(dataset: string) {
-    if (!dataset)
+    if (!dataset) {
       return false
+    }
 
-    if (!this.currentSettings)
+    if (!this.currentSettings) {
       return true
+    }
 
-    if (!this.currentSettings.cnnModelHub.dataset)
+    if (!this.currentSettings.cnnModelHub.dataset) {
       return true
+    }
 
-    return this.currentSettings.cnnModelHub.dataset != dataset
+    return this.currentSettings.cnnModelHub.dataset !== dataset
   }
 
   private updateSetting(notification: TensorFlowHubModelNotification, classNames: ClassNames) {
     const enables = notification.enables ? notification.enables : Object.values(classNames).map(() => true)
     const oldSettings = this.currentSettings ? this.currentSettings : {}
-    this.currentSettings = {...oldSettings, ...notification, classNames: classNames, enables: enables}
+    this.currentSettings = {...oldSettings, ...notification, classNames, enables}
   }
 
   private notifyLoadImage(cnnModel: tf.GraphModel) {
-    if (!cnnModel)
+    if (!cnnModel) {
       return
+    }
 
     const shape = [...cnnModel.inputs[0].shape]
 
-    if (!shape)
+    if (!shape) {
       throw Error(`Shape is undefined ${shape}`)
+    }
 
     console.log("Shape of Model : ", shape)
 
@@ -164,7 +175,7 @@ export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Not
     const cnnMessage: CnnModelSettingNotification = {
       id: "ConvolutionalNeuralNetworkSettings",
       type: NotificationTypes.CnnModelSettingNotification,
-      cnnModel: cnnModel,
+      cnnModel,
       classNames: this.currentSettings.classNames,
       enables: this.currentSettings.enables
     }

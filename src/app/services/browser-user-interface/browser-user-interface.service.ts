@@ -1,16 +1,25 @@
-import {Injectable} from '@angular/core';
-import {Notification, NotificationTypes, TensorFlowHubModelNotification} from "../../interfaces/notifications";
-import {TensorflowHubModel} from "../../interfaces/tensorflow-hub-model";
-import {UserInterfaceCommunication} from "../browser-communication/user-interface-communication/user-interface-communication";
-import {ChromeUserInterfaceCommunication} from "../browser-communication/chrome-browser/user-interface-communication/chrome-user-interface-communication";
-import Module from "../../../classes/module";
-import {Observer} from "rxjs";
+import {Injectable} from "@angular/core"
+import {Notification, NotificationTypes, TensorFlowHubModelNotification} from "../../interfaces/notifications"
+import {TensorflowHubModel} from "../../interfaces/tensorflow-hub-model"
+import {UserInterfaceCommunication} from "../browser-communication/user-interface-communication/user-interface-communication"
+import {ChromeUserInterfaceCommunication} from "../browser-communication/chrome-browser/user-interface-communication/chrome-user-interface-communication"
+import Module from "../../../utils/module"
+import {Observer} from "rxjs"
 
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class BrowserUserInterfaceService extends Module<Notification, Notification> {
+
+
+  constructor() {
+    super()
+    console.log("create User Interface Communication")
+    this.browser = BrowserUserInterfaceService.selectBrowserUserInterfaceCommunication()
+    this.addObserver(this.browser)
+    this.browser.tryToStart()
+  }
   private callbacks = {
     [NotificationTypes.TensorFlowHubModelNotification]: this.browserNotification.bind(this)
   }
@@ -20,13 +29,14 @@ export class BrowserUserInterfaceService extends Module<Notification, Notificati
 
   private currentCnnModelSettings: TensorFlowHubModelNotification
 
+  static selectBrowserUserInterfaceCommunication(): UserInterfaceCommunication<Notification, Notification> {
+    if (chrome) {
+      return new ChromeUserInterfaceCommunication()
+    }
+    else {
+      throw new Error("Not implemented")
+    }
 
-  constructor() {
-    super()
-    console.info("create User Interface Communication")
-    this.browser = BrowserUserInterfaceService.selectBrowserUserInterfaceCommunication()
-    this.subscribe(this.browser)
-    this.browser.tryToStart()
   }
 
 
@@ -43,22 +53,15 @@ export class BrowserUserInterfaceService extends Module<Notification, Notificati
     this.browser.setCnnModelSettings(newNotification)
   }
 
-  static selectBrowserUserInterfaceCommunication(): UserInterfaceCommunication<Notification, Notification> {
-    if (chrome)
-      return new ChromeUserInterfaceCommunication()
-    else
-      throw new Error("Not implemented")
-
-  }
-
 
   next(notification: Notification): void {
     console.log("browser user interface browserNotification: ", notification)
     console.log(this.callbacks)
 
 
-    if (this.callbacks[notification.type])
+    if (this.callbacks[notification.type]) {
       this.callbacks[notification.type](notification)
+    }
 
   }
 
@@ -85,8 +88,9 @@ export class BrowserUserInterfaceService extends Module<Notification, Notificati
   }
 
   private notifyAll() {
-    if (this.currentCnnModelSettings)
+    if (this.currentCnnModelSettings) {
       this.subject.next(this.currentCnnModelSettings)
+    }
   }
 
 

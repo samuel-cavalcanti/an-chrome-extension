@@ -1,7 +1,7 @@
-import { ConvolutionalNeuralNetworkSettings } from './convolutional-neural-network-settings';
+import { ConvolutionalNeuralNetworkSettings } from "./convolutional-neural-network-settings"
 
-describe('ConvolutionalNeuralNetworkSettings', () => {
-  it('should create an instance', () => {
-    expect(new ConvolutionalNeuralNetworkSettings()).toBeTruthy();
-  });
-});
+describe("ConvolutionalNeuralNetworkSettings", () => {
+  it("should create an instance", () => {
+    expect(new ConvolutionalNeuralNetworkSettings()).toBeTruthy()
+  })
+})

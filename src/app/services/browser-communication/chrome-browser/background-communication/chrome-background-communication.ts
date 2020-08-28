@@ -4,9 +4,9 @@ import {
   Notification,
   NotificationTypes,
   TensorFlowHubModelNotification
-} from "../../../../interfaces/notifications";
-import {BrowserCommunication} from "../../browser-communication";
-import Port = chrome.runtime.Port;
+} from "../../../../interfaces/notifications"
+import {BrowserCommunication} from "../../browser-communication"
+import Port = chrome.runtime.Port
 
 export const GET_CURRENT_SETTINGS_MESSAGE = "get current cnn settings"
 
@@ -18,8 +18,8 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
   private static erros = {
     enableContentScript: new Error("Must enable Chrome Content Scripts"),
     enableStorage: new Error("Must add Storage permission"),
-    uuidUndefined: new Error('UUID undefined'),
-    urlsUndefined: new Error('URLS undefined')
+    uuidUndefined: new Error("UUID undefined"),
+    urlsUndefined: new Error("URLS undefined")
   }
 
   private callbacks = {
@@ -45,11 +45,13 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
   }
 
   checkPermissions() {
-    if (chrome.runtime == undefined || chrome.runtime.getURL == undefined)
+    if (chrome.runtime === undefined || chrome.runtime.getURL === undefined) {
       throw ChromeBackgroundCommunication.erros.enableContentScript
+    }
 
-    if (chrome.storage == undefined)
+    if (chrome.storage === undefined) {
       throw ChromeBackgroundCommunication.erros.enableStorage
+    }
   }
 
   tryToStart() {
@@ -61,7 +63,7 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
       this.sendClassNameUrls()
     } catch (e) {
       console.log("Unable to  start runtime")
-      console.info(e)
+      console.log(e)
     }
 
 
@@ -76,12 +78,14 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
 
   next(notification: Notification) {
 
-    if (this.ports[notification.id])
+    if (this.ports[notification.id]) {
       this.ports[notification.id].postMessage(notification)
+    }
 
 
-    if (notification.type == NotificationTypes.TensorFlowHubModelNotification)
+    if (notification.type === NotificationTypes.TensorFlowHubModelNotification) {
       this.storeSettings(notification as TensorFlowHubModelNotification)
+    }
   }
 
 
@@ -96,8 +100,9 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
 
   private listener(notification: Notification, port: Port) {
 
-    if (this.callbacks[notification.type])
+    if (this.callbacks[notification.type]) {
       this.callbacks[notification.type](notification, port)
+    }
 
   }
 
@@ -110,15 +115,19 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
 
     const urlImages = notification.urlImages
 
-    if (port == undefined)
+    if (port === undefined) {
       throw ChromeBackgroundCommunication.erros.uuidUndefined
+    }
 
-    if (urlImages == undefined)
+    if (urlImages === undefined) {
       throw ChromeBackgroundCommunication.erros.urlsUndefined
+    }
 
-    for (const url of urlImages)
-      if (url)
-        this.subject.next(<Notification>{message: url, id: port.name, type: NotificationTypes.ImageSourceNotification})
+    for (const url of urlImages) {
+      if (url) {
+        this.subject.next({message: url, id: port.name, type: NotificationTypes.ImageSourceNotification} as Notification)
+      }
+    }
 
   }
 
@@ -143,12 +152,12 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
       this.subject.next(notification)
       this.next(notification)
     } else if (this.userInterfacePort) {
-      this.next(<TensorFlowHubModelNotification>{
+      this.next({
         id: this.userInterfacePort.name,
         cnnModelHub: {},
         classNames: {},
         type: NotificationTypes.TensorFlowHubModelNotification
-      })
+      } as TensorFlowHubModelNotification)
     }
 
 
@@ -160,21 +169,20 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
 
 
   private simpleNotifications(notification: Notification, port: Port) {
-    console.info("simpleNotifications", notification)
-    if (notification.message == GET_CURRENT_SETTINGS_MESSAGE) {
+    if (notification.message === GET_CURRENT_SETTINGS_MESSAGE) {
       console.log("load local data")
       this.userInterfacePort = port
       this.loadLocalData()
-    } else if (notification.message == GET_LOCAL_CLASS_NAME_URLS) {
+    } else if (notification.message === GET_LOCAL_CLASS_NAME_URLS) {
       this.sendClassNameUrls()
     }
   }
 
   private sendClassNameUrls() {
-    this.subject.next(<ClassNameUrlsNotification>{
+    this.subject.next({
       type: NotificationTypes.ClassNameUrlsNotification,
       urls: this.localClassesNames
-    })
+    } as ClassNameUrlsNotification)
   }
 
 }

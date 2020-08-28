@@ -17280,9 +17280,9 @@ var FilterListComponent = /** @class */ (function () {
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](FilterListComponent, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
         args: [{
-                selector: 'app-filter-list',
-                templateUrl: './filter-list.component.html',
-                styleUrls: ['./filter-list.component.css']
+                selector: "app-filter-list",
+                templateUrl: "./filter-list.component.html",
+                styleUrls: ["./filter-list.component.css"]
             }]
     }], function () { return []; }, { filters: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
@@ -17345,9 +17345,9 @@ var FilterComponent = /** @class */ (function () {
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](FilterComponent, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
         args: [{
-                selector: 'app-filter',
-                templateUrl: './filter.component.html',
-                styleUrls: ['./filter.component.css']
+                selector: "app-filter",
+                templateUrl: "./filter.component.html",
+                styleUrls: ["./filter.component.css"]
             }]
     }], function () { return []; }, { enable: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"],
@@ -17376,7 +17376,7 @@ var FilterComponent = /** @class */ (function () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FiltersComponent", function() { return FiltersComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/__ivy_ngcc__/fesm2015/core.js");
-/* harmony import */ var _classes_ChunkArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../classes/ChunkArray */ "./src/classes/ChunkArray.ts");
+/* harmony import */ var _utils_ChunkArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils/ChunkArray */ "./src/utils/ChunkArray.ts");
 /* harmony import */ var _services_browser_user_interface_browser_user_interface_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../services/browser-user-interface/browser-user-interface.service */ "./src/app/services/browser-user-interface/browser-user-interface.service.ts");
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/common */ "./node_modules/@angular/common/__ivy_ngcc__/fesm2015/common.js");
 /* harmony import */ var _search_bar_search_bar_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./search-bar/search-bar.component */ "./src/app/filters/search-bar/search-bar.component.ts");
@@ -17465,10 +17465,12 @@ var FiltersComponent = /** @class */ (function () {
     };
     Object.defineProperty(FiltersComponent.prototype, "currentState", {
         get: function () {
-            if (this.classPages == undefined)
+            if (this.classPages == undefined) {
                 return this.states.loading;
-            else if (this.resultSearch)
+            }
+            else if (this.resultSearch) {
                 return this.states.searching;
+            }
             return this.states.viewAll;
         },
         enumerable: false,
@@ -17483,10 +17485,12 @@ var FiltersComponent = /** @class */ (function () {
         this.changeDetectorRef.detectChanges();
     };
     FiltersComponent.prototype.onSearch = function (query) {
-        if (query === "")
+        if (query === "") {
             this.resultSearch = undefined;
-        else
+        }
+        else {
             this.resultSearch = this.classes.filter(function (value) { return value.name.indexOf(query) != -1; });
+        }
         this.changeDetectorRef.detectChanges();
     };
     FiltersComponent.prototype.serviceNotification = function (notification) {
@@ -17497,9 +17501,10 @@ var FiltersComponent = /** @class */ (function () {
         this.changeDetectorRef.detectChanges();
     };
     FiltersComponent.prototype.classNamesToChunks = function () {
-        if (!this.classes || this.classes.length == 0)
+        if (!this.classes || this.classes.length == 0) {
             return;
-        var chunkArray = new _classes_ChunkArray__WEBPACK_IMPORTED_MODULE_1__["default"](this.classes);
+        }
+        var chunkArray = new _utils_ChunkArray__WEBPACK_IMPORTED_MODULE_1__["default"](this.classes);
         this.classPages = chunkArray.createChunks(10);
     };
     FiltersComponent.ɵfac = function FiltersComponent_Factory(t) { return new (t || FiltersComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_services_browser_user_interface_browser_user_interface_service__WEBPACK_IMPORTED_MODULE_2__["BrowserUserInterfaceService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ChangeDetectorRef"])); };
@@ -17527,9 +17532,9 @@ var FiltersComponent = /** @class */ (function () {
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](FiltersComponent, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
         args: [{
-                selector: 'app-filters',
-                templateUrl: './filters.component.html',
-                styleUrls: ['./filters.component.css'],
+                selector: "app-filters",
+                templateUrl: "./filters.component.html",
+                styleUrls: ["./filters.component.css"],
             }]
     }], function () { return [{ type: _services_browser_user_interface_browser_user_interface_service__WEBPACK_IMPORTED_MODULE_2__["BrowserUserInterfaceService"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ChangeDetectorRef"] }]; }, null); })();
 
@@ -17638,7 +17643,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var routes = [
-    { path: '', component: _filters_component__WEBPACK_IMPORTED_MODULE_1__["FiltersComponent"] },
+    { path: "", component: _filters_component__WEBPACK_IMPORTED_MODULE_1__["FiltersComponent"] },
 ];
 var FiltersRoutingModule = /** @class */ (function () {
     function FiltersRoutingModule() {
@@ -17708,9 +17713,9 @@ var SearchBarComponent = /** @class */ (function () {
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](SearchBarComponent, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
         args: [{
-                selector: 'app-search-bar',
-                templateUrl: './search-bar.component.html',
-                styleUrls: ['./search-bar.component.css']
+                selector: "app-search-bar",
+                templateUrl: "./search-bar.component.html",
+                styleUrls: ["./search-bar.component.css"]
             }]
     }], function () { return []; }, { searchEmit: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"],
