@@ -2,7 +2,7 @@ import {Component} from "@angular/core"
 import {ConvolutionalNeuralNetwork} from "./convolutional-neural-network/convolutional-neural-network"
 import {LoadImage} from "./load-image/load-image"
 import {ConvolutionalNeuralNetworkSettings} from "./convolutional-neural-network/convolutional-neural-network-settings/convolutional-neural-network-settings"
-import {ChromeBackgroundCommunication} from "../services/browser-communication/chrome-browser/background-communication/chrome-background-communication"
+import {ChromeBackgroundCommunication} from "./background-communication/chrome-browser/chrome-background-communication"
 
 @Component({
   selector: "app-background",

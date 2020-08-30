@@ -1,6 +1,6 @@
-import {Notification, NotificationTypes, TensorFlowHubModelNotification} from "../../../../interfaces/notifications"
-import {USER_INTERFACE_COMMUNICATION_ID, UserInterfaceCommunication} from "../../user-interface-communication/user-interface-communication"
-import {GET_CURRENT_SETTINGS_MESSAGE} from "../background-communication/chrome-background-communication"
+import {Notification, NotificationTypes, TensorFlowHubModelNotification} from "../../../interfaces/notifications"
+import {USER_INTERFACE_COMMUNICATION_ID, UserInterfaceCommunication} from "../../../../utils/user-interface-communication"
+import {GET_CURRENT_SETTINGS_MESSAGE} from "../../../background-page/background-communication/chrome-browser/chrome-background-communication"
 import Port = chrome.runtime.Port
 
 export class ChromeUserInterfaceCommunication extends UserInterfaceCommunication <Notification, Notification> {

@@ -1,14 +1,15 @@
 import {
     ClassNameUrlsNotification,
+    CnnModelSettingNotification,
     ContentNotification,
     LocalModelInputNotification,
     Notification,
     NotificationTypes,
     TensorFlowHubModelNotification
-} from "../../../../interfaces/notifications"
-import {BrowserCommunication} from "../../browser-communication"
+} from "../../../interfaces/notifications"
+import {BrowserCommunication} from "../../../../utils/browser-communication"
+import {USER_INTERFACE_COMMUNICATION_ID} from "../../../../utils/user-interface-communication"
 import Port = chrome.runtime.Port
-import {USER_INTERFACE_COMMUNICATION_ID} from "../../user-interface-communication/user-interface-communication"
 
 export const GET_CURRENT_SETTINGS_MESSAGE = "get current cnn settings"
 
@@ -88,9 +89,10 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
 
 
         if (notification.type === NotificationTypes.TensorFlowHubModelNotification) {
-            console.log("salvando Notificação", notification)
+            console.log("Chrome Background salvando Notificação", notification)
             this.storeSettings(notification as TensorFlowHubModelNotification)
         }
+
     }
 
 
@@ -200,5 +202,6 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
 
         this.subject.next(notification)
     }
+
 
 }

@@ -282,7 +282,7 @@ var SpinnerModule = /** @class */ (function () {
 __webpack_require__.r(__webpack_exports__);
 var ChunkArray = /** @class */ (function () {
     function ChunkArray(array) {
-        this.inputArray = array;
+        this.inputArray = array ? array : [];
     }
     ChunkArray.prototype.createChunks = function (perChunk) {
         this.perChunk = perChunk;

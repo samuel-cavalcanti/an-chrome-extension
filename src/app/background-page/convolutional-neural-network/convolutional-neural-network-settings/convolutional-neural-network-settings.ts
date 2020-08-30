@@ -11,7 +11,7 @@ import {
 } from "../../../interfaces/notifications"
 import {ClassNames} from "../../../interfaces/class-names"
 import * as JSZIP from "jszip"
-import {USER_INTERFACE_COMMUNICATION_ID} from "../../../services/browser-communication/user-interface-communication/user-interface-communication"
+import {USER_INTERFACE_COMMUNICATION_ID} from "../../../../utils/user-interface-communication"
 
 
 export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Notification> {
@@ -198,7 +198,7 @@ export class ConvolutionalNeuralNetworkSettings extends Module<Notification, Not
 
         this.notifyCnn(cnnModel)
 
-        this.notifyLoadImage(cnnModel)
+        // this.notifyLoadImage(cnnModel)
 
         this.notifyUserInterface()
 

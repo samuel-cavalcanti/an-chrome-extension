@@ -1,8 +1,8 @@
 import {Injectable} from "@angular/core"
 import {LocalModelInputNotification, Notification, NotificationTypes, TensorFlowHubModelNotification} from "../../interfaces/notifications"
 import {TensorflowHubModel} from "../../interfaces/tensorflow-hub-model"
-import {UserInterfaceCommunication} from "../browser-communication/user-interface-communication/user-interface-communication"
-import {ChromeUserInterfaceCommunication} from "../browser-communication/chrome-browser/user-interface-communication/chrome-user-interface-communication"
+import {UserInterfaceCommunication} from "../../../utils/user-interface-communication"
+import {ChromeUserInterfaceCommunication} from "./chrome-browser/chrome-user-interface-communication"
 import Module from "../../../utils/module"
 import {Observer} from "rxjs"
 

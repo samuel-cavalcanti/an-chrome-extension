@@ -1,4 +1,4 @@
-import {ImageNotification, InputShapeNotification, Notification, NotificationTypes} from "../../interfaces/notifications"
+import {ImageNotification, Notification, NotificationTypes} from "../../interfaces/notifications"
 import Module from "../../../utils/module"
 
 
@@ -9,14 +9,13 @@ export class LoadImage extends Module<Notification, Notification> {
     }
 
     private static noTabError = new Error("Tab Not found")
-    private shape = {width: 224, height: 224, min: 40}
+    private shape = {min: 40}
 
 
     private tabs: { [key: string]: string } = {}
 
     private callbacks = {
         [NotificationTypes.ImageSourceNotification]: this.imageSourceNotification.bind(this),
-        [NotificationTypes.InputShapeNotification]: this.inputShapeNotification.bind(this)
     }
 
     error(e): void {
@@ -44,15 +43,6 @@ export class LoadImage extends Module<Notification, Notification> {
         this.linkSourceToTab(img.src, notification.id)
     }
 
-    private inputShapeNotification(notification: InputShapeNotification) {
-        if (notification.shape[0] && notification.shape[0] > this.shape.min &&
-            notification.shape[1] && notification.shape[1] > this.shape.min) {
-            this.shape.width = notification.shape[0]
-            this.shape.height = notification.shape[1]
-        }
-
-    }
-
 
     private createDomElement(src: string): HTMLImageElement {
         if (!src) {
@@ -78,8 +68,6 @@ export class LoadImage extends Module<Notification, Notification> {
     private onLoad(event) {
         const imgTarget = (event.target as HTMLImageElement)
         if ((imgTarget.height && imgTarget.height >= this.shape.min) || (imgTarget.width && imgTarget.width >= this.shape.min)) {
-            imgTarget.width = this.shape.width
-            imgTarget.height = this.shape.height
             this.notify(imgTarget)
             return
         }

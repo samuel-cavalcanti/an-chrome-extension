@@ -89,14 +89,13 @@ export class FiltersComponent implements OnInit {
         this.classes = Object.values(notification.classNames).map((value, index) => ({name: value, enableId: index}))
         this.classNamesToChunks()
 
+
         this.enables = notification.enables
         this.changeDetectorRef.detectChanges()
     }
 
     private classNamesToChunks() {
-        if (!this.classes || this.classes.length === 0) {
-            return
-        }
+
         const chunkArray = new ChunkArray(this.classes)
         this.classPages = chunkArray.createChunks(10)
     }

@@ -17502,9 +17502,6 @@ var FiltersComponent = /** @class */ (function () {
         this.changeDetectorRef.detectChanges();
     };
     FiltersComponent.prototype.classNamesToChunks = function () {
-        if (!this.classes || this.classes.length === 0) {
-            return;
-        }
         var chunkArray = new _utils_ChunkArray__WEBPACK_IMPORTED_MODULE_1__["default"](this.classes);
         this.classPages = chunkArray.createChunks(10);
     };

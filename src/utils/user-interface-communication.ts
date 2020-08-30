@@ -1,5 +1,5 @@
-import {BrowserCommunication} from "../browser-communication"
-import {Notification} from "../../../interfaces/notifications"
+import {BrowserCommunication} from "./browser-communication"
+import {Notification} from "../app/interfaces/notifications"
 
 export const USER_INTERFACE_COMMUNICATION_ID = "UserInterfaceCommunication"
 

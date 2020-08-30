@@ -172,6 +172,175 @@ var AppModule = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "./src/app/background-page/background-communication/chrome-browser/chrome-background-communication.ts":
+/*!************************************************************************************************************!*\
+  !*** ./src/app/background-page/background-communication/chrome-browser/chrome-background-communication.ts ***!
+  \************************************************************************************************************/
+/*! exports provided: GET_CURRENT_SETTINGS_MESSAGE, GET_LOCAL_CLASS_NAME_URLS, ChromeBackgroundCommunication */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GET_CURRENT_SETTINGS_MESSAGE", function() { return GET_CURRENT_SETTINGS_MESSAGE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GET_LOCAL_CLASS_NAME_URLS", function() { return GET_LOCAL_CLASS_NAME_URLS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChromeBackgroundCommunication", function() { return ChromeBackgroundCommunication; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../interfaces/notifications */ "./src/app/interfaces/notifications.ts");
+/* harmony import */ var _utils_browser_communication__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../utils/browser-communication */ "./src/utils/browser-communication.ts");
+/* harmony import */ var _utils_user_interface_communication__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../utils/user-interface-communication */ "./src/utils/user-interface-communication.ts");
+
+
+
+
+var GET_CURRENT_SETTINGS_MESSAGE = "get current cnn settings";
+var GET_LOCAL_CLASS_NAME_URLS = " get local class name urls";
+var ChromeBackgroundCommunication = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(ChromeBackgroundCommunication, _super);
+    function ChromeBackgroundCommunication() {
+        var _a, _b;
+        var _this = _super.call(this) || this;
+        _this.callbacks = (_a = {},
+            _a[_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].Notification] = _this.simpleNotifications.bind(_this),
+            _a[_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].ContentNotification] = _this.notifyImages.bind(_this),
+            _a[_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].TensorFlowHubModelNotification] = _this.notifyCnnSettings.bind(_this),
+            _a[_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].LocalModelInputNotification] = _this.loadLocalModel.bind(_this),
+            _a);
+        _this.storeKey = "settings";
+        _this.localClassesNames = (_b = {},
+            _b["imagenet-ilsvrc-2012-cls"] = chrome.runtime.getURL("assets/modelJS/Image-net-class.json"),
+            _b);
+        _this.ports = {};
+        return _this;
+    }
+    ChromeBackgroundCommunication.prototype.checkPermissions = function () {
+        if (chrome.runtime === undefined || chrome.runtime.getURL === undefined) {
+            throw ChromeBackgroundCommunication.erros.enableContentScript;
+        }
+        if (chrome.storage === undefined) {
+            throw ChromeBackgroundCommunication.erros.enableStorage;
+        }
+    };
+    ChromeBackgroundCommunication.prototype.tryToStart = function () {
+        console.log("stating browser listener ...");
+        try {
+            this.checkPermissions();
+            chrome.runtime.onConnect.addListener(this.onConnect.bind(this));
+            this.loadLocalData();
+            this.sendClassNameUrls();
+        }
+        catch (e) {
+            console.log("Unable to  start runtime");
+            console.log(e);
+        }
+    };
+    ChromeBackgroundCommunication.prototype.complete = function () {
+    };
+    ChromeBackgroundCommunication.prototype.error = function (e) {
+    };
+    ChromeBackgroundCommunication.prototype.next = function (notification) {
+        if (this.ports[notification.id]) {
+            this.ports[notification.id].postMessage(notification);
+        }
+        if (notification.type === _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].TensorFlowHubModelNotification) {
+            console.log("Chrome Background salvando Notificação", notification);
+            this.storeSettings(notification);
+        }
+    };
+    ChromeBackgroundCommunication.prototype.onConnect = function (port) {
+        this.ports[port.name] = port;
+        port.onMessage.addListener(this.listener.bind(this));
+        port.onDisconnect.addListener(this.disconnect.bind(this));
+    };
+    ChromeBackgroundCommunication.prototype.listener = function (notification, port) {
+        if (this.callbacks[notification.type]) {
+            this.callbacks[notification.type](notification, port);
+        }
+    };
+    ChromeBackgroundCommunication.prototype.disconnect = function (port) {
+        delete this.ports[port.name];
+    };
+    ChromeBackgroundCommunication.prototype.notifyImages = function (notification, port) {
+        var e_1, _a;
+        var urlImages = notification.urlImages;
+        if (port === undefined) {
+            throw ChromeBackgroundCommunication.erros.uuidUndefined;
+        }
+        if (urlImages === undefined) {
+            throw ChromeBackgroundCommunication.erros.urlsUndefined;
+        }
+        try {
+            for (var urlImages_1 = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__values"])(urlImages), urlImages_1_1 = urlImages_1.next(); !urlImages_1_1.done; urlImages_1_1 = urlImages_1.next()) {
+                var url = urlImages_1_1.value;
+                if (url) {
+                    this.subject.next({ message: url, id: port.name, type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].ImageSourceNotification });
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (urlImages_1_1 && !urlImages_1_1.done && (_a = urlImages_1.return)) _a.call(urlImages_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+    };
+    ChromeBackgroundCommunication.prototype.notifyCnnSettings = function (notification, port) {
+        notification.id = port.name;
+        this.subject.next(notification);
+    };
+    ChromeBackgroundCommunication.prototype.loadLocalData = function () {
+        chrome.storage.local.get([this.storeKey], this.callbackStorage.bind(this));
+    };
+    ChromeBackgroundCommunication.prototype.callbackStorage = function (result) {
+        var notification = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])({}, result.settings), { type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].TensorFlowHubModelNotification, id: _utils_user_interface_communication__WEBPACK_IMPORTED_MODULE_3__["USER_INTERFACE_COMMUNICATION_ID"] });
+        if (result.settings) {
+            this.subject.next(notification);
+            this.next(notification);
+        }
+        else if (this.currentUserInterfacePort) {
+            this.next({
+                id: this.currentUserInterfacePort.name,
+                cnnModelHub: {},
+                classNames: {},
+                type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].TensorFlowHubModelNotification
+            });
+        }
+    };
+    ChromeBackgroundCommunication.prototype.storeSettings = function (settings) {
+        var _a;
+        chrome.storage.local.set((_a = {}, _a[this.storeKey] = settings, _a));
+    };
+    ChromeBackgroundCommunication.prototype.simpleNotifications = function (notification, port) {
+        if (notification.message === GET_CURRENT_SETTINGS_MESSAGE) {
+            this.currentUserInterfacePort = port;
+            this.loadLocalData();
+        }
+        else if (notification.message === GET_LOCAL_CLASS_NAME_URLS) {
+            this.sendClassNameUrls();
+        }
+    };
+    ChromeBackgroundCommunication.prototype.sendClassNameUrls = function () {
+        this.subject.next({
+            type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].ClassNameUrlsNotification,
+            urls: this.localClassesNames
+        });
+    };
+    ChromeBackgroundCommunication.prototype.loadLocalModel = function (notification, port) {
+        this.subject.next(notification);
+    };
+    ChromeBackgroundCommunication.erros = {
+        enableContentScript: new Error("Must enable Chrome Content Scripts"),
+        enableStorage: new Error("Must add Storage permission"),
+        uuidUndefined: new Error("UUID undefined"),
+        urlsUndefined: new Error("URLS undefined")
+    };
+    return ChromeBackgroundCommunication;
+}(_utils_browser_communication__WEBPACK_IMPORTED_MODULE_2__["BrowserCommunication"]));
+
+
+
+/***/ }),
+
 /***/ "./src/app/background-page/background.component.ts":
 /*!*********************************************************!*\
   !*** ./src/app/background-page/background.component.ts ***!
@@ -186,7 +355,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _convolutional_neural_network_convolutional_neural_network__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./convolutional-neural-network/convolutional-neural-network */ "./src/app/background-page/convolutional-neural-network/convolutional-neural-network.ts");
 /* harmony import */ var _load_image_load_image__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./load-image/load-image */ "./src/app/background-page/load-image/load-image.ts");
 /* harmony import */ var _convolutional_neural_network_convolutional_neural_network_settings_convolutional_neural_network_settings__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./convolutional-neural-network/convolutional-neural-network-settings/convolutional-neural-network-settings */ "./src/app/background-page/convolutional-neural-network/convolutional-neural-network-settings/convolutional-neural-network-settings.ts");
-/* harmony import */ var _services_browser_communication_chrome_browser_background_communication_chrome_background_communication__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../services/browser-communication/chrome-browser/background-communication/chrome-background-communication */ "./src/app/services/browser-communication/chrome-browser/background-communication/chrome-background-communication.ts");
+/* harmony import */ var _background_communication_chrome_browser_chrome_background_communication__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./background-communication/chrome-browser/chrome-background-communication */ "./src/app/background-page/background-communication/chrome-browser/chrome-background-communication.ts");
 
 
 
@@ -204,7 +373,7 @@ var BackgroundComponent = /** @class */ (function () {
     }
     BackgroundComponent.selectBrowserBackgroundCommunication = function () {
         if (chrome) {
-            return new _services_browser_communication_chrome_browser_background_communication_chrome_background_communication__WEBPACK_IMPORTED_MODULE_4__["ChromeBackgroundCommunication"]();
+            return new _background_communication_chrome_browser_chrome_background_communication__WEBPACK_IMPORTED_MODULE_4__["ChromeBackgroundCommunication"]();
         }
         else {
             throw new Error("Not implemented");
@@ -301,7 +470,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _interfaces_notifications__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../interfaces/notifications */ "./src/app/interfaces/notifications.ts");
 /* harmony import */ var jszip__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! jszip */ "./node_modules/jszip/dist/jszip.min.js");
 /* harmony import */ var jszip__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(jszip__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _services_browser_communication_user_interface_communication_user_interface_communication__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../services/browser-communication/user-interface-communication/user-interface-communication */ "./src/app/services/browser-communication/user-interface-communication/user-interface-communication.ts");
+/* harmony import */ var _utils_user_interface_communication__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../utils/user-interface-communication */ "./src/utils/user-interface-communication.ts");
 
 
 
@@ -458,7 +627,7 @@ var ConvolutionalNeuralNetworkSettings = /** @class */ (function (_super) {
                         return [4 /*yield*/, zipDir.files[settingsPath].async("text")];
                     case 1:
                         json = _a.sent();
-                        settings = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])({}, JSON.parse(json)), { type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_3__["NotificationTypes"].TensorFlowHubModelNotification, id: _services_browser_communication_user_interface_communication_user_interface_communication__WEBPACK_IMPORTED_MODULE_5__["USER_INTERFACE_COMMUNICATION_ID"] });
+                        settings = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])({}, JSON.parse(json)), { type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_3__["NotificationTypes"].TensorFlowHubModelNotification, id: _utils_user_interface_communication__WEBPACK_IMPORTED_MODULE_5__["USER_INTERFACE_COMMUNICATION_ID"] });
                         this.updateSetting(settings);
                         zipDir.remove(settingsPath);
                         console.log("Zip files", zipDir.files);
@@ -535,7 +704,7 @@ var ConvolutionalNeuralNetworkSettings = /** @class */ (function (_super) {
     ConvolutionalNeuralNetworkSettings.prototype.notify = function (cnnModel) {
         console.log("notificando  observers", this.currentSettings, "CNN Model", cnnModel);
         this.notifyCnn(cnnModel);
-        this.notifyLoadImage(cnnModel);
+        // this.notifyLoadImage(cnnModel)
         this.notifyUserInterface();
     };
     ConvolutionalNeuralNetworkSettings.prototype.loadClassNames = function (dataset) {
@@ -665,7 +834,7 @@ var ConvolutionalNeuralNetwork = /** @class */ (function (_super) {
             predict: this.predict[1],
             imgSrc: message.img.src
         };
-        if (!this.model) {
+        if (this.dontNeedToPredict()) {
             this.subject.next(outputMessage);
             return;
         }
@@ -675,6 +844,12 @@ var ConvolutionalNeuralNetwork = /** @class */ (function (_super) {
             outputMessage.predict = pred;
             _this.subject.next(outputMessage);
         });
+    };
+    ConvolutionalNeuralNetwork.prototype.dontNeedToPredict = function () {
+        if (!this.model) {
+            return true;
+        }
+        return this.enables.reduce((function (previousValue, currentValue) { return previousValue && currentValue; }));
     };
     ConvolutionalNeuralNetwork.prototype.settingsNotification = function (message) {
         if (message.cnnModel) {
@@ -726,19 +901,28 @@ var ConvolutionalNeuralNetwork = /** @class */ (function (_super) {
         });
     };
     ConvolutionalNeuralNetwork.prototype.tinyFunction = function (img) {
-        var image = _tensorflow_tfjs__WEBPACK_IMPORTED_MODULE_1__["browser"].fromPixels(img).toFloat();
+        var shape = this.acceptableInputShape(this.model.inputs[0].shape);
+        var image = _tensorflow_tfjs__WEBPACK_IMPORTED_MODULE_1__["browser"].fromPixels(img).toFloat().resizeBilinear([shape[1], shape[2]]);
         var normalized = image.div(_tensorflow_tfjs__WEBPACK_IMPORTED_MODULE_1__["scalar"](255.0));
-        var shape = this.model.inputs[0].shape;
-        try {
-            console.log("first shape", [1, shape[1], shape[2], shape[3]]);
-            var batched = normalized.reshape([1, shape[1], shape[2], shape[3]]);
-            return this.model.predict(batched);
+        var batched = normalized.reshape(Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__spread"])([1], shape.slice(1, shape.length)));
+        return this.model.predict(batched);
+    };
+    /*
+ por algum motivo alguns modelos do tensorHub possuem um input shape incoerente como: [-1,0,0,3],
+ mas sabe-se que a priori todos os modelos do tensorHub  tem o mesmo input shape que é [1, 224, 224, 3]
+  */
+    ConvolutionalNeuralNetwork.prototype.acceptableInputShape = function (inputShape) {
+        var defaultShapeFromTensorHub = [1, 224, 224, 3];
+        if (inputShape === undefined) {
+            return defaultShapeFromTensorHub;
         }
-        catch (e) { // Alguns modelos não definem o formato de entrada,por padrão o shape do tensorHub é [1, 224, 224, 3]
-            console.log("first shape not work", e);
-            var batched = normalized.reshape([1, 224, 224, 3]);
-            return this.model.predict(batched);
+        if (inputShape.length !== 4) {
+            return defaultShapeFromTensorHub;
         }
+        if (inputShape[1] <= 0 || inputShape[2] <= 0) {
+            return defaultShapeFromTensorHub;
+        }
+        return inputShape;
     };
     return ConvolutionalNeuralNetwork;
 }(_utils_module__WEBPACK_IMPORTED_MODULE_3__["default"]));
@@ -768,11 +952,10 @@ var LoadImage = /** @class */ (function (_super) {
     function LoadImage() {
         var _a;
         var _this = _super.call(this) || this;
-        _this.shape = { width: 224, height: 224, min: 40 };
+        _this.shape = { min: 40 };
         _this.tabs = {};
         _this.callbacks = (_a = {},
             _a[_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].ImageSourceNotification] = _this.imageSourceNotification.bind(_this),
-            _a[_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].InputShapeNotification] = _this.inputShapeNotification.bind(_this),
             _a);
         return _this;
     }
@@ -791,13 +974,6 @@ var LoadImage = /** @class */ (function (_super) {
         }
         var img = this.createDomElement(notification.message);
         this.linkSourceToTab(img.src, notification.id);
-    };
-    LoadImage.prototype.inputShapeNotification = function (notification) {
-        if (notification.shape[0] && notification.shape[0] > this.shape.min &&
-            notification.shape[1] && notification.shape[1] > this.shape.min) {
-            this.shape.width = notification.shape[0];
-            this.shape.height = notification.shape[1];
-        }
     };
     LoadImage.prototype.createDomElement = function (src) {
         if (!src) {
@@ -818,8 +994,6 @@ var LoadImage = /** @class */ (function (_super) {
     LoadImage.prototype.onLoad = function (event) {
         var imgTarget = event.target;
         if ((imgTarget.height && imgTarget.height >= this.shape.min) || (imgTarget.width && imgTarget.width >= this.shape.min)) {
-            imgTarget.width = this.shape.width;
-            imgTarget.height = this.shape.height;
             this.notify(imgTarget);
             return;
         }
@@ -929,288 +1103,6 @@ var NavBarComponent = /** @class */ (function () {
 
 /***/ }),
 
-/***/ "./src/app/services/browser-communication/browser-communication.ts":
-/*!*************************************************************************!*\
-  !*** ./src/app/services/browser-communication/browser-communication.ts ***!
-  \*************************************************************************/
-/*! exports provided: BrowserCommunication */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrowserCommunication", function() { return BrowserCommunication; });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-/* harmony import */ var _utils_module__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../utils/module */ "./src/utils/module.ts");
-
-
-var BrowserCommunication = /** @class */ (function (_super) {
-    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(BrowserCommunication, _super);
-    function BrowserCommunication() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    return BrowserCommunication;
-}(_utils_module__WEBPACK_IMPORTED_MODULE_1__["default"]));
-
-
-
-/***/ }),
-
-/***/ "./src/app/services/browser-communication/chrome-browser/background-communication/chrome-background-communication.ts":
-/*!***************************************************************************************************************************!*\
-  !*** ./src/app/services/browser-communication/chrome-browser/background-communication/chrome-background-communication.ts ***!
-  \***************************************************************************************************************************/
-/*! exports provided: GET_CURRENT_SETTINGS_MESSAGE, GET_LOCAL_CLASS_NAME_URLS, ChromeBackgroundCommunication */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GET_CURRENT_SETTINGS_MESSAGE", function() { return GET_CURRENT_SETTINGS_MESSAGE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GET_LOCAL_CLASS_NAME_URLS", function() { return GET_LOCAL_CLASS_NAME_URLS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChromeBackgroundCommunication", function() { return ChromeBackgroundCommunication; });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-/* harmony import */ var _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../interfaces/notifications */ "./src/app/interfaces/notifications.ts");
-/* harmony import */ var _browser_communication__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../browser-communication */ "./src/app/services/browser-communication/browser-communication.ts");
-/* harmony import */ var _user_interface_communication_user_interface_communication__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../user-interface-communication/user-interface-communication */ "./src/app/services/browser-communication/user-interface-communication/user-interface-communication.ts");
-
-
-
-
-var GET_CURRENT_SETTINGS_MESSAGE = "get current cnn settings";
-var GET_LOCAL_CLASS_NAME_URLS = " get local class name urls";
-var ChromeBackgroundCommunication = /** @class */ (function (_super) {
-    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(ChromeBackgroundCommunication, _super);
-    function ChromeBackgroundCommunication() {
-        var _a, _b;
-        var _this = _super.call(this) || this;
-        _this.callbacks = (_a = {},
-            _a[_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].Notification] = _this.simpleNotifications.bind(_this),
-            _a[_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].ContentNotification] = _this.notifyImages.bind(_this),
-            _a[_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].TensorFlowHubModelNotification] = _this.notifyCnnSettings.bind(_this),
-            _a[_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].LocalModelInputNotification] = _this.loadLocalModel.bind(_this),
-            _a);
-        _this.storeKey = "settings";
-        _this.localClassesNames = (_b = {},
-            _b["imagenet-ilsvrc-2012-cls"] = chrome.runtime.getURL("assets/modelJS/Image-net-class.json"),
-            _b);
-        _this.ports = {};
-        return _this;
-    }
-    ChromeBackgroundCommunication.prototype.checkPermissions = function () {
-        if (chrome.runtime === undefined || chrome.runtime.getURL === undefined) {
-            throw ChromeBackgroundCommunication.erros.enableContentScript;
-        }
-        if (chrome.storage === undefined) {
-            throw ChromeBackgroundCommunication.erros.enableStorage;
-        }
-    };
-    ChromeBackgroundCommunication.prototype.tryToStart = function () {
-        console.log("stating browser listener ...");
-        try {
-            this.checkPermissions();
-            chrome.runtime.onConnect.addListener(this.onConnect.bind(this));
-            this.loadLocalData();
-            this.sendClassNameUrls();
-        }
-        catch (e) {
-            console.log("Unable to  start runtime");
-            console.log(e);
-        }
-    };
-    ChromeBackgroundCommunication.prototype.complete = function () {
-    };
-    ChromeBackgroundCommunication.prototype.error = function (e) {
-    };
-    ChromeBackgroundCommunication.prototype.next = function (notification) {
-        if (this.ports[notification.id]) {
-            this.ports[notification.id].postMessage(notification);
-        }
-        if (notification.type === _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].TensorFlowHubModelNotification) {
-            console.log("salvando Notificação", notification);
-            this.storeSettings(notification);
-        }
-    };
-    ChromeBackgroundCommunication.prototype.onConnect = function (port) {
-        this.ports[port.name] = port;
-        port.onMessage.addListener(this.listener.bind(this));
-        port.onDisconnect.addListener(this.disconnect.bind(this));
-    };
-    ChromeBackgroundCommunication.prototype.listener = function (notification, port) {
-        if (this.callbacks[notification.type]) {
-            this.callbacks[notification.type](notification, port);
-        }
-    };
-    ChromeBackgroundCommunication.prototype.disconnect = function (port) {
-        delete this.ports[port.name];
-    };
-    ChromeBackgroundCommunication.prototype.notifyImages = function (notification, port) {
-        var e_1, _a;
-        var urlImages = notification.urlImages;
-        if (port === undefined) {
-            throw ChromeBackgroundCommunication.erros.uuidUndefined;
-        }
-        if (urlImages === undefined) {
-            throw ChromeBackgroundCommunication.erros.urlsUndefined;
-        }
-        try {
-            for (var urlImages_1 = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__values"])(urlImages), urlImages_1_1 = urlImages_1.next(); !urlImages_1_1.done; urlImages_1_1 = urlImages_1.next()) {
-                var url = urlImages_1_1.value;
-                if (url) {
-                    this.subject.next({ message: url, id: port.name, type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].ImageSourceNotification });
-                }
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (urlImages_1_1 && !urlImages_1_1.done && (_a = urlImages_1.return)) _a.call(urlImages_1);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-    };
-    ChromeBackgroundCommunication.prototype.notifyCnnSettings = function (notification, port) {
-        notification.id = port.name;
-        this.subject.next(notification);
-    };
-    ChromeBackgroundCommunication.prototype.loadLocalData = function () {
-        chrome.storage.local.get([this.storeKey], this.callbackStorage.bind(this));
-    };
-    ChromeBackgroundCommunication.prototype.callbackStorage = function (result) {
-        var notification = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])({}, result.settings), { type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].TensorFlowHubModelNotification, id: _user_interface_communication_user_interface_communication__WEBPACK_IMPORTED_MODULE_3__["USER_INTERFACE_COMMUNICATION_ID"] });
-        if (result.settings) {
-            this.subject.next(notification);
-            this.next(notification);
-        }
-        else if (this.currentUserInterfacePort) {
-            this.next({
-                id: this.currentUserInterfacePort.name,
-                cnnModelHub: {},
-                classNames: {},
-                type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].TensorFlowHubModelNotification
-            });
-        }
-    };
-    ChromeBackgroundCommunication.prototype.storeSettings = function (settings) {
-        var _a;
-        chrome.storage.local.set((_a = {}, _a[this.storeKey] = settings, _a));
-    };
-    ChromeBackgroundCommunication.prototype.simpleNotifications = function (notification, port) {
-        if (notification.message === GET_CURRENT_SETTINGS_MESSAGE) {
-            this.currentUserInterfacePort = port;
-            this.loadLocalData();
-        }
-        else if (notification.message === GET_LOCAL_CLASS_NAME_URLS) {
-            this.sendClassNameUrls();
-        }
-    };
-    ChromeBackgroundCommunication.prototype.sendClassNameUrls = function () {
-        this.subject.next({
-            type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].ClassNameUrlsNotification,
-            urls: this.localClassesNames
-        });
-    };
-    ChromeBackgroundCommunication.prototype.loadLocalModel = function (notification, port) {
-        this.subject.next(notification);
-    };
-    ChromeBackgroundCommunication.erros = {
-        enableContentScript: new Error("Must enable Chrome Content Scripts"),
-        enableStorage: new Error("Must add Storage permission"),
-        uuidUndefined: new Error("UUID undefined"),
-        urlsUndefined: new Error("URLS undefined")
-    };
-    return ChromeBackgroundCommunication;
-}(_browser_communication__WEBPACK_IMPORTED_MODULE_2__["BrowserCommunication"]));
-
-
-
-/***/ }),
-
-/***/ "./src/app/services/browser-communication/chrome-browser/user-interface-communication/chrome-user-interface-communication.ts":
-/*!***********************************************************************************************************************************!*\
-  !*** ./src/app/services/browser-communication/chrome-browser/user-interface-communication/chrome-user-interface-communication.ts ***!
-  \***********************************************************************************************************************************/
-/*! exports provided: ChromeUserInterfaceCommunication */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChromeUserInterfaceCommunication", function() { return ChromeUserInterfaceCommunication; });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-/* harmony import */ var _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../interfaces/notifications */ "./src/app/interfaces/notifications.ts");
-/* harmony import */ var _user_interface_communication_user_interface_communication__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../user-interface-communication/user-interface-communication */ "./src/app/services/browser-communication/user-interface-communication/user-interface-communication.ts");
-/* harmony import */ var _background_communication_chrome_background_communication__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../background-communication/chrome-background-communication */ "./src/app/services/browser-communication/chrome-browser/background-communication/chrome-background-communication.ts");
-
-
-
-
-var ChromeUserInterfaceCommunication = /** @class */ (function (_super) {
-    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(ChromeUserInterfaceCommunication, _super);
-    function ChromeUserInterfaceCommunication() {
-        return _super.call(this) || this;
-    }
-    ChromeUserInterfaceCommunication.prototype.checkPermissions = function () {
-        if (!chrome.extension || !chrome.runtime) {
-            throw Error("Unable to connect to background-page script");
-        }
-    };
-    ChromeUserInterfaceCommunication.prototype.complete = function () {
-    };
-    ChromeUserInterfaceCommunication.prototype.error = function (e) {
-    };
-    ChromeUserInterfaceCommunication.prototype.next = function (notification) {
-    };
-    ChromeUserInterfaceCommunication.prototype.tryToStart = function () {
-        this.checkPermissions();
-        chrome.runtime.onMessage.addListener(this.listener.bind(this));
-        this.port = chrome.runtime.connect({ name: _user_interface_communication_user_interface_communication__WEBPACK_IMPORTED_MODULE_2__["USER_INTERFACE_COMMUNICATION_ID"] });
-        this.port.onMessage.addListener(this.listener.bind(this));
-    };
-    ChromeUserInterfaceCommunication.prototype.sendNotification = function (tensorflowHubModel) {
-        this.port.postMessage(tensorflowHubModel);
-    };
-    ChromeUserInterfaceCommunication.prototype.listener = function (message) {
-        this.subject.next(message);
-    };
-    ChromeUserInterfaceCommunication.prototype.getCnnModelSettingsFromBackground = function () {
-        this.port.postMessage({
-            message: _background_communication_chrome_background_communication__WEBPACK_IMPORTED_MODULE_3__["GET_CURRENT_SETTINGS_MESSAGE"],
-            type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].Notification
-        });
-    };
-    return ChromeUserInterfaceCommunication;
-}(_user_interface_communication_user_interface_communication__WEBPACK_IMPORTED_MODULE_2__["UserInterfaceCommunication"]));
-
-
-
-/***/ }),
-
-/***/ "./src/app/services/browser-communication/user-interface-communication/user-interface-communication.ts":
-/*!*************************************************************************************************************!*\
-  !*** ./src/app/services/browser-communication/user-interface-communication/user-interface-communication.ts ***!
-  \*************************************************************************************************************/
-/*! exports provided: USER_INTERFACE_COMMUNICATION_ID, UserInterfaceCommunication */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "USER_INTERFACE_COMMUNICATION_ID", function() { return USER_INTERFACE_COMMUNICATION_ID; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UserInterfaceCommunication", function() { return UserInterfaceCommunication; });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-/* harmony import */ var _browser_communication__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../browser-communication */ "./src/app/services/browser-communication/browser-communication.ts");
-
-
-var USER_INTERFACE_COMMUNICATION_ID = "UserInterfaceCommunication";
-var UserInterfaceCommunication = /** @class */ (function (_super) {
-    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(UserInterfaceCommunication, _super);
-    function UserInterfaceCommunication() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    return UserInterfaceCommunication;
-}(_browser_communication__WEBPACK_IMPORTED_MODULE_1__["BrowserCommunication"]));
-
-
-
-/***/ }),
-
 /***/ "./src/app/services/browser-user-interface/browser-user-interface.service.ts":
 /*!***********************************************************************************!*\
   !*** ./src/app/services/browser-user-interface/browser-user-interface.service.ts ***!
@@ -1224,7 +1116,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/__ivy_ngcc__/fesm2015/core.js");
 /* harmony import */ var _interfaces_notifications__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../interfaces/notifications */ "./src/app/interfaces/notifications.ts");
-/* harmony import */ var _browser_communication_chrome_browser_user_interface_communication_chrome_user_interface_communication__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../browser-communication/chrome-browser/user-interface-communication/chrome-user-interface-communication */ "./src/app/services/browser-communication/chrome-browser/user-interface-communication/chrome-user-interface-communication.ts");
+/* harmony import */ var _chrome_browser_chrome_user_interface_communication__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./chrome-browser/chrome-user-interface-communication */ "./src/app/services/browser-user-interface/chrome-browser/chrome-user-interface-communication.ts");
 /* harmony import */ var _utils_module__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../utils/module */ "./src/utils/module.ts");
 
 
@@ -1248,7 +1140,7 @@ var BrowserUserInterfaceService = /** @class */ (function (_super) {
     }
     BrowserUserInterfaceService.selectBrowserUserInterfaceCommunication = function () {
         if (chrome) {
-            return new _browser_communication_chrome_browser_user_interface_communication_chrome_user_interface_communication__WEBPACK_IMPORTED_MODULE_3__["ChromeUserInterfaceCommunication"]();
+            return new _chrome_browser_chrome_user_interface_communication__WEBPACK_IMPORTED_MODULE_3__["ChromeUserInterfaceCommunication"]();
         }
         else {
             throw new Error("Not implemented");
@@ -1310,6 +1202,65 @@ var BrowserUserInterfaceService = /** @class */ (function (_super) {
 
 /***/ }),
 
+/***/ "./src/app/services/browser-user-interface/chrome-browser/chrome-user-interface-communication.ts":
+/*!*******************************************************************************************************!*\
+  !*** ./src/app/services/browser-user-interface/chrome-browser/chrome-user-interface-communication.ts ***!
+  \*******************************************************************************************************/
+/*! exports provided: ChromeUserInterfaceCommunication */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChromeUserInterfaceCommunication", function() { return ChromeUserInterfaceCommunication; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../interfaces/notifications */ "./src/app/interfaces/notifications.ts");
+/* harmony import */ var _utils_user_interface_communication__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../utils/user-interface-communication */ "./src/utils/user-interface-communication.ts");
+/* harmony import */ var _background_page_background_communication_chrome_browser_chrome_background_communication__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../background-page/background-communication/chrome-browser/chrome-background-communication */ "./src/app/background-page/background-communication/chrome-browser/chrome-background-communication.ts");
+
+
+
+
+var ChromeUserInterfaceCommunication = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(ChromeUserInterfaceCommunication, _super);
+    function ChromeUserInterfaceCommunication() {
+        return _super.call(this) || this;
+    }
+    ChromeUserInterfaceCommunication.prototype.checkPermissions = function () {
+        if (!chrome.extension || !chrome.runtime) {
+            throw Error("Unable to connect to background-page script");
+        }
+    };
+    ChromeUserInterfaceCommunication.prototype.complete = function () {
+    };
+    ChromeUserInterfaceCommunication.prototype.error = function (e) {
+    };
+    ChromeUserInterfaceCommunication.prototype.next = function (notification) {
+    };
+    ChromeUserInterfaceCommunication.prototype.tryToStart = function () {
+        this.checkPermissions();
+        chrome.runtime.onMessage.addListener(this.listener.bind(this));
+        this.port = chrome.runtime.connect({ name: _utils_user_interface_communication__WEBPACK_IMPORTED_MODULE_2__["USER_INTERFACE_COMMUNICATION_ID"] });
+        this.port.onMessage.addListener(this.listener.bind(this));
+    };
+    ChromeUserInterfaceCommunication.prototype.sendNotification = function (tensorflowHubModel) {
+        this.port.postMessage(tensorflowHubModel);
+    };
+    ChromeUserInterfaceCommunication.prototype.listener = function (message) {
+        this.subject.next(message);
+    };
+    ChromeUserInterfaceCommunication.prototype.getCnnModelSettingsFromBackground = function () {
+        this.port.postMessage({
+            message: _background_page_background_communication_chrome_browser_chrome_background_communication__WEBPACK_IMPORTED_MODULE_3__["GET_CURRENT_SETTINGS_MESSAGE"],
+            type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].Notification
+        });
+    };
+    return ChromeUserInterfaceCommunication;
+}(_utils_user_interface_communication__WEBPACK_IMPORTED_MODULE_2__["UserInterfaceCommunication"]));
+
+
+
+/***/ }),
+
 /***/ "./src/environments/environment.ts":
 /*!*****************************************!*\
   !*** ./src/environments/environment.ts ***!
@@ -1364,6 +1315,32 @@ _angular_platform_browser__WEBPACK_IMPORTED_MODULE_3__["platformBrowser"]().boot
 
 /***/ }),
 
+/***/ "./src/utils/browser-communication.ts":
+/*!********************************************!*\
+  !*** ./src/utils/browser-communication.ts ***!
+  \********************************************/
+/*! exports provided: BrowserCommunication */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrowserCommunication", function() { return BrowserCommunication; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _module__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./module */ "./src/utils/module.ts");
+
+
+var BrowserCommunication = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(BrowserCommunication, _super);
+    function BrowserCommunication() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return BrowserCommunication;
+}(_module__WEBPACK_IMPORTED_MODULE_1__["default"]));
+
+
+
+/***/ }),
+
 /***/ "./src/utils/module.ts":
 /*!*****************************!*\
   !*** ./src/utils/module.ts ***!
@@ -1409,6 +1386,34 @@ var Module = /** @class */ (function () {
     return Module;
 }());
 /* harmony default export */ __webpack_exports__["default"] = (Module);
+
+
+/***/ }),
+
+/***/ "./src/utils/user-interface-communication.ts":
+/*!***************************************************!*\
+  !*** ./src/utils/user-interface-communication.ts ***!
+  \***************************************************/
+/*! exports provided: USER_INTERFACE_COMMUNICATION_ID, UserInterfaceCommunication */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "USER_INTERFACE_COMMUNICATION_ID", function() { return USER_INTERFACE_COMMUNICATION_ID; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UserInterfaceCommunication", function() { return UserInterfaceCommunication; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _browser_communication__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./browser-communication */ "./src/utils/browser-communication.ts");
+
+
+var USER_INTERFACE_COMMUNICATION_ID = "UserInterfaceCommunication";
+var UserInterfaceCommunication = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(UserInterfaceCommunication, _super);
+    function UserInterfaceCommunication() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return UserInterfaceCommunication;
+}(_browser_communication__WEBPACK_IMPORTED_MODULE_1__["BrowserCommunication"]));
+
 
 
 /***/ }),

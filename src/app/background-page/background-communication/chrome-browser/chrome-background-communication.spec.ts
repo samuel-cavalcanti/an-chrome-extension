@@ -1,6 +1,6 @@
 import {ChromeBackgroundCommunication} from "./chrome-background-communication"
-import {BrowserCommunication} from "../../browser-communication"
-import {Notification} from "../../../../interfaces/notifications"
+import {BrowserCommunication} from "../../../../utils/browser-communication"
+import {Notification} from "../../../interfaces/notifications"
 
 
 describe("ChromeBackgroundCommunication", () => {

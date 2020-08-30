@@ -14,8 +14,6 @@ import Module from "../../../utils/module"
 
 export class ConvolutionalNeuralNetwork extends Module<Notification, Notification> {
 
-    // private ONE_SECOND_IN_MS = 1000
-
     private classNames: ClassNames
     private model: tf.GraphModel
     private enables: Array<boolean>
@@ -56,7 +54,7 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
             imgSrc: message.img.src
         }
 
-        if (!this.model) {
+        if (this.dontNeedToPredict()) {
             this.subject.next(outputMessage)
             return
         }
@@ -67,6 +65,15 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
                 outputMessage.predict = pred
                 this.subject.next(outputMessage)
             })
+    }
+
+    private dontNeedToPredict(): boolean {
+        if (!this.model) {
+            return true
+        }
+
+        return this.enables.reduce(((previousValue, currentValue) => previousValue && currentValue))
+
     }
 
     private settingsNotification(message: CnnModelSettingNotification) {
@@ -111,29 +118,42 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
 
     private tinyFunction(img: HTMLImageElement): tf.Tensor | tf.Tensor[] | tf.NamedTensorMap {
 
-        const image = tf.browser.fromPixels(img).toFloat()
+        const shape = this.acceptableInputShape(this.model.inputs[0].shape)
+
+        const image = tf.browser.fromPixels(img).toFloat().resizeBilinear([shape[1], shape[2]])
 
 
         const normalized = image.div(tf.scalar(255.0))
-        const shape = this.model.inputs[0].shape
 
+        const batched = normalized.reshape([1, ...shape.slice(1, shape.length)])
 
-        try {
-
-            console.log("first shape", [1, shape[1], shape[2], shape[3]])
-            const batched = normalized.reshape([1, shape[1], shape[2], shape[3]])
-
-            return this.model.predict(batched)
-
-        } catch (e) {// Alguns modelos não definem o formato de entrada,por padrão o shape do tensorHub é [1, 224, 224, 3]
-            console.log("first shape not work", e)
-            const batched = normalized.reshape([1, 224, 224, 3])
-
-            return this.model.predict(batched)
-        }
+        return this.model.predict(batched)
 
 
     }
 
+    /*
+ por algum motivo alguns modelos do tensorHub possuem um input shape incoerente como: [-1,0,0,3],
+ mas sabe-se que a priori todos os modelos do tensorHub  tem o mesmo input shape que é [1, 224, 224, 3]
+  */
 
+    private acceptableInputShape(inputShape: Array<number>): Array<number> {
+        const defaultShapeFromTensorHub = [1, 224, 224, 3]
+
+        if (inputShape === undefined) {
+            return defaultShapeFromTensorHub
+        }
+
+        if (inputShape.length !== 4) {
+            return defaultShapeFromTensorHub
+        }
+
+        if (inputShape[1] <= 0 || inputShape[2] <= 0) {
+            return defaultShapeFromTensorHub
+        }
+
+        return inputShape
+
+    }
 }
+
