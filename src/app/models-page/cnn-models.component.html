@@ -1,0 +1,26 @@
+<div *ngIf="!models || models.length == 0 || !selectStatus; else showModels" class="align-middle">
+
+    <app-spinner></app-spinner>
+
+</div>
+
+
+<ng-template #showModels>
+    <h4 class="text-center">Models from TensorHub</h4>
+    <div class="container  text-center">
+
+        <div *ngFor="let model of modelPages[currentPage]; index as index" class="card w-100 " style="margin: 5px">
+            <app-card-cnn-model [cnn-model]="model" (selectModel)="selectedModel($event)"
+                                [status]="selectStatus[model.url]"></app-card-cnn-model>
+        </div>
+
+        <app-nav-bar-pagination [numberOfPages]="modelPages.length"
+                                (pageChange)="pageChange($event)"></app-nav-bar-pagination>
+
+    </div>
+
+</ng-template>
+
+
+
+

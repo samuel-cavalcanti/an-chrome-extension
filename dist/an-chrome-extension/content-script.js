@@ -21,6 +21,7 @@ var NotificationTypes;
     NotificationTypes[NotificationTypes["CnnModelSettingNotification"] = 6] = "CnnModelSettingNotification";
     NotificationTypes[NotificationTypes["TensorFlowHubModelNotification"] = 7] = "TensorFlowHubModelNotification";
     NotificationTypes[NotificationTypes["InputShapeNotification"] = 8] = "InputShapeNotification";
+    NotificationTypes[NotificationTypes["LocalModelInputNotification"] = 9] = "LocalModelInputNotification";
 })(NotificationTypes || (NotificationTypes = {}));
 
 
@@ -54,7 +55,7 @@ var ChromeBrowserContentCommunication = /** @class */ (function () {
         this.port = undefined;
     }
     ChromeBrowserContentCommunication.prototype.sender = function (message) {
-        if (this.port == undefined) {
+        if (this.port === undefined) {
             throw new Error("try to send message when channel is not opened");
         }
         message.type = _app_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].ContentNotification;
@@ -255,7 +256,7 @@ var DocumentObserver = /** @class */ (function () {
         this.subject.next(notification);
     };
     DocumentObserver.prototype.listener = function (notification) {
-        if (notification.type != _app_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].FilterNotification) {
+        if (notification.type !== _app_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].FilterNotification) {
             return;
         }
         if (notification.predict === "show") {

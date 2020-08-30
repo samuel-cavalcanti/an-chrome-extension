@@ -1,5 +1,5 @@
 import {Notification, NotificationTypes, TensorFlowHubModelNotification} from "../../../../interfaces/notifications"
-import {UserInterfaceCommunication} from "../../user-interface-communication/user-interface-communication"
+import {USER_INTERFACE_COMMUNICATION_ID, UserInterfaceCommunication} from "../../user-interface-communication/user-interface-communication"
 import {GET_CURRENT_SETTINGS_MESSAGE} from "../background-communication/chrome-background-communication"
 import Port = chrome.runtime.Port
 
@@ -13,7 +13,7 @@ export class ChromeUserInterfaceCommunication extends UserInterfaceCommunication
 
   checkPermissions(): void {
     if (!chrome.extension || !chrome.runtime) {
-      throw Error("Unable to connect to background script")
+      throw Error("Unable to connect to background-page script")
     }
   }
 
@@ -29,14 +29,14 @@ export class ChromeUserInterfaceCommunication extends UserInterfaceCommunication
   tryToStart(): void {
     this.checkPermissions()
     chrome.runtime.onMessage.addListener(this.listener.bind(this))
-    this.port = chrome.runtime.connect({name: this.id})
+    this.port = chrome.runtime.connect({name: USER_INTERFACE_COMMUNICATION_ID})
     this.port.onMessage.addListener(this.listener.bind(this))
-    this.getCnnModelSettingsFromBackground()
+
 
   }
 
 
-  setCnnModelSettings(tensorflowHubModel: TensorFlowHubModelNotification): void {
+  sendNotification(tensorflowHubModel: TensorFlowHubModelNotification): void {
 
     this.port.postMessage(tensorflowHubModel)
   }

@@ -1,0 +1,20 @@
+<div *ngIf="fileName; else inputModel">
+
+    <div class="alert alert-primary container text-center" role="alert">
+        Loading model {{fileName}} ...
+    </div>
+
+    <app-spinner></app-spinner>
+
+
+</div>
+
+
+<ng-template #inputModel>
+    <app-input-local-model (fileChange)="sendLocalModel($event)"></app-input-local-model>
+</ng-template>
+
+
+<div *ngIf="success" class="alert alert-success container text-center" role="alert">
+    successful loaded
+</div>

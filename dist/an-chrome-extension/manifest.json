@@ -16,6 +16,7 @@
     "page": "index.html#/background",
     "persistent": true
   },
+  "options_page": "index.html#/options",
   "web_accessible_resources": [
     "assets/modelJS/*"
   ],

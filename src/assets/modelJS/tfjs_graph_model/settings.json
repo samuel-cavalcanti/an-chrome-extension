@@ -1,0 +1,19 @@
+{
+    "type": 7,
+    "cnnModelHub": {
+        "title": "Teddy Filter",
+        "description": "An CNN model to filter pornographic content",
+        "publisher": "samuel-cavalcanti",
+        "architecture": "custom",
+        "dataset": "teddy-filter",
+        "url": "Local Data"
+    },
+    "classNames": {
+        "0": "Not Porn",
+        "1": "Porn"
+    },
+    "enables": [
+        true,
+        true
+    ]
+}
