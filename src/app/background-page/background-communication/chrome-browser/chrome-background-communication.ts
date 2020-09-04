@@ -1,8 +1,6 @@
 import {
     ClassNameUrlsNotification,
-    CnnModelSettingNotification,
     ContentNotification,
-    LocalModelInputNotification,
     Notification,
     NotificationTypes,
     TensorFlowHubModelNotification
@@ -198,7 +196,7 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
     }
 
 
-    private loadLocalModel(notification: LocalModelInputNotification, port: Port) {
+    private loadLocalModel(notification: Notification, port: Port) {
 
         this.subject.next(notification)
     }

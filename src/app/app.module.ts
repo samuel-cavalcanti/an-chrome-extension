@@ -8,7 +8,6 @@ import {NavBarComponent} from "./navbar/nav-bar.component"
 import {BrowserUserInterfaceService} from "./services/browser-user-interface/browser-user-interface.service"
 import {BackgroundModule} from "./background-page/background.module"
 
-
 // @ts-ignore
 @NgModule({
     declarations: [

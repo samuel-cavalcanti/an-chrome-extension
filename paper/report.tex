@@ -1,0 +1,170 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% University/School Laboratory Report
+% LaTeX Template
+% Version 3.1 (25/3/14)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Linux and Unix Users Group at Virginia Tech Wiki 
+% (https://vtluug.org/wiki/Example_LaTeX_chem_lab_report)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage[version=3]{mhchem} % Package for chemical equation typesetting
+\usepackage{siunitx} % Provides the \SI{}{} and \si{} command for typesetting SI units
+\usepackage{graphicx} % Required for the inclusion of images
+\usepackage[numbers]{natbib} % Required to change bibliography style to APA
+\usepackage{amsmath} % Required for some math elements 
+\usepackage[portuguese]{babel}
+\usepackage[hidelinks]{hyperref}
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+\renewcommand{\labelenumi}{\alph{enumi}.} % Make numbering in the enumerate environment by letter rather than number (e.g. section 6)
+
+%\usepackage{times} % Uncomment to use the Times New Roman font
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENT INFORMATION
+%----------------------------------------------------------------------------------------
+
+\title{Uma Extensão chrome que filtra imagens usando redes neurais convolucionais} % Title
+
+
+\author{\IEEEauthorblockN{1\textsuperscript{st} Samuel Cavalcanti}
+\IEEEauthorblockA{\textit{Escola de Ciências e Tecnologia} \\
+\textit{Universidade Federal do Rio Grande do Norte (UFRN)}\\
+Natal, Brasil \\
+scavalcanti111@gmail.com}
+
+\and
+
+\IEEEauthorblockN{2\textsuperscript{nd} Agostinho De Medeiros Brito Junior}
+\IEEEauthorblockA{\textit{Departamento de Engenharia de Computação e Automação (DCA)} \\
+\textit{Universidade Federal do Rio Grande do Norte (UFRN)}\\
+Natal, Brasil \\
+agostinhobritojr@gmail.com}
+}
+
+%\author{ Samuel Cavalcanti } % Author name
+
+\date{\today} % Date for the report
+
+\begin{document}
+
+\maketitle % Insert the title, author and date
+
+
+% If you wish to include an abstract, uncomment the lines below
+\begin{abstract}
+Resumo da Pesquisa
+\end{abstract}
+
+%----------------------------------------------------------------------------------------
+%	SECTION 1
+%----------------------------------------------------------------------------------------
+
+\section{Introdução} \label{introduction}
+Extensões para navegadores chrome são programas orientados a eventos usados para modificar ou melhorar a experiencia de navegação do usuário. Eventos são gatilhos
+do navegador que são disparados quando o usuário interage com o navegador, como o  abrir ou fechar de uma página, remover ou adicionar uma página aos favoritos. Extensões são capazes monitorar esses eventos e reagir a eles citar [developer.chrome.com].
+
+Esse trabalho é a explicação do funcionamento de uma extensão para o navegadores baseados no chrome que visa filtrar imagens caso ela pertença a uma classe que o usuário não queria ver, para isso é utilizado uma rede neural convolucional para classificar as imagens. Uma rede neural convolucional é uma classe de rede neural artificial que vem sendo aplicada com sucesso no processamento e análise de imagens digitais. A rede neural convolucional tira proveito das cores. Utilizar imagens RGB em vez de escala de cinza no treinamento, pode ocasionar em uma melhora significativa no resultado \cite{rosa2018metodo} \cite{wichmann2002contributions}.
+
+O desenvolvimento dessa aplicação web é aberto e pode ser encontrado no github: \textit{\url{https://github.com/samuel-cavalcanti/an-chrome-extension}}.
+O restante do artigo está dividido nas sessões: a sessão \ref{howChromeExtensionWorks} explica o funcionamento de uma extensão chrome, a sessão \ref{cnn} explica como um modelo de rede neural convolucional está sendo utilizado pelo sistema, a sessão \ref{howMyExtensionWorks} explica o funcionamento da extensão desenvolvida, a sessão \ref{testsAndResults} mostra os testes e resultados realizados utilizando 2 modelos de redes neurais convolucionais e a ultima sessão concluí o artigo.
+
+    
+\section{O funcionamento de uma Extensão chrome} \label{howChromeExtensionWorks} 
+Extensões para navegadores baseados no projeto chromium são construídos usando os componentes:  background scripts, content scripts, options page, 
+elementos de interface gráfica e um arquivo chamado manifest.json onde fica salvo os metadados da extensão. Para construir uma extensão não é necessário utilizar todos os componentes, mas nas extensão desenvolvida foi utilizado todos os componentes citar [developer.chrome.com]
+
+\subsection{manifest.json}\label{manifest} 
+Toda a extensão chrome possui esse arquivo, é nele que é informado ao navegador todas as permissões que a extensão necessita, nome da extensão, uma breve descrição da extensão, quais componentes serão utilizados nessa extensão e seus respectivos arquivos e outros metadados. citar [developer.chrome.com]
+
+\subsection{Elementos de interface gráfica}\label{uiElements} 
+Toda Extensão pode possuir uma interação com usuário, essa interação acontece ao usuário clicar no ícone da extensão, dependendo da implementação o ato de clicar
+é toda interação com o usuário que aplicação pode ter ou que é mais comum é abrir uma página HTML com todas as informações sua aplicação. É possível customizar qual página HTML será exibida dependendo da página atual do usuário ou até mesmo impedir do usuário de acessar as funcionalidades da extensão. citar [developer.chrome.com]
+
+\subsection{Options page}\label{optionsPage} 
+Caso necessite que o usuário modifique ou customize o comportamento da extensão o desenvolvedor pode implementar uma página HTML listando todas as
+funcionalidades. Para acessa as opções o usuário precisa ir em \textbf{chrome://extensions}, localizar a extensão desejada, clicar em \textbf{Details} e clicar em
+\textbf{Extension options}. citar [developer.chrome.com]
+
+\subsection{Content scripts}\label{contentScripts} 
+Content scripts são arquivos que são executados em páginas web durante a navegação, esse arquivos são capazes de ler, modificar e passar informações da página atual para extensão, esses arquivos são executados isoladamente não conflitando entre si e nem com outros scripts presentes na página web apesar deles terem acesso ao mesmo Document Object Model (DOM). citar [developer.chrome.com]
+
+\subsection{background scripts}\label{backgroundScript} 
+Como dito uma Extensão chrome é um programa orientado a eventos e o monitor desses eventos é o backgroud script, ele é inicializado sempre que a extensão for instalada, atualizada  ou quando acontece um evento a qual ele esteja monitorando como: receber uma mensagem de outro componente ou uma determinada página começará a ser carregada. O background script só fica ativo quando tiver executando alguma ação, assim que todas as ações forem finalizadas o script também
+é finalizado. citar [developer.chrome.com]
+
+
+\section{Rede neural convolucional}\label{cnn} 
+Uma Rede Neural Convolucional (ou Convolutional Neural Network - CNN) é uma variação das redes de Perceptrons de Múltiplas Camadas, tendo sido inspirada no processo biológico de processamentos de dados visuais. De maneira semelhante aos processos tradicionais de visão computacional, uma CNN é capaz de aplicar filtros em dados visuais, mantendo a relação de vizinhança entre os pixels da imagem ao longo do processamento da rede \cite{vargas2016estudo}.
+\section{Metodologia}\label{methodology} 
+A intenção desse trabalho era de desenvolver uma extensão chrome possui as seguintes funcionalidades:
+\begin{itemize}
+	\item lista todos os modelos de CNNs do \textit{\url{https://tfhub.dev/}} dado que o modelo serve para classificação de imagens e possui compatibilidade com tensorflowJS. O usuário pode selecionar e usar um desses modelos
+	\item Exibe as classes que o modelo é capaz de classificar e permite o usuário selecionar qual classes ele quer ver  ou não.
+	\item Filtra as imagens dado que o usuário selecionou que não quer ver determinada classe de imagens e o modelo classificou como sendo dessa classe.
+	\item carregar um modelo customizado localmente.
+\end{itemize}
+Apesar da aplicação cumprir com todas elas, por ser uma extensão foi escolhido o não armazenamento de modelos customizados uma vez que demanda o armazenamento local de um grande volume de dados e não foi encontrado suporte para isso. 
+\section{Funcionamento da extensão chrome proposta }\label{howMyExtensionWorks} 
+O objetivo da aplicação é monitorar todas as imagens recebidas pelo navegador e não exibir as imagens que provavelmente o usuário não deseja visualizar, então o primeiro passo para resolver o problema foi dividi-lo em problemas menores onde cada interface pudesse se especializar em e tentar prover uma boa solução. Então 
+foi proposto as seguintes interfaces: gerenciador de classificadores, classificador, interface gráfica, observador de página, navegador-comunicador. Para o desenvolvimento dessa aplicação foi utilizado dois frameworks, tensorflow.js e Angular framework na versão 10.0. Angular é um framework JavasScript de código aberto com o objetivo de criar modernas aplicações web, mobile e desktop \cite{kasagoni2017building}, tensorflow.js é uma biblioteca para construção e execução de algoritmos de aprendizado de máquina em JavaScript \cite{smilkov2019tensorflow}. Para facilitar o entendimento  foi criado sub-sessões cada uma explicando uma parte da solução proposta. É aconselhado ver os dois vídeos demostração antes de continuar a leitura, o segundo vídeo possuí conteúdo pornográfico explicito, nele é demonstrado como utilizar uma CNN customizada para filtragem de imagens, a CNN utilizada foi treinada para filtrar conteúdo pornográfico. Primeiro vídeo: \textit{\url{https://vimeo.com/454629223}}, segundo vídeo: \textit{\url{https://vimeo.com/454627349}}
+
+\subsection{navegador-comunicador}
+Com o objetivo de abstrair o navegador surgiu essa interface. O navegador-comunicador é responsável para realizar qualquer chamada da API do navegador chrome, é através dele que diferentes componentes da extensão se comunicam como a interface gráfica com o background script ou backgroud script com o content script, options page com background script, além também de ser responsável por armazenar informações no navegador e recuperar arquivos que foram instalados juntos com a extensão. Uma das principais motivações da criação dessa interface é isolar a funcionalidades presentes no navegador chrome, para caso houvesse um interesse de migrar ou adicionar suporte a outro navegador o código atual não precisaria ser modificado ou pouco modificado.
+
+\subsection{Observador de página}
+Essa interface é responsável por monitorar as páginas que o usuário está acessando e notificar para outros componentes todas as urls de imagens encontradas e espera ser notificado se as imagens notificadas podem ou não ser visualizadas, esse componente se localiza exclusivamente no content script da nossa aplicação, uma vez que é no content script que se tem acesso as páginas acessadas pelo usuário.
+
+\subsection{Interface gráfica}
+Para o desenvolvimento dessa aplicação foi construído uma página HTML que é exibida assim que o usuário clica no ícone da extensão. Essa página se comporta como uma single page application. Uma single page web application é exatamente o que o nome diz, uma aplicação web feita em JavaScript que necessita o carregamento de uma única página \cite{flanagan1998java}, no entanto essa página pode ter diferentes sub-páginas. Através dessa página HTML o usuário pode selecionar um modelo do \textit{\url{https://tfhub.dev/}} e também marcar quais classes de imagens ele deseja ou não visualizar, por padrão ao escolher um modelo você pode visualizar todas as classes de imagens. Também é nessa interface que o usuário pode inserir um modelo customizado porém, como essa opção é para usuários avançados foi decidido coloca-lo no options page. Modelos customizados não são salvos, tendo que inseri-lo novamente a cada inicialização do navegador.
+
+
+\subsection{Classificador}
+Essa interface é exatamente o que o nome dele diz, ele recebe uma imagem e classifica se a imagem pode ou não ser exibida. Apesar de uma CNN poder classificar uma imagem em enumeras classes diferentes a decisão final é se essa imagem pertence ao conjunto de imagens que podem ser exibidas ou não. Apos realizar a classificação, ela notifica aos outras interface a sua decisão.  
+
+\subsection{gerenciador de classificadores}
+Como surgiu a necessidade de introduzir diferentes formas de selecionar uma CNN, então foi feita essa interface que é responsável por carregar CNN e suas configurações adicionais como todas as classes que ela é capaz de classificar. Atualmente só é possível carregar redes de origem do tfhub e localmente, no entanto se surgir a necessidade de adicionar outra origem, é nessa interface que se deve adicionar essa funcionalidade.
+
+
+\section{Testes e Resultados}\label{testsAndResults} 
+ideias para avaliar a extensão:
+\begin{itemize}
+	\item mensurar o tempo da extensão de exibir as imagens 
+	\item mensurar o tempo de resposta das redes, isso varia com cada rede
+	\item dizer as limitações da extensão, gifs, vídeos, lazing loading e outras variáveis que existem mas não tenho conhecimento devido poucos testes
+	\item dizer que foi pouco testada
+	\item devo automatizar os testes ? muito trabalho pra pouco resultado ?  
+\end{itemize}
+
+\section{Conclusão}\label{conclusion} 
+
+
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
+\bibliographystyle{IEEEtran}
+
+\bibliography{sample}
+
+%----------------------------------------------------------------------------------------
+
+
+\end{document}

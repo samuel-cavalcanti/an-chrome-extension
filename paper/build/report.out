@@ -1,0 +1,17 @@
+\BOOKMARK [1][-]{section.1}{Introdu\347\343o}{}% 1
+\BOOKMARK [1][-]{section.2}{O funcionamento de uma Extens\343o chrome}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{manifest.json}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Elementos de interface gr\341fica}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.3}{Options page}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.4}{Content scripts}{section.2}% 6
+\BOOKMARK [2][-]{subsection.2.5}{background scripts}{section.2}% 7
+\BOOKMARK [1][-]{section.3}{Rede neural convolucional}{}% 8
+\BOOKMARK [1][-]{section.4}{Metodologia}{}% 9
+\BOOKMARK [1][-]{section.5}{Funcionamento da extens\343o chrome proposta }{}% 10
+\BOOKMARK [2][-]{subsection.5.1}{navegador-comunicador}{section.5}% 11
+\BOOKMARK [2][-]{subsection.5.2}{Observador de p\341gina}{section.5}% 12
+\BOOKMARK [2][-]{subsection.5.3}{Interface gr\341fica}{section.5}% 13
+\BOOKMARK [2][-]{subsection.5.4}{Classificador}{section.5}% 14
+\BOOKMARK [2][-]{subsection.5.5}{gerenciador de classificadores}{section.5}% 15
+\BOOKMARK [1][-]{section.6}{Testes e Resultados}{}% 16
+\BOOKMARK [1][-]{section.7}{Conclus\343o}{}% 17

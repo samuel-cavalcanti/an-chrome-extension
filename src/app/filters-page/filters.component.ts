@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, OnInit} from "@angular/core"
 import {BrowserUserInterfaceService} from "../services/browser-user-interface/browser-user-interface.service"
 import {Observer} from "rxjs"
 import {TensorFlowHubModelNotification} from "../interfaces/notifications"
-import ChunkArray from "../../utils/ChunkArray"
+import ChunkArray from "../../utils/chunk-array"
 
 @Component({
     selector: "app-filters",

@@ -1,7 +1,7 @@
 import {Component} from "@angular/core"
 import {ConvolutionalNeuralNetwork} from "./convolutional-neural-network/convolutional-neural-network"
 import {LoadImage} from "./load-image/load-image"
-import {ConvolutionalNeuralNetworkSettings} from "./convolutional-neural-network/convolutional-neural-network-settings/convolutional-neural-network-settings"
+import {ClassifierManager} from "./classifier-manager/classifier-manager"
 import {ChromeBackgroundCommunication} from "./background-communication/chrome-browser/chrome-background-communication"
 
 @Component({
@@ -13,7 +13,7 @@ import {ChromeBackgroundCommunication} from "./background-communication/chrome-b
 export class BackgroundComponent {
 
   constructor() {
-    this.cnnSettings = new ConvolutionalNeuralNetworkSettings()
+    this.cnnSettings = new ClassifierManager()
     this.cnn = new ConvolutionalNeuralNetwork()
     this.loadImage = new LoadImage()
     this.browser = BackgroundComponent.selectBrowserBackgroundCommunication()
@@ -28,7 +28,7 @@ export class BackgroundComponent {
   private cnn: ConvolutionalNeuralNetwork
   private loadImage: LoadImage
   private browser: ChromeBackgroundCommunication
-  private cnnSettings: ConvolutionalNeuralNetworkSettings
+  private cnnSettings: ClassifierManager
 
 
   static selectBrowserBackgroundCommunication(): ChromeBackgroundCommunication {

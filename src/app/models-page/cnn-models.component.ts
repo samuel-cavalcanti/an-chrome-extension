@@ -5,7 +5,7 @@ import {Observer} from "rxjs"
 import {TensorflowHubService} from "../services/tensorflow-hub/tensorflow-hub.service"
 import {BrowserUserInterfaceService} from "../services/browser-user-interface/browser-user-interface.service"
 import {TensorFlowHubModelNotification} from "../interfaces/notifications"
-import ChunkArray from "../../utils/ChunkArray"
+import ChunkArray from "../../utils/chunk-array"
 
 @Component({
   selector: "app-models-page",

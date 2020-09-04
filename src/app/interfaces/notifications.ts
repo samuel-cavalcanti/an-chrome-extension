@@ -63,8 +63,4 @@ export interface ClassNameUrlsNotification extends Notification {
     urls: { [key: string]: string }
 }
 
-export interface LocalModelInputNotification extends Notification {
-    type: NotificationTypes.LocalModelInputNotification
-    url: string
-}
 

@@ -2362,7 +2362,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CnnModelsComponent", function() { return CnnModelsComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/__ivy_ngcc__/fesm2015/core.js");
-/* harmony import */ var _utils_ChunkArray__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../utils/ChunkArray */ "./src/utils/ChunkArray.ts");
+/* harmony import */ var _utils_chunk_array__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../utils/chunk-array */ "./src/utils/chunk-array.ts");
 /* harmony import */ var _services_tensorflow_hub_tensorflow_hub_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../services/tensorflow-hub/tensorflow-hub.service */ "./src/app/services/tensorflow-hub/tensorflow-hub.service.ts");
 /* harmony import */ var _services_browser_user_interface_browser_user_interface_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../services/browser-user-interface/browser-user-interface.service */ "./src/app/services/browser-user-interface/browser-user-interface.service.ts");
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/common */ "./node_modules/@angular/common/__ivy_ngcc__/fesm2015/common.js");
@@ -2482,7 +2482,7 @@ var CnnModelsComponent = /** @class */ (function () {
             .reduce(function (next, current) { return (Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])(Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])({}, next), current)); });
     };
     CnnModelsComponent.prototype.modelsToChunks = function (models) {
-        var chunkArray = new _utils_ChunkArray__WEBPACK_IMPORTED_MODULE_2__["default"](models);
+        var chunkArray = new _utils_chunk_array__WEBPACK_IMPORTED_MODULE_2__["default"](models);
         this.modelPages = chunkArray.createChunks(2);
     };
     CnnModelsComponent.ɵfac = function CnnModelsComponent_Factory(t) { return new (t || CnnModelsComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_services_tensorflow_hub_tensorflow_hub_service__WEBPACK_IMPORTED_MODULE_3__["TensorflowHubService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_services_browser_user_interface_browser_user_interface_service__WEBPACK_IMPORTED_MODULE_4__["BrowserUserInterfaceService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["ChangeDetectorRef"])); };

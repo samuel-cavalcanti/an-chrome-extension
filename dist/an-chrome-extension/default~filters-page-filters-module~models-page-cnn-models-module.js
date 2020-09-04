@@ -271,10 +271,10 @@ var SpinnerModule = /** @class */ (function () {
 
 /***/ }),
 
-/***/ "./src/utils/ChunkArray.ts":
-/*!*********************************!*\
-  !*** ./src/utils/ChunkArray.ts ***!
-  \*********************************/
+/***/ "./src/utils/chunk-array.ts":
+/*!**********************************!*\
+  !*** ./src/utils/chunk-array.ts ***!
+  \**********************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 

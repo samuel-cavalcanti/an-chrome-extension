@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core"
-import {LocalModelInputNotification, Notification, NotificationTypes, TensorFlowHubModelNotification} from "../../interfaces/notifications"
+import {Notification, NotificationTypes, TensorFlowHubModelNotification} from "../../interfaces/notifications"
 import {TensorflowHubModel} from "../../interfaces/tensorflow-hub-model"
 import {UserInterfaceCommunication} from "../../../utils/user-interface-communication"
 import {ChromeUserInterfaceCommunication} from "./chrome-browser/chrome-user-interface-communication"
@@ -47,7 +47,7 @@ export class BrowserUserInterfaceService extends Module<Notification, Notificati
     }
 
     selectLocalModel(url: string) {
-        const notification: LocalModelInputNotification = {type: NotificationTypes.LocalModelInputNotification, url}
+        const notification: Notification = {type: NotificationTypes.LocalModelInputNotification, message: url}
         this.browser.sendNotification(notification)
     }
 
