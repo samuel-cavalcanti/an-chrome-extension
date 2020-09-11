@@ -1,10 +1,4 @@
-import {
-    ClassNameUrlsNotification,
-    ContentNotification,
-    Notification,
-    NotificationTypes,
-    TensorFlowHubModelNotification
-} from "../../../interfaces/notifications"
+import {ClassNameUrlsNotification, Notification, NotificationTypes, TensorFlowHubModelNotification} from "../../../interfaces/notifications"
 import {BrowserCommunication} from "../../../../utils/browser-communication"
 import {USER_INTERFACE_COMMUNICATION_ID} from "../../../../utils/user-interface-communication"
 import Port = chrome.runtime.Port
@@ -21,19 +15,11 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
 
     }
 
-
     private static erros = {
         enableContentScript: new Error("Must enable Chrome Content Scripts"),
         enableStorage: new Error("Must add Storage permission"),
         uuidUndefined: new Error("UUID undefined"),
         urlsUndefined: new Error("URLS undefined")
-    }
-
-    private callbacks = {
-        [NotificationTypes.Notification]: this.simpleNotifications.bind(this),
-        [NotificationTypes.ContentNotification]: this.notifyImages.bind(this),
-        [NotificationTypes.TensorFlowHubModelNotification]: this.notifyCnnSettings.bind(this),
-        [NotificationTypes.LocalModelInputNotification]: this.loadLocalModel.bind(this)
     }
 
     private storeKey = "settings"
@@ -47,7 +33,7 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
     }
 
 
-    checkPermissions() {
+    protected checkPermissions() {
         if (chrome.runtime === undefined || chrome.runtime.getURL === undefined) {
             throw ChromeBackgroundCommunication.erros.enableContentScript
         }
@@ -73,13 +59,13 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
     }
 
 
-    complete() {
+    protected complete() {
     }
 
-    error(e) {
+    protected error(e) {
     }
 
-    next(notification: Notification) {
+    protected next(notification: Notification) {
 
         if (this.ports[notification.id]) {
             this.ports[notification.id].postMessage(notification)
@@ -104,44 +90,20 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
     }
 
     private listener(notification: Notification, port: Port) {
+        console.log("chrome background listener", notification, NotificationTypes.ImageDataNotification)
 
-        if (this.callbacks[notification.type]) {
-            this.callbacks[notification.type](notification, port)
+        notification.id = port.name
+        this.subject.next(notification)
+
+        if (notification.type === NotificationTypes.Notification) {
+            this.simpleNotifications(notification, port)
         }
+
 
     }
 
     private disconnect(port: Port) {
         delete this.ports[port.name]
-    }
-
-
-    private notifyImages(notification: ContentNotification, port: Port) {
-
-        const urlImages = notification.urlImages
-
-        if (port === undefined) {
-            throw ChromeBackgroundCommunication.erros.uuidUndefined
-        }
-
-        if (urlImages === undefined) {
-            throw ChromeBackgroundCommunication.erros.urlsUndefined
-        }
-
-        for (const url of urlImages) {
-            if (url) {
-                this.subject.next({message: url, id: port.name, type: NotificationTypes.ImageSourceNotification} as Notification)
-            }
-        }
-
-    }
-
-    private notifyCnnSettings(notification: TensorFlowHubModelNotification, port: Port) {
-
-        notification.id = port.name
-
-
-        this.subject.next(notification)
     }
 
 
@@ -173,7 +135,11 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
     }
 
     private storeSettings(settings: TensorFlowHubModelNotification) {
+        // até o momento a aplicação não suporta o armazenamento de modelos carregados localmente
         chrome.storage.local.set({[this.storeKey]: settings})
+        // if (settings.cnnModelHub.url !== "Local Data") {
+        //
+        // }
     }
 
 
@@ -194,12 +160,5 @@ export class ChromeBackgroundCommunication extends BrowserCommunication <Notific
             urls: this.localClassesNames
         } as ClassNameUrlsNotification)
     }
-
-
-    private loadLocalModel(notification: Notification, port: Port) {
-
-        this.subject.next(notification)
-    }
-
 
 }

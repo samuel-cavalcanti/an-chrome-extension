@@ -25,15 +25,15 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
 
     }
 
-    error(e): void {
+    protected error(e): void {
 
     }
 
-    complete(): void {
+    protected complete(): void {
 
     }
 
-    next(message: Notification) {
+    protected next(message: Notification) {
 
         if (message.type === NotificationTypes.ImageNotification) {
             return this.imageNotification(message as ImageNotification)
@@ -45,26 +45,16 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
 
     }
 
-    private imageNotification(message: ImageNotification) {
-
-        const outputMessage: FilterNotification = {
-            type: NotificationTypes.FilterNotification,
-            id: message.id,
-            predict: this.predict[1],
-            imgSrc: message.img.src
-        }
+    private imageNotification(notification: ImageNotification) {
 
         if (this.dontNeedToPredict()) {
-            this.subject.next(outputMessage)
-            return
+            this.notifyToShow(notification)
+        } else {
+            this.startToPredict(notification.img)
+                .then((pred: string) => this.notifyPredict(pred, notification))
+                .catch(() => this.notifyToShow(notification))
         }
 
-        this.startToPredict(message.img)
-            .then((pred: string) => {
-                console.log("CNN pred:", pred)
-                outputMessage.predict = pred
-                this.subject.next(outputMessage)
-            })
     }
 
     private dontNeedToPredict(): boolean {
@@ -75,6 +65,30 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
         return this.enables.reduce(((previousValue, currentValue) => previousValue && currentValue))
 
     }
+
+    private notifyToShow(notification: ImageNotification) {
+        const outputMessage: FilterNotification = {
+            type: NotificationTypes.FilterNotification,
+            id: notification.id,
+            predict: this.predict[1],
+            imgSrc: notification.img.src
+        }
+
+        this.subject.next(outputMessage)
+
+    }
+
+    private notifyPredict(pred: string, notification: ImageNotification) {
+        console.log("CNN pred:", pred)
+        const filterNotification: FilterNotification = {
+            type: NotificationTypes.FilterNotification,
+            id: notification.id,
+            predict: pred,
+            imgSrc: notification.img.src
+        }
+        this.subject.next(filterNotification)
+    }
+
 
     private settingsNotification(message: CnnModelSettingNotification) {
         if (message.cnnModel) {
@@ -119,10 +133,7 @@ export class ConvolutionalNeuralNetwork extends Module<Notification, Notificatio
     private tinyFunction(img: HTMLImageElement): tf.Tensor | tf.Tensor[] | tf.NamedTensorMap {
 
         const shape = this.acceptableInputShape(this.model.inputs[0].shape)
-
         const image = tf.browser.fromPixels(img).toFloat().resizeBilinear([shape[1], shape[2]])
-
-
         const normalized = image.div(tf.scalar(255.0))
 
         const batched = normalized.reshape([1, ...shape.slice(1, shape.length)])

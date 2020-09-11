@@ -20,7 +20,7 @@ export class BrowserUserInterfaceService extends Module<Notification, Notificati
         super()
         console.log("create User Interface Communication")
         this.browser = BrowserUserInterfaceService.selectBrowserUserInterfaceCommunication()
-        this.addObserver(this.browser)
+        this.observe(this.browser)
         this.browser.tryToStart()
     }
 

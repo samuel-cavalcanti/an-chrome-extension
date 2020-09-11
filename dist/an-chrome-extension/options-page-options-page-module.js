@@ -234,7 +234,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function OptionsComponent_div_0_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div", 3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div", 4);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](3, "app-spinner");
@@ -245,21 +245,31 @@ function OptionsComponent_div_0_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" Loading model ", ctx_r0.fileName, " ... ");
 } }
 function OptionsComponent_ng_template_1_Template(rf, ctx) { if (rf & 1) {
-    var _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "app-input-local-model", 4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("fileChange", function OptionsComponent_ng_template_1_Template_app_input_local_model_fileChange_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r5); var ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](); return ctx_r4.sendLocalModel($event); });
+    var _r6 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "app-input-local-model", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("fileChange", function OptionsComponent_ng_template_1_Template_app_input_local_model_fileChange_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r6); var ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](); return ctx_r5.sendLocalModel($event); });
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } }
 function OptionsComponent_div_3_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 6);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1, " successful loaded\n");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+} }
+function OptionsComponent_div_4_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1, " Unable do load model, please report this on github\n");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } }
 var OptionsComponent = /** @class */ (function () {
     function OptionsComponent(userInterfaceService, changeDetectorRef) {
         this.userInterfaceService = userInterfaceService;
         this.changeDetectorRef = changeDetectorRef;
-        this.success = false;
+        this.loadStatusType = {
+            notLoad: 0,
+            loadSuccess: 1,
+            loadError: 2
+        };
+        this.loadStatus = this.loadStatusType.notLoad;
         this.timeOutInMilliseconds = 3000;
     }
     OptionsComponent.prototype.ngOnInit = function () {
@@ -282,24 +292,32 @@ var OptionsComponent = /** @class */ (function () {
             return;
         }
         this.fileName = undefined;
-        this.success = true;
+        if (notification.cnnModelHub.url) {
+            this.loadStatus = this.loadStatusType.loadSuccess;
+        }
+        else {
+            this.loadStatus = this.loadStatusType.loadError;
+        }
         setTimeout(this.removeSuccessMessage.bind(this), this.timeOutInMilliseconds);
         this.changeDetectorRef.detectChanges();
     };
     OptionsComponent.prototype.removeSuccessMessage = function () {
-        this.success = false;
+        this.loadStatus = this.loadStatusType.notLoad;
         this.changeDetectorRef.detectChanges();
     };
     OptionsComponent.ɵfac = function OptionsComponent_Factory(t) { return new (t || OptionsComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_services_browser_user_interface_browser_user_interface_service__WEBPACK_IMPORTED_MODULE_1__["BrowserUserInterfaceService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ChangeDetectorRef"])); };
-    OptionsComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: OptionsComponent, selectors: [["app-options"]], decls: 4, vars: 3, consts: [[4, "ngIf", "ngIfElse"], ["inputModel", ""], ["class", "alert alert-success container text-center", "role", "alert", 4, "ngIf"], ["role", "alert", 1, "alert", "alert-primary", "container", "text-center"], [3, "fileChange"], ["role", "alert", 1, "alert", "alert-success", "container", "text-center"]], template: function OptionsComponent_Template(rf, ctx) { if (rf & 1) {
+    OptionsComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: OptionsComponent, selectors: [["app-options"]], decls: 5, vars: 4, consts: [[4, "ngIf", "ngIfElse"], ["inputModel", ""], ["class", "alert alert-success container text-center", "role", "alert", 4, "ngIf"], ["class", "alert alert-danger container text-center", "role", "alert", 4, "ngIf"], ["role", "alert", 1, "alert", "alert-primary", "container", "text-center"], [3, "fileChange"], ["role", "alert", 1, "alert", "alert-success", "container", "text-center"], ["role", "alert", 1, "alert", "alert-danger", "container", "text-center"]], template: function OptionsComponent_Template(rf, ctx) { if (rf & 1) {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](0, OptionsComponent_div_0_Template, 4, 1, "div", 0);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, OptionsComponent_ng_template_1_Template, 1, 0, "ng-template", null, 1, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplateRefExtractor"]);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](3, OptionsComponent_div_3_Template, 2, 0, "div", 2);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](4, OptionsComponent_div_4_Template, 2, 0, "div", 3);
         } if (rf & 2) {
             var _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵreference"](2);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.fileName)("ngIfElse", _r1);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.success);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.loadStatus == 1);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.loadStatus == 2);
         } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_2__["NgIf"], _spinner_spinner_component__WEBPACK_IMPORTED_MODULE_3__["SpinnerComponent"], _input_local_model_input_local_model_component__WEBPACK_IMPORTED_MODULE_4__["InputLocalModelComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL29wdGlvbnMtcGFnZS9vcHRpb25zL29wdGlvbnMuY29tcG9uZW50LmNzcyJ9 */"] });
     return OptionsComponent;
 }());

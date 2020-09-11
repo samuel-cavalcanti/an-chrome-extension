@@ -11,9 +11,16 @@ export class OptionsComponent implements OnInit {
 
     fileName: string
 
-    success = false
+    private readonly loadStatusType = {
+        notLoad: 0,
+        loadSuccess: 1,
+        loadError: 2
+    }
+
+    loadStatus = this.loadStatusType.notLoad
 
     private timeOutInMilliseconds = 3000
+
 
     constructor(private userInterfaceService: BrowserUserInterfaceService,
                 private changeDetectorRef: ChangeDetectorRef) {
@@ -48,7 +55,11 @@ export class OptionsComponent implements OnInit {
             return
         }
         this.fileName = undefined
-        this.success = true
+        if (notification.cnnModelHub.url) {
+            this.loadStatus = this.loadStatusType.loadSuccess
+        } else {
+            this.loadStatus = this.loadStatusType.loadError
+        }
         setTimeout(this.removeSuccessMessage.bind(this), this.timeOutInMilliseconds)
 
         this.changeDetectorRef.detectChanges()
@@ -57,7 +68,7 @@ export class OptionsComponent implements OnInit {
     }
 
     private removeSuccessMessage() {
-        this.success = false
+        this.loadStatus = this.loadStatusType.notLoad
 
         this.changeDetectorRef.detectChanges()
     }

@@ -197,18 +197,12 @@ var GET_LOCAL_CLASS_NAME_URLS = " get local class name urls";
 var ChromeBackgroundCommunication = /** @class */ (function (_super) {
     Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(ChromeBackgroundCommunication, _super);
     function ChromeBackgroundCommunication() {
-        var _a, _b;
+        var _a;
         var _this = _super.call(this) || this;
-        _this.callbacks = (_a = {},
-            _a[_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].Notification] = _this.simpleNotifications.bind(_this),
-            _a[_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].ContentNotification] = _this.notifyImages.bind(_this),
-            _a[_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].TensorFlowHubModelNotification] = _this.notifyCnnSettings.bind(_this),
-            _a[_interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].LocalModelInputNotification] = _this.loadLocalModel.bind(_this),
-            _a);
         _this.storeKey = "settings";
-        _this.localClassesNames = (_b = {},
-            _b["imagenet-ilsvrc-2012-cls"] = chrome.runtime.getURL("assets/modelJS/Image-net-class.json"),
-            _b);
+        _this.localClassesNames = (_a = {},
+            _a["imagenet-ilsvrc-2012-cls"] = chrome.runtime.getURL("assets/modelJS/Image-net-class.json"),
+            _a);
         _this.ports = {};
         return _this;
     }
@@ -252,41 +246,15 @@ var ChromeBackgroundCommunication = /** @class */ (function (_super) {
         port.onDisconnect.addListener(this.disconnect.bind(this));
     };
     ChromeBackgroundCommunication.prototype.listener = function (notification, port) {
-        if (this.callbacks[notification.type]) {
-            this.callbacks[notification.type](notification, port);
+        console.log("chrome background listener", notification, _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].ImageDataNotification);
+        notification.id = port.name;
+        this.subject.next(notification);
+        if (notification.type === _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].Notification) {
+            this.simpleNotifications(notification, port);
         }
     };
     ChromeBackgroundCommunication.prototype.disconnect = function (port) {
         delete this.ports[port.name];
-    };
-    ChromeBackgroundCommunication.prototype.notifyImages = function (notification, port) {
-        var e_1, _a;
-        var urlImages = notification.urlImages;
-        if (port === undefined) {
-            throw ChromeBackgroundCommunication.erros.uuidUndefined;
-        }
-        if (urlImages === undefined) {
-            throw ChromeBackgroundCommunication.erros.urlsUndefined;
-        }
-        try {
-            for (var urlImages_1 = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__values"])(urlImages), urlImages_1_1 = urlImages_1.next(); !urlImages_1_1.done; urlImages_1_1 = urlImages_1.next()) {
-                var url = urlImages_1_1.value;
-                if (url) {
-                    this.subject.next({ message: url, id: port.name, type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].ImageSourceNotification });
-                }
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (urlImages_1_1 && !urlImages_1_1.done && (_a = urlImages_1.return)) _a.call(urlImages_1);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-    };
-    ChromeBackgroundCommunication.prototype.notifyCnnSettings = function (notification, port) {
-        notification.id = port.name;
-        this.subject.next(notification);
     };
     ChromeBackgroundCommunication.prototype.loadLocalData = function () {
         chrome.storage.local.get([this.storeKey], this.callbackStorage.bind(this));
@@ -308,7 +276,11 @@ var ChromeBackgroundCommunication = /** @class */ (function (_super) {
     };
     ChromeBackgroundCommunication.prototype.storeSettings = function (settings) {
         var _a;
+        // até o momento a aplicação não suporta o armazenamento de modelos carregados localmente
         chrome.storage.local.set((_a = {}, _a[this.storeKey] = settings, _a));
+        // if (settings.cnnModelHub.url !== "Local Data") {
+        //
+        // }
     };
     ChromeBackgroundCommunication.prototype.simpleNotifications = function (notification, port) {
         if (notification.message === GET_CURRENT_SETTINGS_MESSAGE) {
@@ -324,9 +296,6 @@ var ChromeBackgroundCommunication = /** @class */ (function (_super) {
             type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationTypes"].ClassNameUrlsNotification,
             urls: this.localClassesNames
         });
-    };
-    ChromeBackgroundCommunication.prototype.loadLocalModel = function (notification, port) {
-        this.subject.next(notification);
     };
     ChromeBackgroundCommunication.erros = {
         enableContentScript: new Error("Must enable Chrome Content Scripts"),
@@ -356,6 +325,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _load_image_load_image__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./load-image/load-image */ "./src/app/background-page/load-image/load-image.ts");
 /* harmony import */ var _classifier_manager_classifier_manager__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./classifier-manager/classifier-manager */ "./src/app/background-page/classifier-manager/classifier-manager.ts");
 /* harmony import */ var _background_communication_chrome_browser_chrome_background_communication__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./background-communication/chrome-browser/chrome-background-communication */ "./src/app/background-page/background-communication/chrome-browser/chrome-background-communication.ts");
+/* harmony import */ var _utils_logger_time_logger__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils/logger/time-logger */ "./src/utils/logger/time-logger.ts");
+
 
 
 
@@ -364,11 +335,14 @@ __webpack_require__.r(__webpack_exports__);
 
 var BackgroundComponent = /** @class */ (function () {
     function BackgroundComponent() {
-        this.cnnSettings = new _classifier_manager_classifier_manager__WEBPACK_IMPORTED_MODULE_3__["ClassifierManager"]();
+        this.classifierManager = new _classifier_manager_classifier_manager__WEBPACK_IMPORTED_MODULE_3__["ClassifierManager"]();
         this.cnn = new _convolutional_neural_network_convolutional_neural_network__WEBPACK_IMPORTED_MODULE_1__["ConvolutionalNeuralNetwork"]();
         this.loadImage = new _load_image_load_image__WEBPACK_IMPORTED_MODULE_2__["LoadImage"]();
         this.browser = BackgroundComponent.selectBrowserBackgroundCommunication();
         this.subscribes();
+        if (_utils_logger_time_logger__WEBPACK_IMPORTED_MODULE_5__["ENABLE_LOGGERS"]) {
+            this.startLoggers();
+        }
         this.startFilter();
     }
     BackgroundComponent.selectBrowserBackgroundCommunication = function () {
@@ -380,17 +354,25 @@ var BackgroundComponent = /** @class */ (function () {
         }
     };
     BackgroundComponent.prototype.startFilter = function () {
+        _utils_logger_time_logger__WEBPACK_IMPORTED_MODULE_5__["ENABLE_LOGGERS"] ? console.log("Loggers are enabled") : console.log("Loggers are disabled");
         this.browser.tryToStart();
     };
     BackgroundComponent.prototype.subscribes = function () {
-        this.cnn.addObserver(this.browser);
-        this.cnn.addObserver(this.loadImage);
-        this.cnn.addObserver(this.cnnSettings);
-        this.loadImage.addObserver(this.browser);
-        this.loadImage.addObserver(this.cnnSettings);
-        this.browser.addObserver(this.cnn);
-        this.browser.addObserver(this.cnnSettings);
-        this.cnnSettings.addObserver(this.browser);
+        this.cnn.observe(this.browser);
+        this.cnn.observe(this.loadImage);
+        this.cnn.observe(this.classifierManager);
+        this.loadImage.observe(this.browser);
+        this.browser.observe(this.cnn);
+        this.browser.observe(this.classifierManager);
+        this.classifierManager.observe(this.browser);
+    };
+    BackgroundComponent.prototype.startLoggers = function () {
+        this.loggerLoadImage = new _utils_logger_time_logger__WEBPACK_IMPORTED_MODULE_5__["TimeLogger"]("time_to_load_image_in_background");
+        this.backgroundTimeLogger = new _utils_logger_time_logger__WEBPACK_IMPORTED_MODULE_5__["TimeLogger"]("cnn_time_to_predict_image");
+        this.loggerLoadImage.observe(this.browser);
+        this.loggerLoadImage.observe(this.loadImage);
+        this.backgroundTimeLogger.observe(this.loadImage);
+        this.backgroundTimeLogger.observe(this.cnn);
     };
     BackgroundComponent.ɵfac = function BackgroundComponent_Factory(t) { return new (t || BackgroundComponent)(); };
     BackgroundComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: BackgroundComponent, selectors: [["app-background"]], decls: 2, vars: 0, template: function BackgroundComponent_Template(rf, ctx) { if (rf & 1) {
@@ -498,33 +480,13 @@ var ClassifierManager = /** @class */ (function (_super) {
     };
     ClassifierManager.prototype.error = function (e) {
     };
-    ClassifierManager.prototype.tryToUpdateCnnModel = function (notification) {
-        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function () {
-            var e_1;
-            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"])(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, this.updateCnnModel(notification)];
-                    case 1:
-                        _a.sent();
-                        return [3 /*break*/, 3];
-                    case 2:
-                        e_1 = _a.sent();
-                        console.warn("Unable update cnn : ", e_1);
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
     ClassifierManager.prototype.tensorHubNotification = function (notification) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function () {
             return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"])(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!this.needToUpdateCnnModel(notification)) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.updateCnnModel(notification)];
+                        return [4 /*yield*/, this.tryToUpdateCnnModel(notification)];
                     case 1:
                         _a.sent();
                         return [3 /*break*/, 3];
@@ -537,7 +499,36 @@ var ClassifierManager = /** @class */ (function (_super) {
             });
         });
     };
-    ClassifierManager.prototype.updateCnnModel = function (notification) {
+    ClassifierManager.prototype.tryToUpdateCnnModel = function (notification) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function () {
+            var _a, settings, model, e_1, settings;
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"])(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _b.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.loadCnnModel(notification)];
+                    case 1:
+                        _a = _b.sent(), settings = _a.settings, model = _a.model;
+                        this.updateSetting(settings);
+                        this.notify(model);
+                        return [3 /*break*/, 3];
+                    case 2:
+                        e_1 = _b.sent();
+                        console.warn("Unable do update model", e_1);
+                        settings = {
+                            type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_2__["NotificationTypes"].TensorFlowHubModelNotification,
+                            classNames: {},
+                            cnnModelHub: {}
+                        };
+                        this.updateSetting(settings);
+                        this.notify();
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ClassifierManager.prototype.loadCnnModel = function (notification) {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function () {
             var modelLoader, settings, model;
             return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"])(this, function (_a) {
@@ -550,9 +541,7 @@ var ClassifierManager = /** @class */ (function (_super) {
                         return [4 /*yield*/, modelLoader.getCnnModel()];
                     case 2:
                         model = _a.sent();
-                        this.updateSetting(settings);
-                        this.notify(model);
-                        return [2 /*return*/];
+                        return [2 /*return*/, { settings: settings, model: model }];
                 }
             });
         });
@@ -561,7 +550,6 @@ var ClassifierManager = /** @class */ (function (_super) {
         return this.needToUpdateModel(settings.cnnModelHub.url) || this.needToUpdateClassNames(settings.cnnModelHub.dataset);
     };
     ClassifierManager.prototype.notify = function (cnnModel) {
-        console.log("notificando  observers", this.currentSettings, "CNN Model", cnnModel);
         this.notifyCnn(cnnModel);
         this.notifyUserInterface();
     };
@@ -937,30 +925,41 @@ var ConvolutionalNeuralNetwork = /** @class */ (function (_super) {
             return this.settingsNotification(message);
         }
     };
-    ConvolutionalNeuralNetwork.prototype.imageNotification = function (message) {
+    ConvolutionalNeuralNetwork.prototype.imageNotification = function (notification) {
         var _this = this;
-        var outputMessage = {
-            type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_2__["NotificationTypes"].FilterNotification,
-            id: message.id,
-            predict: this.predict[1],
-            imgSrc: message.img.src
-        };
         if (this.dontNeedToPredict()) {
-            this.subject.next(outputMessage);
-            return;
+            this.notifyToShow(notification);
         }
-        this.startToPredict(message.img)
-            .then(function (pred) {
-            console.log("CNN pred:", pred);
-            outputMessage.predict = pred;
-            _this.subject.next(outputMessage);
-        });
+        else {
+            this.startToPredict(notification.img)
+                .then(function (pred) { return _this.notifyPredict(pred, notification); })
+                .catch(function () { return _this.notifyToShow(notification); });
+        }
     };
     ConvolutionalNeuralNetwork.prototype.dontNeedToPredict = function () {
         if (!this.model) {
             return true;
         }
         return this.enables.reduce((function (previousValue, currentValue) { return previousValue && currentValue; }));
+    };
+    ConvolutionalNeuralNetwork.prototype.notifyToShow = function (notification) {
+        var outputMessage = {
+            type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_2__["NotificationTypes"].FilterNotification,
+            id: notification.id,
+            predict: this.predict[1],
+            imgSrc: notification.img.src
+        };
+        this.subject.next(outputMessage);
+    };
+    ConvolutionalNeuralNetwork.prototype.notifyPredict = function (pred, notification) {
+        console.log("CNN pred:", pred);
+        var filterNotification = {
+            type: _interfaces_notifications__WEBPACK_IMPORTED_MODULE_2__["NotificationTypes"].FilterNotification,
+            id: notification.id,
+            predict: pred,
+            imgSrc: notification.img.src
+        };
+        this.subject.next(filterNotification);
     };
     ConvolutionalNeuralNetwork.prototype.settingsNotification = function (message) {
         if (message.cnnModel) {
@@ -1083,8 +1082,12 @@ var LoadImage = /** @class */ (function (_super) {
         if (notification.id === undefined) {
             throw LoadImage.noTabError;
         }
-        var img = this.createDomElement(notification.message);
-        this.linkSourceToTab(img.src, notification.id);
+        if (notification.message === undefined) {
+            return;
+        }
+        var imageSource = notification.message;
+        this.createDomElement(imageSource);
+        this.linkSourceToTab(imageSource, notification.id);
     };
     LoadImage.prototype.createDomElement = function (src) {
         if (!src) {
@@ -1094,7 +1097,6 @@ var LoadImage = /** @class */ (function (_super) {
         img.addEventListener("error", this.onError.bind(this));
         img.addEventListener("load", this.onLoad.bind(this));
         img.src = src;
-        return img;
     };
     LoadImage.prototype.linkSourceToTab = function (src, tabUUID) {
         this.tabs[src] = tabUUID;
@@ -1149,8 +1151,10 @@ var NotificationTypes;
     NotificationTypes[NotificationTypes["ContentNotification"] = 5] = "ContentNotification";
     NotificationTypes[NotificationTypes["CnnModelSettingNotification"] = 6] = "CnnModelSettingNotification";
     NotificationTypes[NotificationTypes["TensorFlowHubModelNotification"] = 7] = "TensorFlowHubModelNotification";
-    NotificationTypes[NotificationTypes["InputShapeNotification"] = 8] = "InputShapeNotification";
-    NotificationTypes[NotificationTypes["LocalModelInputNotification"] = 9] = "LocalModelInputNotification";
+    NotificationTypes[NotificationTypes["LocalModelInputNotification"] = 8] = "LocalModelInputNotification";
+    NotificationTypes[NotificationTypes["ImageDataNotification"] = 9] = "ImageDataNotification";
+    NotificationTypes[NotificationTypes["ImageUrlsNotification"] = 10] = "ImageUrlsNotification";
+    NotificationTypes[NotificationTypes["ImageByURINotification"] = 11] = "ImageByURINotification";
 })(NotificationTypes || (NotificationTypes = {}));
 
 
@@ -1245,7 +1249,7 @@ var BrowserUserInterfaceService = /** @class */ (function (_super) {
             _a);
         console.log("create User Interface Communication");
         _this.browser = BrowserUserInterfaceService.selectBrowserUserInterfaceCommunication();
-        _this.addObserver(_this.browser);
+        _this.observe(_this.browser);
         _this.browser.tryToStart();
         return _this;
     }
@@ -1472,6 +1476,130 @@ var CnnModelLoader = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "./src/utils/logger/time-logger.ts":
+/*!*****************************************!*\
+  !*** ./src/utils/logger/time-logger.ts ***!
+  \*****************************************/
+/*! exports provided: ENABLE_LOGGERS, TimeLogger */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ENABLE_LOGGERS", function() { return ENABLE_LOGGERS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TimeLogger", function() { return TimeLogger; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _module__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../module */ "./src/utils/module.ts");
+/* harmony import */ var _app_interfaces_notifications__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../app/interfaces/notifications */ "./src/app/interfaces/notifications.ts");
+
+
+
+var ENABLE_LOGGERS = true;
+var TimeLogger = /** @class */ (function (_super) {
+    Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__extends"])(TimeLogger, _super);
+    function TimeLogger(loggerName) {
+        var _a;
+        var _this = _super.call(this) || this;
+        _this.loggerName = loggerName;
+        _this.exportCSV = false;
+        _this.timers = {};
+        _this.callbacks = (_a = {},
+            _a[_app_interfaces_notifications__WEBPACK_IMPORTED_MODULE_2__["NotificationTypes"].ImageSourceNotification] = _this.imageSourceNotification.bind(_this),
+            _a[_app_interfaces_notifications__WEBPACK_IMPORTED_MODULE_2__["NotificationTypes"].FilterNotification] = _this.filterNotification.bind(_this),
+            _a[_app_interfaces_notifications__WEBPACK_IMPORTED_MODULE_2__["NotificationTypes"].ImageNotification] = _this.imageNotification.bind(_this),
+            _a[_app_interfaces_notifications__WEBPACK_IMPORTED_MODULE_2__["NotificationTypes"].ContentNotification] = _this.contentNotification.bind(_this),
+            _a[_app_interfaces_notifications__WEBPACK_IMPORTED_MODULE_2__["NotificationTypes"].ImageDataNotification] = _this.imageDataNotification.bind(_this),
+            _a[_app_interfaces_notifications__WEBPACK_IMPORTED_MODULE_2__["NotificationTypes"].ImageUrlsNotification] = _this.imageUrlsNotification.bind(_this),
+            _a);
+        return _this;
+    }
+    TimeLogger.prototype.toCsvFile = function (data) {
+        var a = document.createElement("a");
+        var blob = new Blob([data], { type: "text/csv" });
+        a.href = URL.createObjectURL(blob);
+        a.download = this.loggerName + ".csv";
+        document.body.appendChild(a);
+        a.click();
+    };
+    TimeLogger.prototype.complete = function () {
+    };
+    TimeLogger.prototype.error = function (e) {
+    };
+    TimeLogger.prototype.next = function (notification) {
+        if (this.callbacks[notification.type]) {
+            this.callbacks[notification.type](notification);
+        }
+    };
+    TimeLogger.prototype.imageSourceNotification = function (notification) {
+        this.updateTime(notification.message);
+    };
+    TimeLogger.prototype.filterNotification = function (notification) {
+        this.updateTime(notification.imgSrc);
+    };
+    TimeLogger.prototype.imageNotification = function (notification) {
+        this.updateTime(notification.img.src);
+    };
+    TimeLogger.prototype.contentNotification = function (notification) {
+        var _this = this;
+        if (notification.images === undefined) {
+            return;
+        }
+        notification.images.forEach(function (value) { return _this.updateTime(value.src); });
+    };
+    TimeLogger.prototype.imageDataNotification = function (notification) {
+        var _this = this;
+        if (notification.inputs === undefined) {
+            return;
+        }
+        notification.inputs.forEach(function (value) { return _this.updateTime(value.src); });
+    };
+    TimeLogger.prototype.imageUrlsNotification = function (notification) {
+        notification.imageUrls.forEach(this.updateTime.bind(this));
+    };
+    TimeLogger.prototype.updateTime = function (index) {
+        var currentTimeInMilliseconds = new Date().getTime();
+        if (this.timers[index]) {
+            this.timers[index].timeInMilliseconds = currentTimeInMilliseconds - this.timers[index].timeInMilliseconds;
+            this.timers[index].isDate = false;
+        }
+        else {
+            this.timers[index] = { timeInMilliseconds: currentTimeInMilliseconds, isDate: true };
+        }
+        this.toCsvColumn();
+    };
+    TimeLogger.prototype.toCsvColumn = function () {
+        var e_1, _a;
+        var loggedTimes = Object.values(this.timers).filter(function (value) { return value.isDate === false; });
+        if (loggedTimes.length < 600) {
+            console.log(this.loggerName + " loggedTimes " + loggedTimes.length);
+            return;
+        }
+        if (this.exportCSV) {
+            return;
+        }
+        var csv = this.loggerName + "\n";
+        try {
+            for (var loggedTimes_1 = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__values"])(loggedTimes), loggedTimes_1_1 = loggedTimes_1.next(); !loggedTimes_1_1.done; loggedTimes_1_1 = loggedTimes_1.next()) {
+                var timer = loggedTimes_1_1.value;
+                csv += timer.timeInMilliseconds + "\n";
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (loggedTimes_1_1 && !loggedTimes_1_1.done && (_a = loggedTimes_1.return)) _a.call(loggedTimes_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        this.toCsvFile(csv);
+        this.exportCSV = true;
+    };
+    return TimeLogger;
+}(_module__WEBPACK_IMPORTED_MODULE_1__["default"]));
+
+
+
+/***/ }),
+
 /***/ "./src/utils/module.ts":
 /*!*****************************!*\
   !*** ./src/utils/module.ts ***!
@@ -1495,7 +1623,7 @@ var Module = /** @class */ (function () {
         };
         this.subscriptions = new Array();
     }
-    Module.prototype.addObserver = function (abstractModule) {
+    Module.prototype.observe = function (abstractModule) {
         this.subscriptions.push(abstractModule.subject.subscribe(this.observer));
     };
     Module.prototype.unsubscribe = function () {

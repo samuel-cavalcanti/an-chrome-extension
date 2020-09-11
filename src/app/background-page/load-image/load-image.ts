@@ -1,5 +1,6 @@
 import {ImageNotification, Notification, NotificationTypes} from "../../interfaces/notifications"
 import Module from "../../../utils/module"
+import {TimeLogger} from "../../../utils/logger/time-logger"
 
 
 export class LoadImage extends Module<Notification, Notification> {
@@ -10,6 +11,7 @@ export class LoadImage extends Module<Notification, Notification> {
 
     private static noTabError = new Error("Tab Not found")
     private shape = {min: 40}
+
 
 
     private tabs: { [key: string]: string } = {}
@@ -38,13 +40,17 @@ export class LoadImage extends Module<Notification, Notification> {
         if (notification.id === undefined) {
             throw LoadImage.noTabError
         }
+        if (notification.message === undefined) {
+            return
+        }
+        const imageSource = notification.message
 
-        const img = this.createDomElement(notification.message)
-        this.linkSourceToTab(img.src, notification.id)
+        this.createDomElement(imageSource)
+        this.linkSourceToTab(imageSource, notification.id)
     }
 
 
-    private createDomElement(src: string): HTMLImageElement {
+    private createDomElement(src: string) {
         if (!src) {
             return undefined
         }
@@ -53,7 +59,8 @@ export class LoadImage extends Module<Notification, Notification> {
         img.addEventListener("error", this.onError.bind(this))
         img.addEventListener("load", this.onLoad.bind(this))
         img.src = src
-        return img
+
+
     }
 
     private linkSourceToTab(src: string, tabUUID: string) {
@@ -67,6 +74,7 @@ export class LoadImage extends Module<Notification, Notification> {
 
     private onLoad(event) {
         const imgTarget = (event.target as HTMLImageElement)
+
         if ((imgTarget.height && imgTarget.height >= this.shape.min) || (imgTarget.width && imgTarget.width >= this.shape.min)) {
             this.notify(imgTarget)
             return

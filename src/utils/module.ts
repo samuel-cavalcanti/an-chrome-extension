@@ -19,7 +19,7 @@ export default abstract class Module<I, O> {
 
   protected abstract complete(): void
 
-  addObserver(abstractModule: Module<any, I>) {
+  observe(abstractModule: Module<any, I>) {
     this.subscriptions.push(abstractModule.subject.subscribe(this.observer))
   }
 

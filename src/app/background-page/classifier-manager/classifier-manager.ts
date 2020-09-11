@@ -4,14 +4,10 @@ import {CnnModelSettingNotification, Notification, NotificationTypes, TensorFlow
 import CnnModelLoader from "../../../utils/cnn-model-loader"
 import {TensorHubModelLoader} from "./cnn-loaders/tensorhub-loader/tensor-hub-model-loader"
 import {InputButtonLoader} from "./cnn-loaders/input-button-loader/input-button-loader"
+import {TensorflowHubModel} from "../../interfaces/tensorflow-hub-model"
 
 
 export class ClassifierManager extends Module<Notification, Notification> {
-
-    constructor() {
-        super()
-    }
-
     private callbacks = {
         [NotificationTypes.TensorFlowHubModelNotification]: this.tensorHubNotification.bind(this),
         [NotificationTypes.LocalModelInputNotification]: this.tryToUpdateCnnModel.bind(this)
@@ -23,6 +19,7 @@ export class ClassifierManager extends Module<Notification, Notification> {
     }
 
     private currentSettings: TensorFlowHubModelNotification
+
 
     next(message: Notification) {
 
@@ -40,21 +37,11 @@ export class ClassifierManager extends Module<Notification, Notification> {
     error(e): void {
     }
 
-    private async tryToUpdateCnnModel(notification: Notification) {
-
-        try {
-            await this.updateCnnModel(notification)
-        } catch (e) {
-            console.warn("Unable update cnn : ", e)
-        }
-
-
-    }
 
     private async tensorHubNotification(notification: TensorFlowHubModelNotification) {
 
         if (this.needToUpdateCnnModel(notification)) {
-            await this.updateCnnModel(notification)
+            await this.tryToUpdateCnnModel(notification)
         } else {
             this.updateSetting(notification)
             this.notify()
@@ -63,17 +50,34 @@ export class ClassifierManager extends Module<Notification, Notification> {
 
     }
 
-    private async updateCnnModel(notification: Notification) {
+    private async tryToUpdateCnnModel(notification: Notification) {
+
+        try {
+            const {settings, model} = await this.loadCnnModel(notification)
+            this.updateSetting(settings)
+            this.notify(model)
+        } catch (e) {
+            console.warn("Unable do update model", e)
+            const settings: TensorFlowHubModelNotification = {
+                type: NotificationTypes.TensorFlowHubModelNotification,
+                classNames: {},
+                cnnModelHub: {} as TensorflowHubModel
+            }
+            this.updateSetting(settings)
+            this.notify()
+
+        }
+
+    }
+
+
+    private async loadCnnModel(notification: Notification) {
 
         const modelLoader: CnnModelLoader = new this.waysToLoadModel[notification.type](notification)
         const settings = await modelLoader.getSettings()
         const model = await modelLoader.getCnnModel()
 
-
-        this.updateSetting(settings)
-        this.notify(model)
-
-
+        return {settings, model}
     }
 
 
@@ -84,7 +88,6 @@ export class ClassifierManager extends Module<Notification, Notification> {
 
     private notify(cnnModel?: tf.GraphModel) {
 
-        console.log("notificando  observers", this.currentSettings, "CNN Model", cnnModel)
 
         this.notifyCnn(cnnModel)
 
@@ -106,6 +109,7 @@ export class ClassifierManager extends Module<Notification, Notification> {
         if (!this.currentSettings.cnnModelHub) {
             return true
         }
+
 
         return this.currentSettings.cnnModelHub.url !== url
 
@@ -134,6 +138,7 @@ export class ClassifierManager extends Module<Notification, Notification> {
 
 
         this.currentSettings = {...oldSettings, ...settings, enables}
+
 
     }
 

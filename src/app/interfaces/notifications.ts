@@ -11,8 +11,10 @@ export enum NotificationTypes {
     ContentNotification,
     CnnModelSettingNotification,
     TensorFlowHubModelNotification,
-    InputShapeNotification,
-    LocalModelInputNotification
+    LocalModelInputNotification,
+    ImageDataNotification,
+    ImageUrlsNotification,
+    ImageByURINotification
 }
 
 export interface Notification {
@@ -35,8 +37,8 @@ export interface FilterNotification extends Notification {
 
 export interface ContentNotification extends Notification {
     type: NotificationTypes.ContentNotification
-    urlImages?: Array<string>
-    urlVideos?: Array<string>
+    images?: Array<HTMLImageElement>
+    videos?: Array<HTMLVideoElement>
 }
 
 export interface CnnModelSettingNotification extends Notification {
@@ -53,14 +55,20 @@ export interface TensorFlowHubModelNotification extends Notification {
     enables?: Array<boolean>
 }
 
-export interface InputShapeNotification extends Notification {
-    type: NotificationTypes.InputShapeNotification
-    shape: Array<number>
-}
 
 export interface ClassNameUrlsNotification extends Notification {
     type: NotificationTypes.ClassNameUrlsNotification
     urls: { [key: string]: string }
+}
+
+export interface ImageUrlsNotification extends Notification {
+    type: NotificationTypes.ImageUrlsNotification
+    imageUrls: Array<string>
+}
+
+export interface ImageDataNotification extends Notification {
+    type: NotificationTypes.ImageDataNotification
+    inputs: Array<{ src: string, data: ImageData }>
 }
 
 

@@ -15,6 +15,10 @@
 </ng-template>
 
 
-<div *ngIf="success" class="alert alert-success container text-center" role="alert">
+<div *ngIf="loadStatus == 1" class="alert alert-success container text-center" role="alert">
     successful loaded
+</div>
+
+<div *ngIf="loadStatus == 2" class="alert alert-danger container text-center" role="alert">
+    Unable do load model, please report this on github
 </div>

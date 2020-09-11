@@ -3,9 +3,9 @@ import Module from "./module"
 
 export abstract class BrowserCommunication<I, O> extends Module<I, O> {
 
-  abstract tryToStart(): void
+    abstract tryToStart(): void
 
-  abstract checkPermissions(): void
+    protected abstract checkPermissions(): void
 
 
 }
