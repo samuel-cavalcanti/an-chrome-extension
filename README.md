@@ -4,6 +4,8 @@ Essa é uma aplicação que utiliza os classificadores do [tensor hub](https://t
 o [Tensorflow JS](https://www.tensorflow.org/js) para a criação de uma
 [extensão chrome](https://developer.chrome.com/extensions/getstarted) que filtre toda imagens.
 
+Artigo produzido: [Uma Extensão do Chrome para Filtragem de Imagens Digitais Usando Redes Neurais Convolucionais](Uma_Extens_o_chrome_que_filtra_imagens_usando_redes_neurais_convolucionais__1_.pdf)
+
 ## compilação da extensão:
 
 ```zsh
